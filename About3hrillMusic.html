@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3HRILL MUSIC — About & Vision</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,700&family=JetBrains+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --void:#020810;--deep:#040c1a;
+  --elec:#00aaff;--cyan:#9693f871;--hot:#ffcdbbd2;--gold:#fbfbc8d6;
+  --green:#0a333cf6;--violet:#338dff6f;--white:#e8f4ff;
+  --muted:#3a6080;--ghost:#152535;
+  --fd:'Bebas Neue',sans-serif;--fb:'Barlow Condensed',sans-serif;
+  --fm:'JetBrains Mono',monospace;--fp:'Playfair Display',serif;
+}
+html,body{height:100%;overflow:hidden;background:var(--void);color:var(--white);font-family:var(--fb)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,170,255,.006) 3px,rgba(0,170,255,.006) 4px)}
+
+/* ═══ NAV ═══ */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;
+  display:none;align-items:center;justify-content:space-between;padding:0 3rem;
+  background:linear-gradient(180deg,rgba(2,8,16,.98),rgba(2,8,16,.72));
+  border-bottom:1px solid rgba(240,192,64,.1);backdrop-filter:blur(16px)}
+.nav-logo{font-family:var(--fd);font-size:1.7rem;letter-spacing:.22em;text-decoration:none;
+  background:linear-gradient(110deg,#00e5ff,#0088ff 55%,#0044cc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 14px rgba(0,180,255,.45))}
+.nav-links{display:flex;gap:1.8rem;list-style:none}
+.nav-links a{font-family:var(--fb);font-size:.72rem;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan)}
+.nav-right{display:flex;align-items:center;gap:1.2rem}
+.nav-badge{font-family:var(--fm);font-size:.56rem;letter-spacing:.2em;color:var(--gold);
+  background:rgba(240,192,64,.07);border:1px solid rgba(240,192,64,.22);border-radius:2px;padding:.28rem .75rem}
+
+
+
+       /* ── WRAPPER ── */
+.hmenu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 0;                /* don't let it push anything */
+    height: 0;
+    z-index: 999;
+}
+
+/* ── TOGGLE ── */
+.toggle {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;           /* above the rail */
+    transition: transform .15s ease, background .3s ease, box-shadow .3s ease;
+}
+.toggle:hover  { background: rgba(12,17,32,.96); }
+.toggle:active { transform: scale(.92); }
+
+.toggle .peg {
+    width: 1px;
+    height: 20px;
+    border-radius: 2px;
+    background: var(--steel);
+    transition: background .3s ease, height .3s ease, width .3s ease;
+}
+.toggle .peg[data-p="0"] { width: 2.8px; height: 24px; background: #e7c98f; }
+.toggle .peg[data-p="1"] { width: 2.4px; height: 22px; background: #8fcbff; }
+.toggle .peg[data-p="2"] { width: 2px;   height: 20px; background: #b8a5ff; }
+.toggle .peg[data-p="3"] { width: 1.6px; height: 18px; background: #7dd8c0; }
+.toggle .peg[data-p="4"] { width: 1.2px; height: 15px; background: #ff9a9a; }
+
+/* ── RAIL ── */
+.rail {
+    position: absolute;
+    top: 20px;
+    left: -211px;
+    width: 95px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 17px;       /* leave room for the toggle */
+    background: linear-gradient(to left, rgba(12,17,32,.95), rgba(12,17,32,0));
+    border-left: 1px solid rgba(63,224,255,.12);
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform .55s cubic-bezier(.22,1,.36,1),
+                opacity .35s ease,
+                visibility .35s ease;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+.rail.open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* ── ROW (the <a>) ── */
+.row {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    /* nothing else — no top/right offsets, those broke hit-testing */
+}
+
+/* the thin visual line */
+.string {
+    height: 2px;
+    width: 130px;
+    border-radius: 3px;
+    background: #e7c98f;
+    pointer-events: none;    /* clicks go to the <a> */
+    transition: height .3s ease, background .3s ease, filter .3s ease, box-shadow .3s ease;
+}
+.row:hover .string {
+    height: 48%;
+    background: #3fe0ff;
+    filter: drop-shadow(0 0 12px rgba(63,224,255,.7));
+    box-shadow: 0 0 20px rgba(63,224,255,.2);
+}
+
+/* ── FLYOUT ── */
+.flyout {
+    position: absolute;
+    right: calc(100% + 14px);
+    top: 50%;
+    transform: translate(10px, -50%);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 18px;
+    background: rgba(12,17,32,.95);
+    border: 1px solid rgba(63,224,255,.12);
+    border-right: 2px solid #3d4a63;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;    /* hidden by default */
+    transition: opacity .3s ease,
+                transform .3s cubic-bezier(.2,1,.3,1),
+                border-color .25s ease;
+    backdrop-filter: blur(8px);
+}
+
+/* show flyout when hovering EITHER the row OR the flyout itself */
+.row:hover .flyout,
+.flyout:hover {
+    opacity: 1;
+    transform: translate(0, -50%);
+    pointer-events: auto;    /* now clickable */
+    border-right-color: #3fe0ff;
+}
+.logo{
+position:absolute;right:10px;top:7px;width:18px;height:36%;z-index:954;
+}
+/* ═══ SLIDES ═══ */
+#slides{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none;padding-top:1px;}
+#slides::-webkit-scrollbar{display:none}
+.slide{height:100vh;scroll-snap-align:start;position:relative;overflow:hidden;transition:6s all ease}
+
+.mesh{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 65% at 8% 40%,rgba(6,28,70,.45) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 40% at 92% 12%,rgba(4,18,55,.3) 0%,transparent 60%)
+    radial-gradient(ellipse 50% 50% at 50% 98%,rgba(2,8,30,.4) 0%,transparent 65%)}
+.grid-lines{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(0,130,200,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,130,200,.02) 1px,transparent 1px);
+  background-size:60px 60px}
+
+/* Slide Arrows */
+.slide-next{position:absolute;bottom:1.4rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer;z-index:10;
+  font-family:var(--fm);font-size:1.5rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;
+  animation:aBounce 2.6s ease infinite}
+.slide-next .arr{width:13px;height:13px;border-right:1px solid rgba(240,192,64,.22);
+  border-bottom:1px solid rgba(240,192,64,.22);transform:rotate(45deg)}
+@keyframes aBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══════════════════════════════════════════
+   SLIDE 1 — TIMELINE & DECLARATION
+═══════════════════════════════════════════ */
+#slide-timeline{display:grid;grid-template-columns:1fr 1fr;
+  background:linear-gradient(158deg,#020810 0%,#030d1c 50%,#040f1c 100%),url('images/3hrill.png');background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;}
+
+.decl-l{display:flex;flex-direction:column;justify-content:center;
+  padding:5rem 1rem 1rem 2.3rem;border-right:1px solid rgba(240,192,64,.07);z-index:2}
+.decl-eyebrow{font-family:var(--fm);font-size:.55rem;display:none;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--gold);opacity:.7;margin-bottom:.6rem}
+.decl-headline{font-family:var(--fd);font-size:clamp(5.5rem,6.5vw,6.5rem);margin-top:1px;letter-spacing:.05em;line-height:.88}
+.decl-headline em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,229,255,.45);color:transparent}
+.decl-headline span{color:var(--gold);animation:glowPulse 3.8s ease infinite}
+.decl-rule{width:48px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:1.2rem 0}
+.decl-body{font-family:var(--fp);font-style:italic;font-size:1.95rem;line-height:1.75;
+  color:rgba(200,225,245,.6);max-width:480px}
+.decl-body strong{font-style:normal;font-weight:700;color:var(--gold)}
+
+/* Vertical Timeline Track */
+.decl-r{display:flex;flex-direction:column;justify-content:center;padding:2rem 4rem 2rem 3rem;z-index:2;
+  overflow-y:auto;scrollbar-width:none}
+.decl-r::-webkit-scrollbar{display:none}
+
+.v-timeline{position:relative;border-left:1px solid rgba(0,170,255,.15);padding-left:2rem;margin-left:0.5rem}
+.v-tl-item{position:relative;margin-bottom:2rem}
+.v-tl-item:last-child{margin-bottom:0}
+.v-tl-dot{position:absolute;left:calc(-2rem - 5px);top:4px;width:9px;height:9px;
+  border-radius:50%;background:var(--void);border:2px solid var(--cyan);
+  box-shadow:0 0 10px rgba(0,229,255,.4);transition:all .25s}
+.v-tl-item:hover .v-tl-dot{background:var(--cyan);transform:scale(1.2)}
+.v-tl-meta{font-family:var(--fm);font-size:.6rem;letter-spacing:.12em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:.2rem;display:flex;align-items:center;gap:.5rem}
+.v-tl-status{color:var(--gold);font-weight:500}
+.v-tl-title{font-family:var(--fb);font-size:1.15rem;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--white);line-height:1.1;margin-bottom:.3rem}
+.v-tl-desc{font-family:var(--fb);font-size:.85rem;color:rgba(150,200,245,.55);line-height:1.45}
+
+/* ═══════════════════════════════════════════
+   SLIDE 2 — TARGET AREAS FOR ACHIEVEMENT
+═══════════════════════════════════════════ */
+#slide-achievement{display:grid;grid-template-columns:460px 1fr;
+  background:linear-gradient(162deg,#020810 0%,#030c1a 55%,#040e1a 100%)}
+
+.ach-l{display:flex;flex-direction:column;text-spacing:14px;
+  padding:6rem 3rem 2rem 4rem;border-right:1px solid rgba(136,85,255,.1);z-index:2}
+.ach-eyebrow{font-family:var(--fm);display:none;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--violet);opacity:.7;margin-bottom:.45rem}
+.ach-title{font-family:var(--fd);font-size:clamp(5.5rem,6.5vw,6.5rem);letter-spacing:.06em;line-height:1.3}
+.ach-title em{font-style:normal;color:var(--violet);font-size:44px;line-height:16px}
+.ach-desc{font-family:var(--fb);font-size:1.2rem;line-height:1.6;color:rgba(160,210,250,.52);margin-top:1rem}
+
+.ach-r{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);
+  gap:.8rem;padding:3rem 4rem 3rem 3rem;z-index:2}
+.target-card{background:linear-gradient(140deg,rgba(8,18,36,.94),rgba(4,10,22,.97));
+  border:1px solid rgba(0,110,180,.12);border-radius:4px;padding:1.4rem;
+  transition:all .25s;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.target-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan);opacity:0;transition:opacity .25s}
+.target-card:hover{border-color:rgba(0,229,255,.2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(2,8,16,.6)}
+.target-card:hover::before{opacity:1}
+
+.target-card.cyan::before { background: var(--cyan); }
+.target-card.violet::before { background: var(--violet); }
+.target-card.gold::before { background: var(--gold); }
+.target-card.hot::before { background: var(--hot); }
+
+.tc-num{font-family:var(--fm);position:relative;font-size:.6rem;letter-spacing:.1em;color:var(--muted);margin-bottom:12rem;padding-right:-5px;}
+.tc-title{font-family:var(--fb);font-size:1.15rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--white);margin-bottom:.4rem}
+.tc-body{font-family:var(--fb);font-size:.85rem;color:rgba(150,200,245,.5);line-height:1.5}
+
+/* ═══════════════════════════════════════════
+   SLIDE 3 — CONTACT US & ENGINE INTEGRATION
+═══════════════════════════════════════════ */
+#slide-contact{background:linear-gradient(160deg,#020810 0%,#03091a 50%,#030d1a 100%);
+  display:grid;grid-template-columns:1.2fr 1fr}
+
+.contact-l{display:flex;flex-direction:column;justify-content:center;padding:2rem 3rem 2rem 4rem;z-index:2}
+.contact-eyebrow{font-family:var(--fm);display:none;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--hot);opacity:.7;margin-bottom:.3rem}
+.contact-title{font-family:var(--fd);font-size:clamp(5.5rem,6.5vw,6.5rem);letter-spacing:.06em;line-height:.9;margin-bottom:1.5rem}
+.contact-title em{font-style:normal;color:var(--hot)}
+
+/* Contact Form Engine */
+.contact-form{display:flex;flex-direction:column;gap:.75rem;max-width:520px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.input-group{display:flex;flex-direction:column;gap:.35rem}
+.input-group label{font-family:var(--fm);font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.form-input{background:rgba(4,12,26,.8);border:1px solid rgba(0,170,255,.15);border-radius:3px;
+  padding:.65rem .9rem;color:var(--white);font-family:var(--fb);font-size:.9rem;letter-spacing:.04em;
+  transition:all .25s;outline:none}
+.form-input:focus{border-color:var(--cyan);background:rgba(6,18,38,1);box-shadow:0 0 10px rgba(0,229,255,.1)}
+textarea.form-input{resize:none;height:90px}
+
+.submit-btn{background:linear-gradient(90deg,rgba(255,107,53,.15),rgba(255,107,53,.05));
+  border:1px solid var(--hot);border-radius:3px;padding:.75rem;color:var(--white);
+  font-family:var(--fm);font-size:.65rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+  cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;margin-top:.4rem}
+.submit-btn:hover{background:var(--hot);box-shadow:0 0 15px rgba(255,107,53,.45);color:var(--void);font-weight:700}
+
+/* Physical & Directory Coordinates Routing */
+.contact-r{display:flex;flex-direction:column;justify-content:center;padding:2rem 4rem 2rem 3rem;
+  z-index:2;border-left:1px solid rgba(255,107,53,.1)}
+.meta-directory{display:flex;flex-direction:column;gap:1.4rem;margin-bottom:2rem}
+.meta-node{display:flex;flex-direction:column;gap:.25rem}
+.mn-lbl{font-family:var(--fm);font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--hot)}
+.mn-val{font-family:var(--fb);font-size:1.25rem;font-weight:600;color:var(--white);letter-spacing:.02em}
+.mn-sub{font-family:var(--fm);font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+
+/* Structural Social Grid System */
+.socials-label{font-family:var(--fm);font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.socials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;max-width:440px}
+.soc-tile{display:flex;flex-direction:column;padding:.6rem .8rem;background:rgba(4,12,26,.6);
+  border:1px solid rgba(0,110,180,.1);border-radius:3px;text-decoration:none;transition:all .22s}
+.soc-tile:hover{border-color:rgba(240,192,64,.3);background:rgba(8,20,42,.8);transform:translateY(-2px)}
+.soc-tile.tw:hover{border-color:#1da1f2;background:rgba(29,161,242,.05)}
+.soc-tile.ig:hover{border-color:#e1306c;background:rgba(225,48,108,.05)}
+.soc-tile.yt:hover{border-color:#ff0000;background:rgba(255,0,0,.05)}
+.soc-tile.sc:hover{border-color:#ff5500;background:rgba(255,85,0,.05)}
+.soc-tile.tt:hover{border-color:#00f2fe;background:rgba(0,242,254,.05)}
+.soc-tile.li:hover{border-color:#0077b5;background:rgba(0,119,181,.05)}
+
+.soc-name{font-family:var(--fb);font-size:.9rem;font-weight:700;letter-spacing:.05em;color:var(--white)}
+.soc-handle{font-family:var(--fm);font-size:.44rem;letter-spacing:.05em;color:var(--muted);margin-top:.1rem}
+
+/* ── SIDE DOT NAVIGATION ── */
+.dot-nav{position:absolute;left:1.4rem;top:80%;transform:translateY(-50%);
+  z-index:300;display:none;flex-direction:row;gap:.6rem;align-items:center}
+.dot-nav-item{width:170px;height:40px;border-radius:10%;border:1.5px solid rgba(240,192,64,.22);
+  background:transparent;cursor:pointer;transition:all .28s;position:relative}
+.dot-nav-item.active{background:var(--gold);border-color:var(--gold);
+  box-shadow:0 0 8px rgba(240,192,64,.45);width:9px;height:9px}
+.dot-nav-item::after{content:attr(data-label);position:absolute;width:170px;height:40px;right:1.5rem;top:50%;
+  transform:translateY(-50%);font-family:var(--fm);font-size:.42rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);white-space:nowrap;opacity:0;
+  pointer-events:none;transition:opacity .2s;background:rgba(2,8,16,.95);
+  border:1px solid rgba(0,130,200,.12);border-radius:2px;padding:.2rem .5rem}
+.dot-nav-item:hover::after{opacity:1}
+
+/* ── CLOSING FOOTER ── */
+.final-footer{position:absolute;bottom:0;left:0;right:0;padding:1rem 4rem;
+  border-top:1px solid rgba(240,192,64,.07);display:flex;align-items:center;
+  justify-content:space-between;background:linear-gradient(180deg,transparent,rgba(2,8,16,.65));
+  z-index:5}
+.ff-logo{font-family:var(--fd);font-size:1.5rem;letter-spacing:.22em;
+  background:linear-gradient(110deg,#00e5ff,#0088ff 55%,#0044cc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 10px rgba(0,180,255,.3))}
+.ff-tagline{font-family:var(--fp);font-style:italic;font-size:.78rem;color:rgba(200,220,245,.28)}
+.ff-links{display:flex;gap:1.2rem}
+.ff-link{font-family:var(--fm);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;cursor:pointer;transition:color .2s}
+.ff-link:hover{color:var(--gold)}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 0px rgba(240,192,64,0))}50%{filter:drop-shadow(0 0 22px rgba(240,192,64,.18))}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.anim-fade-up{opacity:0;animation:fadeUp .8s cubic-bezier(.22,1,.36,1) both}
+[data-delay="1"]{animation-delay:.1s}
+[data-delay="2"]{animation-delay:.22s}
+[data-delay="3"]{animation-delay:.38s}
+[data-delay="4"]{animation-delay:.54s}
+
+/* Responsive Overrides */
+@media(max-width:1024px){
+  #slide-timeline, #slide-achievement, #slide-contact{grid-template-columns:1fr;overflow-y:auto}
+  .slide{height:auto;min-height:calc(100vh - 58px);scroll-snap-align:none}
+  #slides{scroll-snap-type:none;overflow-y:visible}
+  .decl-l, .decl-r, .ach-l, .ach-r, .contact-l, .contact-r{padding:2rem 1.5rem}
+  .decl-l{border-right:none;border-bottom:1px solid rgba(240,192,64,.07)}
+  .ach-l{border-right:none;border-bottom:1px solid rgba(136,85,255,.1)}
+  .contact-r{border-left:none;border-top:1px solid rgba(255,107,53,.1)}
+  .ach-r{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="logo" ><img src="images/3hrill.png" alt=""
+style="position:absolute;right:65px;top:25px;height:10%;opacity:36%"></div>
+<nav>
+  <a href="#" class="nav-logo">3HRILL MUSIC</a>
+  <ul class="nav-links">
+    <li><a href="#" class="active" onclick="goSlide(0);return false">Timeline</a></li>
+    <li><a href="#" onclick="goSlide(1);return false">Target Areas</a></li>
+    <li><a href="#" onclick="goSlide(2);return false">Contact Matrix</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-badge" id="utcClock">// SYSTEM UTC: 00:00:00</div>
+  </div>
+</nav>
+   <!-- TOGGLE + RAIL -->
+    <div class="hmenu">
+<button class="toggle" id="toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span class="peg" data-p="0"></span>
+        <span class="peg" data-p="1"></span>
+        <span class="peg" data-p="2"></span>
+        <span class="peg" data-p="3"></span>
+        <span class="peg" data-p="4"></span>
+    </button>
+
+    <nav class="rail" id="rail">
+        <span class="tag">NAV</span>
+        
+        <a class="row" data-i="0" href="index.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">02</span><span class="label">Home</span></span>
+        </a>
+        <a class="row" data-i="1" href="newssplash.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">03</span><span class="label">News Splash</span></span>
+        </a>
+        <a class="row" data-i="2" href="3hrillcharts.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Music Charts</span></span>
+        </a>
+<a class="row" data-i="3" href="Librarypass.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Library Pass</span></span>
+        </a>
+        <a class="row" data-i="4" href="fanshowcase.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Funs showcase</span></span>
+        </a>
+<a class="row" data-i="5" href="3hrillgigs.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Gigs</span></span>
+        </a>
+<a class="row" data-i="6" href="musicschool.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music School</span></span>
+        </a>
+<a class="row" data-i="7" href="musicstudio.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music Studio</span></span>
+        </a>
+<a class="row" data-i="8" href="3hrillstore.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label"> The Store</span></span>
+        </a>
+<a class="row" data-i="9" href="About3hrillMusic.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Music</span></span>
+        </a>
+    </nav>
+    </nav>
+</div>
+<div class="dot-nav">
+  <div class="dot-nav-item active" data-label="01 // MILESTONES" onclick="goSlide(0)"></div>
+  <div class="dot-nav-item" data-label="02 // TARGETS" onclick="goSlide(1)"></div>
+  <div class="dot-nav-item" data-label="03 // CONTACT ROUTING" onclick="goSlide(2)"></div>
+</div>
+
+<div id="slides">
+
+  <section class="slide" id="slide-timeline">
+    <div class="mesh" ></div><div class="grid-lines"></div>
+    
+    <div class="decl-l anim-fade-up" data-delay="1">
+      <div class="decl-eyebrow">DECLARATION & RECORD // LOG</div>
+      <h1 class="decl-headline">THE <em>JOURNEY</em> OF<br><span>3HRILL MUSIC</span></h1>
+      <div class="decl-rule"></div>
+      <p class="decl-body">
+        Tracking operational deployment nodes, system updates, and architectural milestones. 
+        We document our structural evolution to maintain strict alignment between <strong>sonic engineering</strong> and cultural execution.
+      </p>
+    </div>
+
+    <div class="decl-r anim-fade-up" data-delay="2">
+      <div class="v-timeline">
+        
+        <div class="v-tl-item">
+          <div class="v-tl-dot"></div>
+          <div class="v-tl-meta">NODE_01  <span class="v-tl-status"> INITIALIZED</span></div>
+          <div class="v-tl-title">Brand Synthesis & Identity Genesis</div>
+          <div class="v-tl-desc">Established the structural foundations of 3hrill Music, defining a unified typology, standardizing design tokens, and generating initial visual blueprints for our creative platforms.</div>
+        </div>
+
+        <div class="v-tl-item">
+          <div class="v-tl-dot"></div>
+          <div class="v-tl-meta">NODE_02  <span class="v-tl-status"> ARCHIVED</span></div>
+          <div class="v-tl-title">"Carols from 3hrill Music" Curated Series</div>
+          <div class="v-tl-desc">Successfully deployed a dedicated seasonal showcase during the 2025 festive sequence, providing historical deep-dives and custom audio overviews of original cultural classics.</div>
+        </div>
+
+        <div class="v-tl-item">
+          <div class="v-tl-dot"></div>
+          <div class="v-tl-meta">NODE_03  <span class="v-tl-status"> ENGINE ACTIVE</span></div>
+          <div class="v-tl-title">Console Subsystems Development</div>
+          <div class="v-tl-desc">Initiated design sprints for our integrated software utilities, including cross-format file converters, subscription aggregators, and custom database frameworks.</div>
+        </div>
+
+        <div class="v-tl-item">
+          <div class="v-tl-dot"></div>
+          <div class="v-tl-meta">NODE_04  <span class="v-tl-status"> LIVE INJECT</span></div>
+          <div class="v-tl-title">3hrill Gigs Spatial Directory Mapping</div>
+          <div class="v-tl-desc">Engineered an interactive live event calendar engine leveraging advanced spatial mapping API protocols to offer rotating 3D telemetry for live music tracking.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="slide-next" onclick="goSlide(1)">
+      <span class="txt">Targets</span>
+      <div class="arr"></div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-achievement">
+    <div class="mesh" ></div><div class="grid-lines"></div>
+    
+    <div class="ach-l anim-fade-up" data-delay="1">
+      <div class="ach-eyebrow">STRATEGIC HORIZONS // PROJECTED</div>
+      <h1 class="ach-title">AREAS EYEING<br>FOR <em>ACHIEVEMENT</em></h1>
+      <p class="ach-desc">
+        A blueprint mapping our target coordinates for structural disruption. We scale across education, operational support, industrial data synthesis, and global market amplification.
+      </p>
+    </div>
+
+    <div class="ach-r anim-fade-up" data-delay="2">
+      
+      <div class="target-card cyan" style="backdrop-filter:blur(26px)">
+        <div class="tc-num">SUBSYSTEM</div>
+        <div class="tc-title">The 3hrill Academy</div>
+        <div class="tc-body">Building a comprehensive curriculum matrix comprising foundational, intermediate, and advanced masterclasses designed to empower practitioners with world-class sonic literacy.</div>
+      </div>
+
+      <div class="target-card violet">
+        <div class="tc-num">INFRASTRUCTURE</div>
+        <div class="tc-title">The Music Studio Engine</div>
+        <div class="tc-body">Launching physical and virtual production arrays matching elite international standards, prioritizing creative hardware configurations, custom builds, and clean signal chains.</div>
+      </div>
+
+      <div class="target-card gold">
+        <div class="tc-num">TELEMETRY</div>
+        <div class="tc-title">3hrill Music Analytics & Charts</div>
+        <div class="tc-body">Developing automated web-scraping pipelines and analytics consoles to track global streaming metrics, regional trends, and industry-defining data in real time.</div>
+      </div>
+
+      <div class="target-card hot">
+        <div class="tc-num" style="left:2px">ADVOCACY</div>
+        <div class="tc-title">Global South Amplification</div>
+        <div class="tc-body">Creating a dedicated commercial pipeline to connect regional creators from Africa and developing markets directly to international distribution, publishing houses, and executive suites.</div>
+      </div>
+
+    </div>
+
+    <div class="slide-next" onclick="goSlide(2)">
+      <span class="txt">Contact Us</span>
+      <div class="arr"></div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-contact">
+    <div class="mesh" 
+            background-position: cover;
+            background-repeat: no-repeat;"></div><div class="grid-lines"></div>
+    
+    <div class="contact-l anim-fade-up" data-delay="1">
+      <div class="contact-eyebrow">COMMUNICATIONS VECTOR // INPUT</div>
+      <h1 class="contact-title">CONNECT TO<br>THE <em>CORE ENGINE</em></h1>
+      
+      <form class="contact-form" onsubmit="event.preventDefault(); alert('Message transmission logged successfully.');">
+        <div class="form-row">
+          <div class="input-group">
+            <label>Sender Identity / Name</label>
+            <input type="text" class="form-input" placeholder="e.g., Jane Doe" required>
+          </div>
+          <div class="input-group">
+            <label>Contact Number / Phone</label>
+            <input type="tel" class="form-input" placeholder="e.g., +260 970 000 000" required>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Email Link / Address</label>
+          <input type="email" class="form-input" placeholder="name@domain.com" required>
+        </div>
+        <div class="input-group">
+          <label>Transmission Payload / Message</label>
+          <textarea class="form-input" placeholder="Write your message or operational inquiry here..." required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">EXECUTE INJECT TRANSMISSION</button>
+      </form>
+    </div>
+
+    <div class="contact-r anim-fade-up" data-delay="2">
+      <div class="meta-directory">
+        <div class="meta-node">
+          <span class="mn-lbl">Direct Mailing Coordinate</span>
+          <span class="mn-val">hq@3hrillmusic.com</span>
+          <span class="mn-sub">Secure Routing System</span>
+        </div>
+        <div class="meta-node">
+          <span class="mn-lbl">Physical Grid Anchor</span>
+          <span class="mn-val">Main Office Node, Lusaka, Zambia</span>
+          <span class="mn-sub">Creative Space & Tech Hub Operations</span>
+        </div>
+      </div>
+
+      <div class="socials-container">
+        <div class="socials-label">Industrial Directory Nodes // Social Networks</div>
+        <div class="socials-grid">
+          <a href="#" class="soc-tile tw" target="_blank">
+            <span class="soc-name">X / Twitter</span>
+            <span class="soc-handle">@3hrillmusic</span>
+          </a>
+          <a href="#" class="soc-tile ig" target="_blank">
+            <span class="soc-name">Instagram</span>
+            <span class="soc-handle">@3hrillmusic</span>
+          </a>
+          <a href="#" class="soc-tile yt" target="_blank">
+            <span class="soc-name">YouTube</span>
+            <span class="soc-handle">@3hrillmusic</span>
+          </a>
+          <a href="#" class="soc-tile sc" target="_blank">
+            <span class="soc-name">SoundCloud</span>
+            <span class="soc-handle">@3hrillmusic</span>
+          </a>
+          <a href="#" class="soc-tile tt" target="_blank">
+            <span class="soc-name">TikTok</span>
+            <span class="soc-handle">@3hrillmusic</span>
+          </a>
+          <a href="#" class="soc-tile li" target="_blank">
+            <span class="soc-name">LinkedIn</span>
+            <span class="soc-handle">3hrill-music</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="final-footer">
+      <div class="ff-logo">3HRILL MUSIC</div>
+      <div class="ff-tagline">"Sound. Structure. System."</div>
+      <div class="ff-links">
+        <a class="ff-link" onclick="goSlide(0)">Top Node</a>
+        <a class="ff-link" href="#">Privacy Protocol</a>
+        <a class="ff-link" href="#">Terms of Architecture</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+
+ (function() {
+    const toggle = document.getElementById('toggle');
+    const rail   = document.getElementById('rail');
+
+    function setOpen(open) {
+        rail.classList.toggle('open', open);
+        toggle.classList.toggle('active', open);
+        toggle.setAttribute('aria-expanded', String(open));
+    }
+
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setOpen(!rail.classList.contains('open'));
+    });
+
+    // click outside closes
+    document.addEventListener('click', function(e) {
+        if (rail.classList.contains('open')
+            && !rail.contains(e.target)
+            && !toggle.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    // Esc closes
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') setOpen(false);
+    });
+
+    // pluck animation on hover — nothing else
+    document.querySelectorAll('.row').forEach(function(row) {
+        const string = row.querySelector('.string');
+        row.addEventListener('mouseenter', function() {
+            string.classList.remove('plucked');
+            void string.offsetWidth;
+            string.classList.add('plucked');
+        });
+        // ❌ removed: row.addEventListener('click', e => e.preventDefault());
+    });
+})();
+
+
+const slidesContainer = document.getElementById('slides');
+const slideElements = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot-nav-item');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+let isScrolling = false;
+
+// Slide navigation runner
+function goSlide(index) {
+  if(index < 0 || index >= slideElements.length) return;
+  const targetY = slideElements[index].offsetTop - 58; // Adjusting for fixed navigation frame
+  
+  slidesContainer.scrollTo({
+    top: targetY,
+    behavior: 'smooth'
+  });
+  
+  updateNavigationStates(index);
+}
+
+// Coordinate link and navigational state triggers
+function updateNavigationStates(activeIndex) {
+  dots.forEach((dot, i) => {
+    if(i === activeIndex) dot.classList.add('active');
+    else dot.classList.remove('active');
+  });
+
+  navLinks.forEach((link, i) => {
+    if(i === activeIndex) link.classList.add('active');
+    else link.classList.remove('active');
+  });
+}
+
+// Track programmatic container intersection to handle manual scroll snapping
+slidesContainer.addEventListener('scroll', () => {
+  if (isScrolling) return;
+  
+  const currentScrollTop = slidesContainer.scrollTop;
+  const slideHeight = slideElements[0].clientHeight;
+  const computedIndex = Math.round(currentScrollTop / slideHeight);
+  
+  updateNavigationStates(computedIndex);
+});
+
+// Update standard UTC clock readout matching terminal designs
+function updateUTCClock() {
+  const now = new Date();
+  const utcString = now.toUTCString().replace('GMT', 'UTC');
+  const clockElement = document.getElementById('utcClock');
+  if(clockElement) {
+    clockElement.textContent = `// SYSTEM ${utcString.substring(17, 25)} UTC`;
+  }
+}
+setInterval(updateUTCClock, 1000);
+updateUTCClock();
+</script>
+
+</body>
+</html>

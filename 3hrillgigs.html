@@ -1,0 +1,4144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3HRILL GIGS</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --void:#020810;
+  --deep:#050f1e;
+  --dark:#07111f;
+  --mid:#0a1a30;
+  --panel:#0d2040;
+  --ridge:#0e2850;
+  --blue-dim:#0a2040;
+  --blue-nav:#082555;
+  --blue-mid:#0e4080;
+  --blue-hi:#1460a8;
+  --elec:#00aaff;
+  --cyan:#00e5ff;
+  --glow:rgba(0,180,255,.4);
+  --hot:#ff6b35;
+  --white:#e8f4ff;
+  --muted:#3a6080;
+  --ghost:#1a3050;
+  --fd:'Bebas Neue',sans-serif;
+  --fb:'Barlow Condensed',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--white);
+  font-family:var(--fb);
+  overflow:hidden;
+  cursor:default;
+}
+
+/* scanline texture */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,180,255,.012) 3px,rgba(0,180,255,.012) 4px);
+  pointer-events:none;
+  z-index:9999;
+}
+
+/* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            height: 58px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            background: linear-gradient(180deg, rgba(2, 8, 16, .98), rgba(2, 8, 16, .72));
+            border-bottom: 1px solid rgba(0, 140, 220, .1);
+            backdrop-filter: blur(16px);
+        }
+        .nav-logo {
+            font-family: var(--fd);
+            font-size: 1.7rem;
+            letter-spacing: .22em;
+            text-decoration: none;
+            background: linear-gradient(110deg, #00e5ff, #0088ff 55%, #0044cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 14px rgba(0, 180, 255, .45));
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            list-style: none;
+        }
+        .nav-links a {
+            font-family: var(--fb);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color .2s;
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--cyan);
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .nav-badge {
+            font-family: var(--fm);
+            font-size: .56rem;
+            letter-spacing: .2em;
+            color: var(--violet);
+            background: rgba(136, 85, 255, .07);
+            border: 1px solid rgba(136, 85, 255, .2);
+            border-radius: 2px;
+            padding: .28rem .75rem;
+        }
+        .nav-clock {
+            font-family: var(--fm);
+            font-size: .52rem;
+            letter-spacing: .08em;
+            color: var(--ghost);
+            line-height: 1.8;
+        }
+
+
+
+       /* ── WRAPPER ── */
+.hmenu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 0;                /* don't let it push anything */
+    height: 0;
+    z-index: 999;
+}
+
+/* ── TOGGLE ── */
+.toggle {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;           /* above the rail */
+    transition: transform .15s ease, background .3s ease, box-shadow .3s ease;
+}
+.toggle:hover  { background: rgba(12,17,32,.96); }
+.toggle:active { transform: scale(.92); }
+
+.toggle .peg {
+    width: 1px;
+    height: 20px;
+    border-radius: 2px;
+    background: var(--steel);
+    transition: background .3s ease, height .3s ease, width .3s ease;
+}
+.toggle .peg[data-p="0"] { width: 2.8px; height: 24px; background: #e7c98f; }
+.toggle .peg[data-p="1"] { width: 2.4px; height: 22px; background: #8fcbff; }
+.toggle .peg[data-p="2"] { width: 2px;   height: 20px; background: #b8a5ff; }
+.toggle .peg[data-p="3"] { width: 1.6px; height: 18px; background: #7dd8c0; }
+.toggle .peg[data-p="4"] { width: 1.2px; height: 15px; background: #ff9a9a; }
+
+/* ── RAIL ── */
+.rail {
+    position: absolute;
+    top: 20px;
+    left: -184px;
+    width: 95px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 17px;       /* leave room for the toggle */
+    background: linear-gradient(to left, rgba(12,17,32,.95), rgba(12,17,32,0));
+    border-left: 1px solid rgba(63,224,255,.12);
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform .55s cubic-bezier(.22,1,.36,1),
+                opacity .35s ease,
+                visibility .35s ease;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+.rail.open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* ── ROW (the <a>) ── */
+.row {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    /* nothing else — no top/right offsets, those broke hit-testing */
+}
+
+/* the thin visual line */
+.string {
+    height: 2px;
+    width: 130px;
+    border-radius: 3px;
+    background: #e7c98f;
+    pointer-events: none;    /* clicks go to the <a> */
+    transition: height .3s ease, background .3s ease, filter .3s ease, box-shadow .3s ease;
+}
+.row:hover .string {
+    height: 48%;
+    background: #3fe0ff;
+    filter: drop-shadow(0 0 12px rgba(63,224,255,.7));
+    box-shadow: 0 0 20px rgba(63,224,255,.2);
+}
+
+/* ── FLYOUT ── */
+.flyout {
+    position: absolute;
+    right: calc(100% + 14px);
+    top: 50%;
+    transform: translate(10px, -50%);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 18px;
+    background: rgba(12,17,32,.95);
+    border: 1px solid rgba(63,224,255,.12);
+    border-right: 2px solid #3d4a63;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;    /* hidden by default */
+    transition: opacity .3s ease,
+                transform .3s cubic-bezier(.2,1,.3,1),
+                border-color .25s ease;
+    backdrop-filter: blur(8px);
+}
+
+/* show flyout when hovering EITHER the row OR the flyout itself */
+.row:hover .flyout,
+.flyout:hover {
+    opacity: 1;
+    transform: translate(0, -50%);
+    pointer-events: auto;    /* now clickable */
+    border-right-color: #3fe0ff;
+}
+
+
+
+/* ─── SLIDE CONTAINER ─── */
+#slides{
+  height:100vh;
+  overflow-y:scroll;
+  scroll-snap-type:y mandatory;
+  scrollbar-width:none;
+}
+#slides::-webkit-scrollbar{display:none}
+.slide{
+  height:100vh;
+  scroll-snap-align:start;
+  position:relative;
+  overflow:hidden;
+}
+
+/* ─── MESH BACKGROUND ─── */
+.mesh-bg{
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(ellipse 60% 60% at 15% 50%,rgba(8,40,90,.5) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 40% at 85% 20%,rgba(5,25,65,.4) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 50% 90%,rgba(3,15,40,.6) 0%,transparent 70%);
+  pointer-events:none;
+}
+ #slide-overview{
+ background-image: linear-gradient(155deg, rgba(3, 10, 24, 0.92) 0%, rgba(4, 13, 28, 0.88) 50%, rgba(3, 10, 22, 0.92) 100%), url('images/sig.jpg');
+  display:flex;flex-direction:column;
+background-size:cover;
+}
+.overview-top{
+  padding:72px 4rem 0;
+  display:flex;align-items:flex-end;gap:3rem;
+  position:relative;z-index:2;
+  flex-shrink:0;
+}
+/* ─── SLIDE 1: FESTIVALS ─── */
+#slide-festivals{
+  background-image: linear-gradient(155deg, rgba(3, 10, 24, 0.92) 0%, rgba(4, 13, 28, 0.88) 50%, rgba(3, 10, 22, 0.92) 100%), url('images/sig.jpg');
+  display:flex;flex-direction:column;
+background-size:cover;
+
+}
+.festivals-top{
+  padding:72px 4rem 0;
+  display:flex;align-items:flex-end;gap:3rem;
+  position:relative;z-index:2;
+  flex-shrink:0;
+}
+.slide-eyebrow{
+  font-family:var(--fm);font-size:.62rem;display:none;
+  letter-spacing:.3em;color:var(--elec);opacity:.65;
+  text-transform:uppercase;margin-bottom:.55rem;
+}
+.slide-headline{
+
+  font-family:var(--fd);
+  font-size:clamp(6.8rem,6.5vw,4.9rem);
+  letter-height:190px;
+
+  padding-bottom:124px;
+  letter-spacing:.708em;line-height:6.9px;
+  text-shadow:0 0 60px rgba(0,170,255,.12);
+}
+.slide-headline em{
+  font-style:normal;
+position:absolute;
+left:120px;
+top:240px;
+  letter-spacing:.5508em;
+  -webkit-text-stroke:1px rgba(0,180,255,.5);
+  color:transparent;
+}
+.slide-sub{
+padding-top:136px;
+display:flex;
+  font-size:1.9rem;font-weight:400;
+  color:var(--muted);
+  line-height:1.5;margin-top:.5rem;
+}
+
+/* count pill */
+.genre-count{
+  font-family:var(--fm);font-size:.6rem;letter-spacing:.1em;
+  color:var(--cyan);background:rgba(0,180,255,.08);
+display:none;
+  border:1px solid rgba(0,180,255,.2);border-radius:2px;
+  padding:.3rem .8rem;white-space:nowrap;margin-bottom:.4rem;
+}
+.logo{
+position:absolute;right:10px;top:7px;width:18px;height:36%;z-index:454;
+}
+
+/* GENRE TABS */
+.genre-strip{
+  display:flex;gap:.45rem;
+  padding:.9rem 4rem;
+  overflow-x:auto;scrollbar-width:none;
+  position:relative;z-index:2;flex-shrink:0;
+}
+.genre-strip::-webkit-scrollbar{display:none}
+.gtab{
+  flex-shrink:0;
+  padding:.42rem 1.25rem;
+  border:1px solid rgba(0,130,200,.2);
+  background:rgba(8,18,38,.55);
+  border-radius:2px;
+  font-family:var(--fb);font-size:.72rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted);cursor:pointer;
+  transition:all .22s;backdrop-filter:blur(4px);
+  position:relative;
+}
+.gtab::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--cyan);transition:width .25s}
+.gtab:hover{border-color:var(--elec);color:var(--elec);background:rgba(0,150,255,.07)}
+.gtab.active{
+  border-color:var(--cyan);color:var(--cyan);
+  background:rgba(0,229,255,.1);
+  box-shadow:0 0 22px rgba(0,229,255,.12),inset 0 0 12px rgba(0,229,255,.05);
+}
+.gtab.active::before{width:60%}
+
+/* FESTIVAL PANELS */
+.festivals-body{
+  flex:1;overflow-y:auto;
+  padding:0 4rem 1.5rem;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,120,200,.2) transparent;
+  position:relative;z-index:2;
+}
+.festivals-body::-webkit-scrollbar{width:3px}
+.festivals-body::-webkit-scrollbar-thumb{background:rgba(0,120,200,.2)}
+.gpanel{display:none}
+.gpanel.active{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:.8rem;
+  animation:fadeUp .38s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.fcard{
+  background:linear-gradient(135deg,rgba(8,18,38,.92),rgba(5,12,28,.97));
+  border:1px solid rgba(0,130,200,.15);
+  border-radius:3px;
+  padding:1.1rem 1.3rem;
+  cursor:pointer;transition:all .28s;
+  position:relative;overflow:hidden;
+}
+.fcard::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,var(--elec) 50%,transparent 100%);
+  opacity:0;transition:opacity .28s;
+}
+.fcard::after{
+  content:'';position:absolute;
+  bottom:0;left:0;
+  width:3px;height:100%;
+  background:linear-gradient(180deg,transparent,var(--cyan),transparent);
+  opacity:-2;transition:opacity .28s;
+}
+.fcard:hover{
+  border-color:rgba(0,180,255,.35);
+  transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,80,180,.18);
+}
+.fcard:hover::before,.fcard:hover::after{opacity:1}
+.fcard-date{
+  font-family:var(--fm);font-size:.6rem;
+  color:var(--elec);letter-spacing:.1em;
+  margin-bottom:.5rem;opacity:.8;
+}
+.fcard-name{
+  font-family:var(--fd);font-size:1.35rem;
+  letter-spacing:.04em;color:var(--white);
+  line-height:1;margin-bottom:.25rem;
+}
+.fcard-loc{
+  font-size:.78rem;color:var(--muted);
+  font-weight:400;letter-spacing:.04em;margin-bottom:.75rem;
+}
+.fcard-meta{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.fbadge{
+  font-family:var(--fm);font-size:.56rem;
+  padding:.18rem .55rem;border-radius:2px;
+  border:1px solid rgba(0,130,200,.22);
+  color:var(--muted);letter-spacing:.09em;text-transform:uppercase;
+}
+.fbadge.trending{border-color:var(--hot);color:var(--hot)}
+
+/* scroll hint */
+.scroll-hint{
+  position:absolute;
+bottom:1.6rem;
+left:50%;
+transform:translateX(-50%);
+  display:flex;
+flex-direction:column;
+align-items:center;
+gap:.4rem;
+  font-family:var(--fm);
+font-size:1.55rem;
+letter-spacing:.22em;
+  color:var(--ghost);
+text-transform:uppercase;
+cursor:pointer;z-index:5;
+  animation:hintBounce 2.5s ease infinite;
+}
+.scroll-hint .arr{
+  width:18px;height:18px;
+  border-right:1px solid rgba(0,170,255,.25);
+  border-bottom:1px solid rgba(0,170,255,.25);
+  transform:rotate(45deg);
+}
+@keyframes hintBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+   .back-pill {
+           position: absolute;
+            top: 1px;
+            left: 3rem;
+border:0px;
+            z-index: 10;
+            font-family: var(--fm);
+            font-size: 1.55rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: white;
+            cursor: pointer;
+            display: flex;
+BACKGROUND:none;
+            align-items: center;
+            gap: .4rem;
+            
+        }
+        .back-pill:hover {
+           color: var(--cyan);
+letter-spacing:13px;
+transition: 1.3s;
+        }
+  
+/* ─── SLIDE 2: GIGS DIRECTORY ─── */
+#slide-gigs{
+  background:linear-gradient(155deg,#030a18 0%,#050c1c 50%,#040a16 100%);
+  display:grid;
+  grid-template-rows:64px 1fr;
+  overflow-y:auto;height:100vh;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,100,180,.15) transparent;
+  
+}
+.gigs-spacer{height:64px}
+.gigs-layout{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  height:100%;
+}
+
+/* LEFT PANEL */
+.gigs-left{
+  padding:1.6rem 2.8rem;height:90vh;
+  border-right:1px solid rgba(0,140,220,.08);
+  overflow-y:auto;
+
+  scrollbar-width:thin;scrollbar-color:rgba(0,100,180,.15) transparent;
+  display:flex;flex-direction:column;gap:1.3rem;
+  position:relative;z-index:2;
+}
+.gigs-left::-webkit-scrollbar{width:3px}
+.gigs-left::-webkit-scrollbar-thumb{background:rgba(0,100,180,.15)}
+
+.dir-header .dir-eye{
+  font-family:var(--fm);font-size:.6rem;
+display:none;
+  letter-spacing:.28em;color:var(--elec);opacity:.6;
+  text-transform:uppercase;margin-bottom:.7rem;
+}
+.dir-header h2{
+  font-family:var(--fd);
+  font-size:clamp(2.2rem,3.5vw,3.2rem);
+  letter-spacing:.08em;color:var(--white);line-height:.95;
+}
+.dir-header h2 span{color:var(--elec)}
+
+/* SEARCH */
+.search-wrap{position:relative}
+.search-input{
+  width:100%;
+  background:rgba(6,14,28,.85);
+  border:1px solid rgba(0,150,220,.2);
+  border-radius:3px;
+  padding:.85rem 3rem .85rem 1.1rem;
+  font-family:var(--fb);font-size:.95rem;font-weight:500;
+  letter-spacing:.04em;color:var(--white);
+  outline:none;transition:all .28s;
+}
+.search-input::placeholder{color:var(--ghost);opacity:.7}
+.search-input:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(0,229,255,.07),0 0 28px rgba(0,170,255,.08);
+  background:rgba(8,20,40,.9);
+}
+.search-btn{
+  position:absolute;right:.9rem;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--elec);cursor:pointer;
+  font-size:1.1rem;opacity:.65;transition:opacity .2s;
+}
+.search-btn:hover{opacity:1}
+.loc-info{
+  font-family:var(--fm);font-size:.6rem;
+  color:var(--ghost);letter-spacing:.09em;
+  min-height:1.1rem;margin-top:.3rem;
+}
+.loc-info.ok{color:var(--cyan)}
+.loc-info.err{color:#ff4466}
+
+/* CALENDAR */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+.cal-month{font-family:var(--fd);font-size:1.45rem;letter-spacing:.1em;color:var(--white)}
+.cal-navs{display:flex;gap:.4rem}
+.calbtn{
+  background:rgba(8,22,45,.7);border:1px solid rgba(0,130,200,.18);
+  color:var(--muted);width:26px;height:26px;border-radius:2px;
+  cursor:pointer;font-size:.85rem;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.calbtn:hover{border-color:var(--elec);color:var(--elec)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.cdh{
+  font-family:var(--fm);font-size:.55rem;text-align:center;
+  color:var(--ghost);letter-spacing:.06em;padding:.35rem 0;
+}
+.cd{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fm);font-size:.62rem;color:var(--muted);
+  border-radius:2px;cursor:pointer;transition:all .18s;position:relative;
+}
+.cd:hover{background:rgba(0,150,255,.08);color:var(--white)}
+.cd.today{border:1px solid rgba(0,160,255,.3);color:var(--elec)}
+.cd.hasgig{color:var(--white)}
+.cd.hasgig::after{
+  content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:3px;height:3px;border-radius:50%;background:var(--cyan);
+}
+.cd.empty{opacity:0;pointer-events:none}
+
+/* GIG LIST */
+.gig-list-hd{
+  font-family:var(--fm);font-size:.6rem;letter-spacing:.2em;
+  color:var(--elec);opacity:.55;text-transform:uppercase;margin-bottom:.6rem;
+}
+.gig-item{
+  display:flex;gap:.9rem;padding:.7rem 0;
+  border-bottom:1px solid rgba(0,130,200,.07);
+  cursor:pointer;transition:all .2s;
+}
+.gig-item:hover{padding-left:.5rem;background:rgba(0,170,255,.03)}
+.gig-db{min-width:42px;text-align:center;padding-top:.1rem}
+.gig-dd{font-family:var(--fd);font-size:1.4rem;line-height:1;color:var(--elec)}
+.gig-dm{font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;color:var(--ghost);text-transform:uppercase}
+.gig-info{flex:1}
+.gig-artist{font-family:var(--fb);font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:.18rem}
+.gig-venue{font-size:.72rem;color:var(--muted);font-weight:400}
+.gig-tag{
+  font-family:var(--fm);font-size:.52rem;padding:.14rem .4rem;
+  border:1px solid rgba(0,130,200,.18);color:var(--ghost);
+  letter-spacing:.09em;align-self:center;border-radius:2px;
+  text-transform:uppercase;white-space:nowrap;
+}
+
+/* RIGHT PANEL - GLOBE */
+.gigs-right{
+  position:relative;overflow:hidden;height:92vh;
+  display:flex;align-items:center;justify-content:center;
+  cursor:grab;
+}
+.gigs-right:active{cursor:grabbing}
+#globeCanvas{width:100%;height:100%;display:block}
+
+/* radial vignette */
+.gigs-right::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,transparent 35%,rgba(3,10,24,.75) 100%);
+  pointer-events:none;z-index:2;
+}
+
+/* scan line */
+.globe-scan{
+  position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,255,.35),transparent);
+  animation:scanMove 5s ease-in-out infinite;
+  pointer-events:none;z-index:3;
+}
+@keyframes scanMove{
+  0%{top:8%;opacity:0}20%{opacity:1}80%{opacity:.4}100%{top:92%;opacity:0}
+}
+
+/* globe overlay info */
+.globe-info{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  text-align:center;pointer-events:none;z-index:4;
+}
+.globe-city{
+  font-family:var(--fd);font-size:2rem;letter-spacing:.2em;
+  color:var(--cyan);text-shadow:0 0 30px rgba(0,229,255,.5);
+  opacity:0;transition:opacity .6s;
+}
+.globe-city.show{opacity:1}
+.globe-coord{
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.15em;
+  color:var(--muted);margin-top:.25rem;
+}
+
+/* globe corner stats */
+.globe-hud{
+  position:absolute;top:1.2rem;right:1.4rem;
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;
+  color:var(--ghost);text-align:right;line-height:1.8;
+  pointer-events:none;z-index:4;
+}
+.globe-hud .hud-val{color:var(--muted)}
+
+/* bottom left tag */
+.globe-brand{
+  position:absolute;bottom:1.2rem;left:1.4rem;
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.12em;
+  color:var(--ghost);line-height:1.8;
+  pointer-events:none;z-index:4;
+}
+
+/* crosshair */
+.crosshair{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:3;opacity:.12;
+}
+.crosshair::before,.crosshair::after{
+  content:'';position:absolute;background:var(--elec);
+}
+.crosshair::before{width:20px;height:1px;top:0;left:-10px}
+.crosshair::after{height:20px;width:1px;top:-10px;left:0}
+
+/* ── FOOTER BREADCRUMB (last slide) ── */
+.footer-breadcrumb {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .55rem 3.2rem;
+    background: linear-gradient(180deg, rgba(2, 8, 16, 0) 0%, rgba(2, 8, 16, .88) 40%, rgba(2, 8, 16, .98) 100%);
+    border-top: 1px solid rgba(240, 192, 64, .12);
+    backdrop-filter: blur(8px);
+    font-family: var(--fm);
+    font-size: .5rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+}
+
+/* Left group — sitemap + copyright */
+.fbc-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.fbc-sitemap {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--gold);
+    cursor: pointer;
+    font-weight: 700;
+    transition: color .2s;
+    position: relative;
+}
+.fbc-sitemap:hover {
+    color: var(--cyan);
+}
+.fbc-sitemap .arrow {
+    font-size: .6rem;
+    transition: transform .25s;
+    display: inline-block;
+}
+.fbc-sitemap.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.fbc-sitemap-panel {
+    position: absolute;
+    bottom: 130%;
+    left: 0;
+    min-width: 260px;
+    background: linear-gradient(160deg, rgba(6, 14, 28, .98), rgba(2, 8, 16, .99));
+    border: 1px solid rgba(240, 192, 64, .18);
+    border-radius: 3px;
+    padding: .6rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity .25s, transform .25s;
+    z-index: 30;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+}
+.fbc-sitemap.open .fbc-sitemap-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+.fbc-sitemap-panel a {
+    font-family: var(--fm);
+    font-size: .48rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: .4rem 1rem;
+    transition: color .2s, background .2s, padding-left .2s;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+.fbc-sitemap-panel a:hover {
+    color: var(--gold);
+    background: rgba(240, 192, 64, .05);
+    padding-left: 1.3rem;
+}
+.fbc-sitemap-panel a::before {
+    content: '›';
+    color: rgba(240, 192, 64, .4);
+    font-size: .7rem;
+}
+
+/* Copyright */
+.fbc-copy {
+    color: var(--ghost);
+    font-size: .48rem;
+}
+.fbc-copy strong {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+/* Right group — cookie + terms */
+.fbc-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.fbc-link {
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: color .2s, letter-spacing .2s;
+    font-size: .48rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+.fbc-link:hover {
+    color: var(--gold);
+    letter-spacing: .2em;
+}
+
+/* ═══════════════════════════════════════════
+   COOKIE CONSENT
+═══════════════════════════════════════════ */
+.consent-banner {
+    position: fixed;
+    inset: 0;
+    z-index: 800;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 1.6rem;
+    background: rgba(2, 8, 16, .55);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+    font-family: var(--fb);
+}
+.consent-banner.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.consent-card {
+    width: min(440px, 92vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(160deg, #040c1a 0%, #020810 100%);
+    border: 1px solid rgba(240, 192, 64, .22);
+    border-radius: 4px;
+    padding: 1.3rem 1.4rem 1.1rem;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .75);
+    position: relative;
+    transform: translateY(24px) scale(.97);
+    transition: transform .4s cubic-bezier(.22, 1, .36, 1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(240, 192, 64, .2) transparent;
+}
+.consent-banner.open .consent-card {
+    transform: translateY(0) scale(1);
+}
+.consent-card::-webkit-scrollbar { width: 3px; }
+.consent-card::-webkit-scrollbar-thumb {
+    background: rgba(240, 192, 64, .25);
+    border-radius: 2px;
+}
+.consent-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--hot), var(--violet));
+    opacity: .65;
+    border-radius: 4px 4px 0 0;
+}
+
+/* decorative vertical strings */
+.consent-strings {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    display: flex;
+    gap: 3px;
+    opacity: .35;
+    pointer-events: none;
+}
+.consent-strings span {
+    display: block;
+    width: 1px;
+    height: 14px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+}
+.consent-strings span:nth-child(2) { height: 20px; opacity: .8; }
+.consent-strings span:nth-child(3) { height: 12px; opacity: .6; }
+.consent-strings span:nth-child(4) { height: 18px; opacity: .9; }
+.consent-strings span:nth-child(5) { height: 10px; opacity: .5; }
+
+.consent-body { position: relative; z-index: 2; }
+
+.consent-eyebrow {
+    font-family: var(--fm);
+    font-size: .5rem;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    margin-bottom: .35rem;
+}
+.consent-eyebrow b {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.consent-title {
+    font-family: var(--fd);
+    font-size: 1.8rem;
+    letter-spacing: .09em;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: .55rem;
+}
+
+.consent-text {
+    font-size: .82rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(180, 210, 240, .72);
+    margin-bottom: 1rem;
+}
+
+/* Preference rows */
+.consent-prefs {
+    display: none;
+    flex-direction: column;
+    gap: .45rem;
+    margin-bottom: .9rem;
+    animation: consentFade .3s ease both;
+}
+.consent-prefs.open { display: flex; }
+
+@keyframes consentFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pref-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: .65rem .75rem;
+    border: 1px solid rgba(0, 120, 190, .14);
+    border-radius: 3px;
+    background: rgba(6, 14, 28, .55);
+    transition: border-color .2s, background .2s;
+}
+.pref-row:hover {
+    border-color: rgba(240, 192, 64, .28);
+    background: rgba(240, 192, 64, .04);
+}
+.pref-copy { flex: 1; min-width: 0; }
+.pref-name {
+    font-family: var(--fb);
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--white);
+    margin-bottom: .18rem;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+.pref-name .locked {
+    font-family: var(--fm);
+    font-size: .4rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(240, 192, 64, .28);
+    border-radius: 2px;
+    padding: .05rem .32rem;
+    font-weight: 400;
+}
+.pref-desc {
+    font-size: .72rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+/* Switch */
+.switch {
+    flex-shrink: 0;
+    width: 34px;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(0, 100, 180, .14);
+    border: 1px solid rgba(0, 120, 190, .22);
+    position: relative;
+    cursor: pointer;
+    transition: background .25s, border-color .25s;
+    margin-top: .15rem;
+}
+.switch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(180, 210, 240, .45);
+    transition: left .25s cubic-bezier(.22, 1, .36, 1), background .25s;
+}
+.switch.on {
+    background: rgba(240, 192, 64, .18);
+    border-color: rgba(240, 192, 64, .45);
+}
+.switch.on::after {
+    left: calc(100% - 14px);
+    background: var(--gold);
+    box-shadow: 0 0 6px rgba(240, 192, 64, .55);
+}
+.switch.locked {
+    cursor: not-allowed;
+    opacity: .85;
+}
+.switch:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* Preference footer button */
+.consent-foot {
+    margin-top: .35rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Actions */
+.consent-actions {
+    display: flex;
+    gap: .45rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: .35rem;
+}
+
+.btn {
+    padding: .55rem 1.1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--fb);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    transition: all .22s;
+    border: 1px solid transparent;
+    background: transparent;
+}
+.btn:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+.btn-accept {
+    background: rgba(240, 192, 64, .12);
+    border-color: rgba(240, 192, 64, .35);
+    color: var(--gold);
+}
+.btn-accept:hover {
+    background: rgba(240, 192, 64, .24);
+    box-shadow: 0 0 18px rgba(240, 192, 64, .2);
+}
+.btn-reject {
+    background: transparent;
+    border-color: rgba(0, 120, 190, .22);
+    color: var(--muted);
+}
+.btn-reject:hover { border-color: var(--elec); color: var(--elec); }
+.btn-customize {
+    background: transparent;
+    border-color: rgba(136, 85, 255, .28);
+    color: var(--violet);
+}
+.btn-customize:hover {
+    background: rgba(136, 85, 255, .1);
+    border-color: rgba(136, 85, 255, .5);
+}
+
+/* Toast */
+.consent-toast {
+    position: fixed;
+    bottom: 4.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    z-index: 810;
+    background: linear-gradient(140deg, rgba(240, 192, 64, .12), rgba(4, 10, 22, .98));
+    border: 1px solid rgba(240, 192, 64, .35);
+    color: var(--gold);
+    font-family: var(--fm);
+    font-size: .55rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    padding: .55rem 1.2rem;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+}
+.consent-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .consent-banner {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0;
+    }
+    .consent-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 6px 6px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        max-height: 92vh;
+        padding: 1.2rem 1.1rem 1rem;
+    }
+    .consent-actions {
+        gap: .35rem;
+        justify-content: stretch;
+    }
+    .consent-actions .btn {
+        flex: 1;
+        text-align: center;
+        padding: .55rem .6rem;
+        font-size: .66rem;
+    }
+}
+ 
+
+/* ─── SLIDE 3: ARENAS ─── */
+#slide-arenas{
+  background:linear-gradient(145deg,#02050c 0%,#041226 60%,#020810 100%);
+  display:flex;flex-direction:column;
+  padding:72px 3.5rem 1.5rem;
+}
+.arena-search-strip{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:2rem;margin-bottom:1rem;flex-shrink:0;
+}
+.arena-headline{
+  font-family:var(--fd);font-size:2rem;letter-spacing:.1em;
+  color:var(--white);margin:0;
+}
+.arena-headline span{color:var(--elec)}
+.arena-search-container{
+  position:relative;width:320px;
+}
+.arena-select{
+  width:100%;
+  background:rgba(6,14,28,.85);
+  border:1px solid rgba(0,150,220,.22);
+  color:var(--white);padding:.6rem 1.2rem;
+  border-radius:2px;font-family:var(--fb);
+  font-size:.9rem;outline:none;cursor:pointer;
+  transition:border-color .2s;
+}
+.arena-select:focus{
+  border-color:var(--cyan);
+}
+
+/* Arena Grid Area */
+.arena-content-grid{
+  display:grid;
+  grid-template-columns:1.2fr 0.8fr;
+  gap:1.5rem;flex:1;min-height:0;
+}
+.arena-panel-left{
+  display:flex;flex-direction:column;gap:1.2rem;
+  overflow-y:auto;padding-right:.5rem;
+  scrollbar-width:none;
+}
+.arena-panel-left::-webkit-scrollbar{display:none}
+
+/* Map container landscape skewed */
+.arena-blueprint-container{
+  background:rgba(4,10,24,.6);
+  border:1px solid rgba(0,150,220,.15);
+  border-radius:4px;height:240px;position:relative;
+  overflow:hidden;perspective:800px;
+}
+.arena-blueprint-skewed{
+  width:100%;height:100%;
+  transform:rotateX(25deg) rotateY(-5deg) scale(1.05);
+  transform-style:preserve-3d;
+  transition:transform .5s ease;
+}
+#arenaBlueprintCanvas{
+  width:100%;height:100%;display:block;
+}
+.blueprint-tag{
+  position:absolute;top:1rem;left:1.2rem;
+  font-family:var(--fm);font-size:.55rem;
+  color:var(--cyan);letter-spacing:.28em;text-transform:uppercase;
+}
+.blueprint-status{
+  position:absolute;bottom:1rem;right:1.2rem;
+  font-family:var(--fm);font-size:.55rem;
+  color:rgba(0,229,255,.4);letter-spacing:.1em;
+}
+
+/* Arena media, details */
+.arena-info-card{
+  background:rgba(6,16,35,.8);
+  border:1px solid rgba(0,150,220,.12);
+  border-radius:4px;display:grid;
+  grid-template-columns:1.1fr 0.9fr;gap:1.5rem;
+  padding:1.4rem;position:relative;overflow:hidden;
+}
+.arena-photo-frame{
+  border-radius:2px;overflow:hidden;height:100%;
+  min-height:180px;position:relative;
+}
+.arena-img{
+  position:absolute;inset:0;background-size:cover;
+  background-position:center;
+  animation:kenBurns 22s ease-in-out infinite alternate;
+}
+.arena-details-text{
+  display:flex;flex-direction:column;justify-content:center;
+}
+.arena-meta-pill{
+  font-family:var(--fm);font-size:.55rem;color:var(--cyan);
+  background:rgba(0,170,255,.08);align-self:flex-start;
+  padding:.2rem .6rem;border-radius:2px;margin-bottom:.6rem;
+}
+.arena-name{
+  font-family:var(--fd);font-size:2rem;letter-spacing:.05em;
+  color:var(--white);margin-bottom:.4rem;line-height:.95;
+}
+.arena-loc{
+  font-family:var(--fb);font-size:.9rem;color:var(--muted);
+  margin-bottom:.8rem;
+}
+.arena-desc{
+  font-size:.85rem;line-height:1.5;color:rgba(232,244,255,.75);
+}
+
+/* Right Panel: Schedule & Booking */
+.arena-panel-right{
+  display:flex;flex-direction:column;gap:1.2rem;
+  overflow-y:auto;scrollbar-width:none;
+}
+.arena-panel-right::-webkit-scrollbar{display:none}
+
+.schedule-header{
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.2em;
+  color:var(--elec);text-transform:uppercase;
+  margin-bottom:.4rem;
+}
+.schedule-list{
+  display:flex;flex-direction:column;gap:.5rem;
+}
+.schedule-row{
+  background:rgba(6,14,28,.7);
+  border:1px solid rgba(0,130,200,.1);border-radius:3px;
+  padding:.8rem;display:flex;align-items:center;
+  justify-content:space-between;gap:1rem;
+}
+.schedule-date{
+  font-family:var(--fd);font-size:1.1rem;color:var(--elec);
+  line-height:1;display:flex;flex-direction:column;align-items:center;
+}
+.schedule-date .yr{
+  font-family:var(--fm);font-size:.5rem;color:var(--ghost);
+}
+.schedule-event-info{
+  flex:1;
+}
+.schedule-artist{
+  font-family:var(--fb);font-weight:700;font-size:.9rem;
+  color:var(--white);
+}
+.schedule-genre{
+  font-family:var(--fm);font-size:.52rem;color:var(--muted);
+  text-transform:uppercase;margin-top:.15rem;
+}
+
+/* occupancy & capacity trackers */
+.arena-cap-hud{
+  background:rgba(8,20,42,.6);border:1px solid rgba(0,170,255,.15);
+  border-radius:3px;padding:1rem;
+}
+.hud-stat-bar-container{
+  margin-top:.4rem;
+}
+.hud-bar-label{
+  display:flex;justify-content:space-between;
+  font-family:var(--fm);font-size:.55rem;color:var(--ghost);
+  margin-bottom:.2rem;
+}
+.hud-bar-bg{
+  width:100%;height:4px;background:rgba(255,255,255,.05);
+  border-radius:2px;overflow:hidden;
+}
+.hud-bar-fill{
+  height:100%;width:0%;background:linear-gradient(90deg,var(--elec),var(--cyan));
+  transition:width 1s cubic-bezier(.4,0,.2,1);
+}
+.booking-terminal-btn{
+  background:linear-gradient(110deg,#00aaff 0%,#00e5ff 100%);
+  border:none;border-radius:2px;color:var(--void);
+  font-family:var(--fb);font-size:.9rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  padding:.8rem;width:100%;cursor:pointer;
+  transition:all .3s ease;text-align:center;text-decoration:none;
+}
+.booking-terminal-btn:hover{
+  box-shadow:0 0 24px rgba(0,229,255,.45);
+  transform:translateY(-1px);
+}
+
+/* ════════════════════════════════════════
+   FESTIVAL MODAL
+════════════════════════════════════════ */
+#fmodal{
+  position:fixed;inset:0;z-index:500;
+  display:flex;align-items:stretch;
+  opacity:0;pointer-events:none;
+  transition:opacity .38s cubic-bezier(.4,0,.2,1);
+}
+#fmodal.open{
+  opacity:1;pointer-events:all;
+}
+#fmodal-img{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  animation:kenBurns 18s ease-in-out infinite alternate;
+  will-change:transform;
+}
+#fmodal-veil{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(135deg, rgba(2,6,14,.96) 0%, rgba(3,10,24,.88) 45%, rgba(4,14,32,.72) 100%),
+    linear-gradient(0deg, rgba(2,6,14,.98) 0%, rgba(2,6,14,.5) 40%, rgba(2,8,18,.6) 100%);
+  backdrop-filter:blur(1px);
+}
+#fmodal-close{
+  position:absolute;top:1.8rem;right:5.8rem;
+  width:38px;height:38px;
+  background:rgba(0,100,180,.1);
+  border:1px solid rgba(0,150,220,.22);
+  border-radius:2px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  z-index:10;transition:all .2s;
+}
+#fmodal-close:hover{
+  background:rgba(0,180,255,.15);
+  border-color:var(--cyan);
+  box-shadow:0 0 18px rgba(0,200,255,.15);
+}
+#fmodal-close span{
+  position:absolute;
+  width:16px;height:1px;background:var(--white);
+  transition:background .2s;
+}
+#fmodal-close span:first-child{transform:rotate(45deg)}
+#fmodal-close span:last-child{transform:rotate(-45deg)}
+#fmodal-close:hover span{background:var(--cyan)}
+
+#fmodal-genre-badge{
+  position:absolute;top:1.6rem;left:2rem;
+  font-family:var(--fm);font-size:.58rem;
+  letter-spacing:.28em;color:var(--elec);
+  background:rgba(0,160,255,.08);
+  border:1px solid rgba(0,160,255,.2);
+  border-radius:2px;padding:.32rem .85rem;
+  z-index:10;
+}
+#fmodal-panel{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  z-index:5;
+  padding:3rem 3.5rem 3rem;
+  background:linear-gradient(0deg,rgba(2,6,14,.98) 0%,rgba(2,6,14,.92) 55%,transparent 100%);
+  transform:translateY(28px);
+  opacity:0;
+  transition:transform .55s cubic-bezier(.22,1,.36,1) .18s,
+             opacity .45s ease .18s;
+}
+#fmodal.open #fmodal-panel{
+  transform:translateY(0);
+  opacity:1;
+}
+#fmodal-panel > *{ max-width:720px; }
+#fmodal-eyebrow{
+  font-family:var(--fm);font-size:.6rem;
+  letter-spacing:.22em;color:var(--elec);opacity:.65;
+  text-transform:uppercase;margin-bottom:.55rem;
+}
+#fmodal-name{
+  font-family:var(--fd);
+  font-size:clamp(2.8rem,6vw,5.2rem);
+  letter-spacing:.05em;line-height:.9;
+  color:var(--white);
+  text-shadow:0 0 80px rgba(0,180,255,.14);
+  margin-bottom:.65rem;
+}
+#fmodal-meta{
+  display:flex;gap:.7rem;align-items:center;
+  font-family:var(--fm);font-size:.62rem;
+  letter-spacing:.1em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:1.2rem;
+}
+#fmodal-desc{
+  font-family:var(--fb);font-size:1rem;font-weight:400;
+  line-height:1.65;color:rgba(180,215,240,.72);
+  max-width:640px;margin-bottom:1.6rem;
+}
+#fmodal-divider{
+  height:1px;max-width:none;
+  background:linear-gradient(90deg,rgba(0,140,220,.25),transparent);
+  margin-bottom:1.4rem;
+}
+#fmodal-actions{
+  display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.2rem;
+}
+#fmodal-actions a{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.6rem 1.5rem;
+  font-family:var(--fb);font-size:.78rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;border-radius:2px;
+  transition:all .22s;cursor:pointer;
+}
+#fmodal-site{
+  background:linear-gradient(110deg,rgba(0,160,255,.2),rgba(0,100,200,.12));
+  border:1px solid rgba(0,160,255,.35);
+  color:var(--cyan);
+}
+#fmodal-site:hover{
+  background:linear-gradient(110deg,rgba(0,180,255,.3),rgba(0,130,220,.2));
+  border-color:var(--cyan);
+  box-shadow:0 0 24px rgba(0,200,255,.2);
+}
+#fmodal-yt{
+  background:rgba(255,60,60,.08);
+  border:1px solid rgba(255,60,60,.22);
+  color:rgba(255,120,120,.8);
+}
+#fmodal-yt:hover{
+  background:rgba(255,60,60,.15);
+  border-color:rgba(255,80,80,.5);
+  color:rgba(255,160,160,.9);
+}
+
+#fmodal-socials{
+  display:flex;align-items:center;gap:1rem;
+}
+.fmodal-social-label{
+  font-family:var(--fm);font-size:.55rem;
+  letter-spacing:.2em;color:var(--ghost);
+  text-transform:uppercase;
+}
+.fmodal-soc{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-family:var(--fm);font-size:.62rem;letter-spacing:.08em;
+  color:var(--muted);text-decoration:none;
+  padding:.3rem .7rem;
+  border:1px solid rgba(0,100,180,.15);border-radius:2px;
+  transition:all .2s;
+}
+.fmodal-soc:hover{
+  color:var(--elec);
+  border-color:rgba(0,160,255,.3);
+  background:rgba(0,150,255,.06);
+}
+#fmodal-trending-badge{
+  position:absolute;
+  top:50%;right:3rem;
+  transform:translateY(-50%);
+  font-family:var(--fm);font-size:.62rem;
+  letter-spacing:.18em;color:var(--hot);
+  background:rgba(255,107,53,.07);
+  border:1px solid rgba(255,107,53,.2);
+  border-radius:2px;padding:.35rem .9rem;
+  z-index:10;
+  opacity:0;transition:opacity .4s .4s;
+  display:none;
+}
+#fmodal.open #fmodal-trending-badge.show{opacity:1;display:block}
+#fmodal-panel::before{
+  content:attr(data-name);
+  position:absolute;
+  top:-4rem;right:0;
+  font-family:var(--fd);
+  font-size:clamp(5rem,11vw,9.5rem);
+  letter-spacing:.04em;line-height:1;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(0,120,200,.07);
+  white-space:nowrap;overflow:hidden;
+  pointer-events:none;user-select:none;
+}
+#fmodal-particles{
+  position:absolute;inset:0;
+  pointer-events:none;z-index:3;
+  opacity:.45;
+}
+
+/* ════════════════════════════════════════
+   DYNAMIC TICKETING MODAL (LEFT SIDEBAR REFINEMENT)
+════════════════════════════════════════ */
+#gmodal{
+  position:fixed;inset:0;z-index:600;
+  display:flex;align-items:center;justify-content:flex-start;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s cubic-bezier(.4,0,.2,1);
+}
+#gmodal.open{
+  opacity:1;pointer-events:all;
+}
+#gmodal-backdrop{
+  position:absolute;inset:0;
+  /* Soft linear gradient keeping the right-hand globe fully unblurred and crystal clear */
+  background:linear-gradient(90deg, rgba(2,8,16,0.96) 0%, rgba(2,8,16,0.85) 35%, rgba(2,8,16,0.1) 100%);
+  backdrop-filter:none;
+}
+#gmodal-container{
+  background:linear-gradient(145deg,#050f1e,#0a1a30);
+  border:1px solid rgba(0,170,255,.35);
+  border-radius:4px;width:90%;max-width:440px;
+  position:relative;z-index:5;padding:2.2rem;
+  margin-left:4rem;
+  box-shadow:0 25px 60px rgba(0,170,255,.2);
+  transform:translateX(-40px);
+  transition:transform .4s cubic-bezier(.25, 1, 0.5, 1), opacity .4s ease;
+}
+#gmodal.open #gmodal-container{
+  transform:translateX(0);
+}
+.gmodal-close-btn{
+  position:absolute;top:1.2rem;right:1.2rem;
+  background:none;border:none;color:var(--muted);
+  font-family:var(--fm);font-size:.8rem;cursor:pointer;
+  transition:color .2s;
+  letter-spacing:.1em;
+}
+.gmodal-close-btn:hover{color:var(--cyan)}
+.gmodal-type-badge{
+  font-family:var(--fm);font-size:.55rem;color:var(--cyan);
+  background:rgba(0,170,255,.08);border:1px solid rgba(0,170,255,.3);
+  padding:.3rem .6rem;border-radius:2px;display:inline-block;
+  text-transform:uppercase;letter-spacing:.2em;margin-bottom:1rem;
+}
+.gmodal-title{
+  font-family:var(--fd);font-size:2.5rem;letter-spacing:.05em;
+  color:var(--white);line-height:.95;margin-bottom:.5rem;
+}
+.gmodal-venue{
+  font-family:var(--fb);font-size:1.1rem;color:var(--muted);
+  margin-bottom:1.5rem;
+}
+.gmodal-meta-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;
+  margin-bottom:1.8rem;border-top:1px solid rgba(0,170,255,.1);
+  border-bottom:1px solid rgba(0,170,255,.1);padding:1rem 0;
+}
+.gmodal-meta-item{
+  display:flex;flex-direction:column;gap:.2rem;
+}
+.gmodal-meta-lbl{
+  font-family:var(--fm);font-size:.55rem;color:var(--ghost);
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.gmodal-meta-val{
+  font-family:var(--fb);font-weight:700;font-size:1.1rem;
+  color:var(--white);
+}
+.gmodal-actions-container{
+  display:flex;flex-direction:column;gap:.8rem;
+}
+
+</style>
+</head>
+<body>
+<div class="logo" ><img src="images/3hrill.png" alt=""
+style="position:absolute;right:65px;top:25px;height:10%;opacity:36%"></div>
+ 
+    <!-- TOGGLE + RAIL -->
+    <div class="hmenu">
+<button class="toggle" id="toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span class="peg" data-p="0"></span>
+        <span class="peg" data-p="1"></span>
+        <span class="peg" data-p="2"></span>
+        <span class="peg" data-p="3"></span>
+        <span class="peg" data-p="4"></span>
+    </button>
+
+    <nav class="rail" id="rail">
+        <span class="tag">NAV</span>
+      <a class="row" data-i="0" href="index.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">02</span><span class="label">Home</span></span>
+        </a>
+        <a class="row" data-i="1" href="newssplash.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">03</span><span class="label">News Splash</span></span>
+        </a>
+        <a class="row" data-i="2" href="3hrillcharts.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Music Charts</span></span>
+        </a>
+<a class="row" data-i="3" href="Librarypass.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Library Pass</span></span>
+        </a>
+        <a class="row" data-i="4" href="fansshowcase.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Funs showcase</span></span>
+        </a>
+<a class="row" data-i="5" href="3hrillgigs.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Gigs</span></span>
+        </a>
+<a class="row" data-i="6" href="musicschool.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music School</span></span>
+        </a>
+<a class="row" data-i="7" href="musicstudio.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music Studio</span></span>
+        </a>
+<a class="row" data-i="8" href="3hrillstore.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label"> The Store</span></span>
+        </a>
+<a class="row" data-i="9" href="About3hrillMusic.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Music</span></span>
+        </a>
+    </nav>
+</div>
+
+
+<!-- SLIDES -->
+<div id="slides">
+ 
+  <!-- ══════════ SLIDE 1: FESTIVALS ══════════ -->
+  <section class="slide" id="slide-festivals">
+
+    <div class="mesh-bg"></div>
+
+    <!-- BACKGROUND HIGHLIGHT LAYER -->
+    <div id="fest-highlights" style="display:none;">
+
+      <div id="hl-progress"><div id="hl-progress-fill"></div></div>
+    </div>
+
+
+    <div class="festivals-top">
+      <div>
+        <div class="slide-eyebrow">// 01 — Music Festivals</div>
+        <h1 class="slide-headline">DISCOVER<br><em>FESTIVALS</em></h1>
+        <p class="slide-sub">Curated global events by genre — from underground raves to stadium spectacles.</p>
+      </div>
+      <div>
+        <div class="genre-count" id="genreCount">— GENRES LOADED</div>
+      </div>
+    </div>
+
+    <div class="genre-strip" id="genreTabs"></div>
+    <div class="festivals-body" id="festPanels"></div>
+
+    <div class="scroll-hint" onclick="goSlide(1)">
+      <span>Gigs Directory</span>
+      <div class="arr"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ SLIDE 2: GIGS DIRECTORY ══════════ -->
+  <section class="slide" id="slide-gigs">
+    <div class="mesh-bg"></div>
+<button class="back-pill" onclick="goSlide(0)" aria-label="Return to overview"><span class="arr-up"></span> Overview</button>
+    <div class="gigs-spacer"></div>
+
+    <div class="gigs-layout">
+
+      <!-- LEFT -->
+      <div class="gigs-left">
+
+         
+        <div class="dir-header">
+          <div class="dir-eye">// 02 — Gigs Directory</div>
+          <h2>FIND YOUR<br><span>CITY</span></h2>
+        </div>
+
+        <div>
+          <div class="search-wrap">
+            <input class="search-input" id="cityInput" type="text"
+              placeholder="Enter city… London, Lagos, NYC, Tokyo" autocomplete="off">
+            <button class="search-btn" onclick="doSearch()">⌕</button>
+          </div>
+          <div class="loc-info" id="locInfo">Type a city and press Enter or click ⌕</div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div>
+          <div class="cal-head">
+            <div class="cal-month" id="calMonth">— 20—</div>
+            <div class="cal-navs">
+              <button class="calbtn" onclick="shiftMonth(-1)">‹</button>
+              <button class="calbtn" onclick="shiftMonth(1)">›</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+
+        <!-- GIG LIST -->
+        <div>
+          <div class="gig-list-hd" id="gigHd">UPCOMING GIGS</div>
+          <div id="gigList"></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: GLOBE -->
+      <div class="gigs-right" id="globeTouchZone">
+        <canvas id="globeCanvas"></canvas>
+        <div class="globe-scan"></div>
+        <div class="crosshair"></div>
+
+        <div class="globe-hud" id="globeHud">
+          3HRILL GLOBE<br>
+          LAT <span class="hud-val" id="hudLat">——.——</span><br>
+          LON <span class="hud-val" id="hudLon">——.——</span><br>
+          WEATHER <span class="hud-val" id="hudWeather" style="color:var(--cyan)">SCANNING...</span><br>
+          STATUS <span class="hud-val" id="hudStat">IDLE</span>
+        </div>
+
+        <div class="globe-brand">
+          3HRILL MUSIC<br>
+          GIGS NETWORK<br>
+          © 2025
+        </div>
+
+        <div class="globe-info">
+          <div class="globe-city" id="globeCity"></div>
+          <div class="globe-coord" id="globeCoord"></div>
+        </div>
+      </div>
+
+    </div>
+<div class="scroll-hint" onclick="goSlide(2)">
+      <span>Arenas</span>
+      <div class="arr"></div>
+  </section>
+
+  <!-- ══════════ SLIDE 3: ARENAS ─── -->
+  <section class="slide" id="slide-arenas">
+    <div class="mesh-bg"></div>
+     <button class="back-pill" onclick="goSlide(1)" aria-label="Return to Gigs"><span class="arr-up"></span> Gigs</button>
+    <div class="arena-search-strip">
+      <div class="arena-headline"> Global <span>Arenas</span></div>
+      <div class="arena-search-container">
+        <select class="arena-select" id="arenaSelector" onchange="selectArena(this.value)">
+          <!-- Loaded dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <div class="arena-content-grid">
+      
+      <!-- LEFT AREA: Landscape blueprint and Arena details -->
+      <div class="arena-panel-left">
+        
+        <!-- Interactive landscape skewed blueprint view -->
+        <div class="arena-blueprint-container">
+          <div class="blueprint-tag">SEATING MATRIX ARCHITECTURE // SKYWING VISUALS</div>
+          <div class="arena-blueprint-skewed">
+            <canvas id="arenaBlueprintCanvas"></canvas>
+          </div>
+          <div class="blueprint-status" id="blueprintStatus">SCANNING RESOLUTION: 100%</div>
+        </div>
+
+        <!-- Media & Profiles -->
+        <div class="arena-info-card">
+          <div class="arena-photo-frame">
+            <div class="arena-img" id="arenaPhoto"></div>
+          </div>
+          <div class="arena-details-text">
+            <span class="arena-meta-pill" id="arenaCapacity">CAPACITY: --</span>
+            <h3 class="arena-name" id="arenaName">--</h3>
+            <p class="arena-loc" id="arenaLoc">--</p>
+            <p class="arena-desc" id="arenaDesc">--</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT AREA: Capacity residency dials & Annual Schedule -->
+      <div class="arena-panel-right">
+        
+        <div class="arena-cap-hud">
+          <div class="schedule-header">RECON TERMINAL METRICS</div>
+          
+          <div class="hud-stat-bar-container">
+            <div class="hud-bar-label">
+              <span>LIVE SYSTEM DISPATCH</span>
+              <span id="occupancyVal">0%</span>
+            </div>
+            <div class="hud-bar-bg">
+              <div class="hud-bar-fill" id="occupancyBar"></div>
+            </div>
+          </div>
+
+          <div class="hud-stat-bar-container" style="margin-top:0.8rem">
+            <div class="hud-bar-label">
+              <span>ACOUSTIC EMISSION SCALE</span>
+              <span id="decibelVal">0 dB</span>
+            </div>
+            <div class="hud-bar-bg">
+              <div class="hud-bar-fill" id="decibelBar" style="background:linear-gradient(90deg, #ff8c00, var(--hot))"></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="schedule-header">ANNUAL EVENT SCHEDULE</div>
+          <div class="schedule-list" id="arenaSchedule">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <button class="booking-terminal-btn" onclick="triggerArenaBooking()">INITIALIZE BOOKING SEQUENCE</button>
+
+      </div>
+
+    </div>
+
+
+<!-- ─── FOOTER BREADCRUMB ─── -->
+<div class="footer-breadcrumb">
+
+    <div class="fbc-left">
+        <!-- Site Map dropdown -->
+        <div class="fbc-sitemap" id="sitemapBtn" onclick="toggleSitemap(event)">
+            <span>Site Map</span>
+            <span class="arrow">▾</span>
+
+            <div class="fbc-sitemap-panel" id="sitemapPanel">
+                <a href="index.html">Home</a>
+                <a href="news-splash.html">News</a>
+                <a href="3hrillCharts.html">Charts</a>
+                <a href="library-pass.html">Library</a>
+                <a href="Funshowcase.html">Fun Showcase</a>
+                <a href="3hrillgigs.html">3hrill Gigs</a>
+                <a href="3hrillschool.html">3hrill School</a>
+                <a href="3hrillstudio.html">3hrill Studio</a>
+                <a href="store-fixed.html">The Store</a>
+                <a href="About3hrillMusic.html">About 3hrill Music</a>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="fbc-copy">
+            © <strong>2026 3HRILL MUSIC</strong> — All Rights Reserved
+        </div>
+    </div>
+
+    <div class="fbc-right">
+        <!-- Cookie preferences -->
+        <a class="fbc-link" onclick="openCookieConsent()">Cookie Preferences</a>
+
+        <!-- Terms & conditions -->
+        <a class="fbc-link" href="About3hrillMusic.html">Terms &amp; Conditions</a>
+    </div>
+
+</div>
+  </section>
+
+</div>
+
+<!-- ══════════ FESTIVAL DETAIL MODAL ══════════ -->
+<div id="fmodal" role="dialog" aria-modal="true">
+  <div id="fmodal-img"></div>
+  <div id="fmodal-veil"></div>
+  <div id="fmodal-genre-badge"></div>
+  <div id="fmodal-trending-badge">⚡ TRENDING</div>
+  <button id="fmodal-close" onclick="closeModal()" aria-label="Close">
+    <span></span><span></span>
+  </button>
+  <div id="fmodal-panel">
+    <div id="fmodal-eyebrow"></div>
+    <div id="fmodal-name"></div>
+    <div id="fmodal-meta">
+      <span id="fmodal-loc"></span>
+      <div class="fmodal-dot"></div>
+      <span id="fmodal-cap"></span>
+    </div>
+    <p id="fmodal-desc"></p>
+    <div id="fmodal-divider"></div>
+    <div id="fmodal-actions">
+      <a id="fmodal-site" target="_blank" rel="noopener">Official Site</a>
+      <a id="fmodal-yt" target="_blank" rel="noopener">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+        Aftermovie
+      </a>
+    </div>
+    <div id="fmodal-socials">
+      <span class="fmodal-social-label">Follow —</span>
+      <a id="fmodal-tw" class="fmodal-soc" target="_blank" rel="noopener">Twitter</a>
+      <a id="fmodal-ig" class="fmodal-soc" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <canvas id="fmodal-particles"></canvas>
+</div>
+
+<!-- ══════════ GIGS DETAIL/TICKET MODAL ══════════ -->
+<div id="gmodal">
+  <div id="gmodal-backdrop" onclick="closeGigModal()"></div>
+  <div id="gmodal-container">
+    <button class="gmodal-close-btn" onclick="closeGigModal()">[CLOSE TERMINAL]</button>
+    <div class="gmodal-type-badge" id="gmodalType">TOUR DISPATCH</div>
+    <h3 class="gmodal-title" id="gmodalTitle">ARTIST GIG PROFILE</h3>
+    <div class="gmodal-venue" id="gmodalVenue">VENUE / LOCATION DETAIL</div>
+    
+    <div class="gmodal-meta-grid">
+      <div class="gmodal-meta-item">
+        <span class="gmodal-meta-lbl">LAUNCH CHRONO</span>
+        <span class="gmodal-meta-val" id="gmodalDate">-- -- 2025</span>
+      </div>
+      <div class="gmodal-meta-item">
+        <span class="gmodal-meta-lbl">ACOUSTIC CLASSIFICATION</span>
+        <span class="gmodal-meta-val" id="gmodalGenre">GENRE</span>
+      </div>
+    </div>
+
+    <div class="gmodal-actions-container">
+      <a class="booking-terminal-btn" id="gmodalTicketBtn" target="_blank" rel="noopener">ACQUIRE TICKETS</a>
+      <a class="fmodal-soc" id="gmodalSiteBtn" target="_blank" rel="noopener" style="text-align:center;justify-content:center;padding:.6rem">VISIT GIG LANDING PAGE</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================= COOKIE CONSENT ================= -->
+<div class="consent-banner" id="consentBanner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <div class="consent-card">
+        <div class="consent-strings" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="consent-body">
+            <p class="consent-eyebrow">3hrill · <b>privacy</b></p>
+            <h2 class="consent-title">Cookies, Too</h2>
+            <p class="consent-text">
+                3hrill Music uses cookies to keep the site running and understand how the
+                stage gets used. Allow cookies, or pick exactly what you're comfortable with.
+            </p>
+
+            <div class="consent-prefs" id="consentPrefs">
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Essential <span class="locked">always on</span></p>
+                        <p class="pref-desc">Required for the site to load and function — navigation, layout, and security. These can't be switched off.</p>
+                    </div>
+                    <div class="switch on locked" data-cat="essential" aria-checked="true" aria-label="Essential cookies (always on)"></div>
+                </div>
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Analytics</p>
+                        <p class="pref-desc">Helps us see which pages and sets get the most love, so we know what to build next.</p>
+                    </div>
+                    <div class="switch" data-cat="analytics" tabindex="0" aria-label="Analytics cookies"></div>
+                </div>
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Personalization</p>
+                        <p class="pref-desc">Remembers things like your favorite genres and recent picks to tailor recommendations.</p>
+                    </div>
+                    <div class="switch" data-cat="personalization" tabindex="0" aria-label="Personalization cookies"></div>
+                </div>
+                <div class="consent-foot">
+                    <button type="button" class="btn btn-accept" id="savePrefs">Save Preferences</button>
+                </div>
+            </div>
+
+            <div class="consent-actions">
+                <button type="button" class="btn btn-accept" id="acceptAll">Accept All</button>
+                <button type="button" class="btn btn-reject" id="rejectAll">Reject All</button>
+                <button type="button" class="btn btn-customize" id="openPrefs" aria-expanded="false">Customize</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+const WEATHER_CODES = {
+  0: "CLEAR SKY",
+  1: "PARTLY CLOUDY", 2: "PARTLY CLOUDY", 3: "PARTLY CLOUDY",
+  45: "FOG SYSTEMS DETECTED", 48: "DEPOSITION FOG",
+  51: "LIGHT DRIZZLE", 53: "DRIZZLE ATMOSPHERE", 55: "DENSE DRIZZLE",
+  61: "ATMOSPHERIC SHOWERS", 63: "RAINFALL RADAR ACTIVE", 65: "DENSE METEO SHOWERS",
+  71: "LIGHT CYRO-SNOW", 73: "CRYOGENIC BLIZZARD", 75: "HEAVY FROST ACCUMULATION",
+  77: "SNOW GRAIN DISCHARGE",
+  80: "ISOLATED SHOWERS", 81: "HEAVY RAIN CLUSTERS", 82: "VIOLENT TORRENTIAL READOUT",
+  95: "ELECTROMAGNETIC STORM", 96: "THUNDERSTORM WITH HAIL", 99: "SEVERE METEO DISRUPTIONS"
+};
+
+/* ══════════════════════════════════════════
+   DATA SYSTEMS
+══════════════════════════════════════════ */
+const GENRES = [
+  {id:'electronic',name:'Electronic'},
+  {id:'rock',name:'Rock'},
+  {id:'hiphop',name:'Hip-Hop'},
+  {id:'jazz',name:'Jazz & Blues'},
+  {id:'indie',name:'Indie'},
+  {id:'afrobeats',name:'Afrobeats'},
+  {id:'latin',name:'Latin'},
+  {id:'metal',name:'Metal'},
+];
+
+const FESTIVALS = {
+  electronic:[
+    {name:'TOMORROWLAND',loc:'Boom, Belgium',date:'JUL 18–27, 2025',cap:'400K',hot:true,
+     desc:'The world\'s most iconic electronic music festival. Set in the magical De Schorre nature reserve, Tomorrowland transforms an entire town into a fantasy realm of light, art, and sound — hosting 400,000 revellers across 16 stages over two weekends.',
+     img:'images/tomorowland.jpg',
+     site:'https://www.tomorrowland.com',yt:'https://www.youtube.com/results?search_query=tomorrowland+2025+aftermovie',
+     socials:{tw:'@tomorrowland',ig:'@tomorrowland',yt:'Tomorrowland'}},
+    {name:'EDC LAS VEGAS',loc:'Nevada, USA',date:'MAY 16–18, 2025',cap:'160K',hot:false,
+     desc:'Electric Daisy Carnival under the neon desert sky. Three nights of relentless electronic music, carnival rides, and breathtaking art installations on the Las Vegas Motor Speedway — where the city that never sleeps finally makes sense.',
+     img:'images/electyi.jpg',
+     site:'https://lasvegas.electricdaisycarnival.com',yt:'https://www.youtube.com/results?search_query=EDC+Las+Vegas+2025+aftermovie',
+     socials:{tw:'@EDC_LasVegas',ig:'@electricdaisycarnival',yt:'EDC Las Vegas'}},
+    {name:'ULTRA MIAMI',loc:'Miami, USA',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'images/miami_ultra.jpg',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Melt!',loc:'Grafenhainichen, GERMANY',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Untold',loc:'Grafenhainichen, GERMANY',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'images/untd.jpg',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'AWAKENINGS',loc:'Amsterdam, NL',date:'JUN 28–29, 2025',cap:'50K',hot:false,
+     desc:'Europe\'s premier techno event, born in 1997 from a legendary club night in a former gas plant. Awakenings commands the NDSM Wharf with surgically curated lineups and a crowd that\'s there for the music — nothing else.',
+     img:'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1600&q=85&fit=crop',
+     site:'https://www.awakenings.com',yt:'https://www.youtube.com/results?search_query=Awakenings+Festival+2025',
+     socials:{tw:'@Awakenings',ig:'@awakenings_events',yt:'Awakenings'}},
+     {name:'Sunburn',loc:'Goa Goa, India',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Lost Lands',loc:'Grafenhainichen, GERMANY',date:'MAR 28–30, 2025',cap:'165K',hot:true,  desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'images/download/jpg',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Bass Canyon',loc:'Grafenhainichen, GERMANY',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'images/bass canyon.jpg',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Exit',loc:'Grafenhainichen, GERMANY',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'MOVEMENT DETROIT',loc:'Detroit, USA',date:'MAY 24–26, 2025',cap:'100K',hot:false,
+     desc:'Held in the birthplace of techno, Movement Detroit is a pilgrimage for electronic music purists. Hart Plaza becomes a sprawling temple of underground beats, celebrating the raw, mechanical soul that Detroit gave the world.',
+     img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=85&fit=crop',
+     site:'https://www.movement.us',yt:'https://www.youtube.com/results?search_query=Movement+Detroit+2025',
+     socials:{tw:'@MovementDET',ig:'@movementdetroit',yt:'Movement Detroit'}},
+     {name:'DEKMANTEL',loc:'Amsterdam, NL',date:'AUG 1–3, 2025',cap:'30K',hot:false,
+     desc:'The curatorial gold standard of the underground. Dekmantel\'s dense, rain-soaked weekender in Amsterdamse Bos is less a festival than a 72-hour seminar in exactly what electronic music can be at its most uncompromising.',
+     img:'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=1600&q=85&fit=crop',
+     site:'https://www.dekmantel.com',yt:'https://www.youtube.com/results?search_query=Dekmantel+Festival+2025',
+     socials:{tw:'@Dekmantel',ig:'@dekmantel',yt:'Dekmantel'}},
+     {name:'SONAR',loc:'Barcelona, Spain',date:'JUN 19–21, 2025',cap:'120K',hot:true,
+     desc:'Where music, creativity, and technology converge. Sónar\'s dual identity — a day festival of discovery and a night festival of full-force dance — makes it unique. By day, seminars. By night, a relentless sonic assault.',
+     img:'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1600&q=85&fit=crop',
+     site:'https://sonar.es',yt:'https://www.youtube.com/results?search_query=Sonar+Festival+Barcelona+2025',
+     socials:{tw:'@sonarfestival',ig:'@sonarfestival',yt:'Sónar Festival'}}
+     
+  ],
+  rock:[
+    {name:'GLASTONBURY',loc:'Somerset, UK',date:'JUN 25–29, 2025',cap:'210K',hot:true,
+     desc:'The greatest show on Earth. Worthy Farm becomes a city of 210,000 for five days every June — a counter-cultural institution since 1970 that has hosted everyone from David Bowie to Beyoncé. More than a festival; it\'s a rite of passage.',
+     img:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=85&fit=crop',
+     site:'https://www.glastonburyfestivals.co.uk',yt:'https://www.youtube.com/results?search_query=Glastonbury+2025',
+     socials:{tw:'@GlastoFest',ig:'@glastonburyfestivals',yt:'Glastonbury'}},
+    {name:'DOWNLOAD',loc:'Donington, UK',date:'JUN 6–8, 2025',cap:'100K',hot:false,
+     desc:'Donington Park — the spiritual home of rock. Download Festival carries the torch of the legendary Monsters of Rock concerts, delivering three days of heavy riffs and massive pyrotechnics to 100,000 devoted rock and metal faithful.',
+     img:'',
+     site:'https://www.downloadfestival.co.uk',yt:'https://www.youtube.com/results?search_query=Download+Festival+2025+aftermovie',
+     socials:{tw:'@DownloadFest',ig:'@downloadfestival',yt:'Download Festival'}},
+     {name:'Montreux ',loc:'Miami, Switzerland',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'LOLLAPALOOZA',loc:'Chicago, USA',date:'AUG 1–4, 2025',cap:'400K',hot:true,
+     desc:'Born from Perry Farrell\'s vision of a travelling alternative carnival in 1991, Lollapalooza in Grant Park is now Chicago\'s defining summer cultural institution — four stages, four days, and a million stories under Lake Michigan skies.',
+     img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1600&q=85&fit=crop',
+     site:'https://www.lollapalooza.com',yt:'https://www.youtube.com/results?search_query=Lollapalooza+2025+aftermovie',
+     socials:{tw:'@lollapalooza',ig:'@lollapalooza',yt:'Lollapalooza'}},
+     {name:'ROCK IN RIO',loc:'Rio de Janeiro, BR',date:'SEP 19–28, 2025',cap:'700K',hot:true,
+     desc:'The largest music festival in the world. Since its first edition in 1985 drew 1.5 million people, Rock in Rio has been a cultural phenomenon — the Cidade do Rock rising in Rio\'s west zone like a separate nation devoted entirely to music.',
+     img:'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1600&q=85&fit=crop',
+     site:'https://rockinrio.com',yt:'https://www.youtube.com/results?search_query=Rock+in+Rio+2025+aftermovie',
+     socials:{tw:'@rockinrio',ig:'@rockinrio',yt:'Rock in Rio'}},
+     {name:'woodstock',loc:'Grafenhainichen, GERMANY',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'images/download1).jpg',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Bonnaroo',loc:'Grafenhainichen, GERMANY',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'images/bonaroooo.jpg',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'READING & LEEDS',loc:'UK',date:'AUG 22–24, 2025',cap:'105K',hot:false,
+     desc:'The twin-site titan of British rock. Running simultaneously in Reading and Leeds since 1999, the festival is the undisputed home of breakthrough alternative and rock acts — where this year\'s support act is next year\'s headliner.',
+     img:'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1600&q=85&fit=crop',
+     site:'https://www.readingandleedsfestival.com',yt:'https://www.youtube.com/results?search_query=Reading+Leeds+Festival+2025',
+     socials:{tw:'@OfficialRandL',ig:'@readingleedsfestival',yt:'Reading & Leeds'}},
+     {name:'ROSKILDE',loc:'Roskilde, Denmark',date:'JUL 2–9, 2025',cap:'130K',hot:false,
+     desc:'Scandinavia\'s cultural heartbeat. Entirely run by 30,000 volunteers and dedicated to not-for-profit ideals since 1971, Roskilde is perhaps the most socially conscious major festival on earth — and its Orange Stage one of the most revered.',
+     img:'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=1600&q=85&fit=crop',
+     site:'https://www.roskilde-festival.dk',yt:'https://www.youtube.com/results?search_query=Roskilde+Festival+2025',
+     socials:{tw:'@RoskildeFest',ig:'@roskildefestival',yt:'Roskilde Festival'}},
+     {name:'COACHELLA',loc:'Indio, USA',date:'APR 11–13, 2025',cap:'250K',hot:true,
+     desc:'The festival that set the template for the modern era. Held in the Coachella Valley each April, its Empire Polo Club grounds have hosted some of the defining concert moments of the 21st century — and a few legendary outfits.',
+     img:'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600&q=85&fit=crop',
+     site:'https://www.coachella.com',yt:'https://www.youtube.com/results?search_query=Coachella+2025+highlights',
+     socials:{tw:'@coachella',ig:'@coachella',yt:'Coachella'}},
+     {name:'FUJI ROCK',loc:'Niigata, Japan',date:'JUL 25–27, 2025',cap:'120K',hot:false,
+     desc:'Japan\'s most beloved outdoor festival, carved into the Naeba mountain resort. A three-day hike across five stages through forest, riverside, and mountain — Fuji Rock\'s combination of world-class music and profound natural beauty is unmatched.',
+     img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=85&fit=crop',
+     site:'https://www.fujirockfestival.com',yt:'https://www.youtube.com/results?search_query=Fuji+Rock+Festival+2025',
+     socials:{tw:'@fujirock_fes',ig:'@fujirockfestival',yt:'Fuji Rock Festival'}}
+     
+  ],
+  hiphop:[
+    {name:'ROLLING LOUD MIAMI',loc:'Miami, USA',date:'JUL 18–20, 2025',cap:'250K',hot:true,
+     desc:'The world\'s largest hip-hop festival, born in 2015 from a Miami warehouse party. Hard Rock Stadium becomes Hip-Hop\'s most prestigious three-day spectacle, with a lineup that reads like the definitive ranking of the genre\'s reigning titans.',
+     img:'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1600&q=85&fit=crop',
+     site:'https://rollingloud.com',yt:'https://www.youtube.com/results?search_query=Rolling+Loud+Miami+2025+aftermovie',
+     socials:{tw:'@RollingLoud',ig:'@rollingloud',yt:'Rolling Loud'}},
+    {name:'GovBall',loc:'New York, United states',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+    {name:'Summer Jam',loc:'New Jersey, United States',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+    {name:'Roots picnic',loc:'pensolvania, United States',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+    {name:'ROLLING LOUD LA',loc:'Los Angeles, USA',date:'MAR 14–16, 2025',cap:'200K',hot:false,
+     desc:'West Coast edition of hip-hop\'s premier institution. The LA chapter brings the Rolling Loud brand to the city that arguably invented rap\'s most dominant modern sounds — and delivers a bill that reflects LA\'s singular status in the culture.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://rollingloud.com',yt:'https://www.youtube.com/results?search_query=Rolling+Loud+LA+2025',
+     socials:{tw:'@RollingLoud',ig:'@rollingloud',yt:'Rolling Loud'}},
+    {name:'A3C FESTIVAL',loc:'Atlanta, USA',date:'OCT 1–5, 2025',cap:'30K',hot:false,
+     desc:'Atlanta\'s premier hip-hop culture conference and festival. A3C sits at the intersection of music, art, and entrepreneurship — five days that celebrate the underground, the independent, and the next generation of hip-hop visionaries.',
+     img:'https://images.unsplash.com/photo-1474679270684-b5e00ddc76b1?w=1600&q=85&fit=crop',
+     site:'https://a3cfestival.com',yt:'https://www.youtube.com/results?search_query=A3C+Festival+Atlanta+2025',
+     socials:{tw:'@A3CFestival',ig:'@a3cfestival',yt:'A3C Festival'}},
+    {name:'AFROPUNK BROOKLYN',loc:'Brooklyn, USA',date:'AUG 23–24, 2025',cap:'60K',hot:true,
+     desc:'More than a festival — a radical celebration of Black identity, creativity, and freedom. Afropunk Brooklyn\'s Commodore Barry Park is a riot of self-expression that transcends genre, fusing punk, soul, hip-hop, and activism into something irreplaceable.',
+     img:'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=1600&q=85&fit=crop',
+     site:'https://afropunk.com',yt:'https://www.youtube.com/results?search_query=Afropunk+Brooklyn+2025',
+     socials:{tw:'@AFROPUNK',ig:'@afropunk',yt:'AFROPUNK'}},
+    {name:'WIRELESS FESTIVAL',loc:'London, UK',date:'JUL 4–6, 2025',cap:'50K',hot:true,
+     desc:'The UK\'s defining hip-hop and R&B event. Wireless at Finsbury Park has shaped UK rap culture — a platform that has given British artists their biggest stages while hosting the genre\'s global heavyweights for three unforgettable days.',
+     img:'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1600&q=85&fit=crop',
+     site:'https://wirelessfestival.co.uk',yt:'https://www.youtube.com/results?search_query=Wireless+Festival+2025+aftermovie',
+     socials:{tw:'@WirelessFest',ig:'@wirelessfestival',yt:'Wireless Festival'}},
+    {name:'SUMMER JAM',loc:'New York, USA',date:'JUN 7, 2025',cap:'50K',hot:false,
+     desc:'Hot 97\'s legendary Summer Jam is hip-hop\'s oldest major festival event, dating to 1994. For one day each June, MetLife Stadium hosts the genre\'s biggest names in a concert that doubles as New York City\'s official summer declaration.',
+     img:'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1600&q=85&fit=crop',
+     site:'https://hot97.com/summerjam',yt:'https://www.youtube.com/results?search_query=Hot+97+Summer+Jam+2025',
+     socials:{tw:'@Hot97',ig:'@hot97',yt:'HOT 97'}},
+    {name:'DREAMVILLE FEST',loc:'Raleigh, USA',date:'APR 5–6, 2025',cap:'35K',hot:true,
+     desc:'J. Cole\'s homecoming. The Dreamville Festival on Dix Park in Raleigh, NC is one of the most beloved new festivals in America — an expression of southern hip-hop pride, community, and the sound of a generation finding its voice.',
+     img:'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1600&q=85&fit=crop',
+     site:'https://dreamvillefest.com',yt:'https://www.youtube.com/results?search_query=Dreamville+Festival+2025+aftermovie',
+     socials:{tw:'@DreamvilleFest',ig:'@dreamvillefest',yt:'Dreamville'}},
+    {name:'ONE MUSICFEST',loc:'Atlanta, USA',date:'SEP 13–14, 2025',cap:'25K',hot:false,
+     desc:'Atlanta\'s festival for the culture. One Musicfest brings together hip-hop, neo-soul, R&B and jazz in a two-day celebration at Centennial Olympic Park — a homecoming for the city that birthed trap music and shaped modern Black pop.',
+     img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1600&q=85&fit=crop',
+     site:'https://onemusicfest.com',yt:'https://www.youtube.com/results?search_query=One+Musicfest+Atlanta+2025',
+     socials:{tw:'@OneMusicFest',ig:'@onemusicfest',yt:'One Musicfest'}}
+  ],
+  jazz:[
+    {name:'NEW ORLEANS JAZZ FEST',loc:'Louisiana, USA',date:'APR 25 – MAY 4, 2025',cap:'475K',hot:true,
+     desc:'The most soulful festival on earth. The New Orleans Jazz & Heritage Festival at Fair Grounds Race Course is not merely a music event but a full immersion in Louisiana culture — food, art, crafts, and the birthplace sounds of jazz, blues, and gospel.',
+     img:'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1600&q=85&fit=crop',
+     site:'https://www.nojazzfest.com',yt:'https://www.youtube.com/results?search_query=New+Orleans+Jazz+Fest+2025',
+     socials:{tw:'@jazzfest',ig:'@nojazzfest',yt:'Jazz Fest'}},{name:'MONTREUX JAZZ',loc:'Montreux, Switzerland',date:'JUL 4–19, 2025',cap:'250K',hot:false,
+     desc:'Founded by Claude Nobs in 1967, Montreux Jazz Festival on the Swiss Riviera is a 16-day sublime marathon where jazz meets soul, rock, and electronic music — with the Alps and Lake Geneva forming the most breathtaking festival backdrop imaginable.',
+     img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=85&fit=crop',
+     site:'https://www.montreuxjazzfestival.com',yt:'https://www.youtube.com/results?search_query=Montreux+Jazz+Festival+2025',
+     socials:{tw:'@MontreuxJazz',ig:'@montreuxjazzfestival',yt:'Montreux Jazz Festival'}},
+    {name:'NORTH SEA JAZZ',loc:'Rotterdam, NL',date:'JUL 11–13, 2025',cap:'70K',hot:false,
+     desc:'The world\'s largest indoor jazz festival. MOJO Concerts\' North Sea Jazz at Ahoy Rotterdam packs 14 stages and 1,000 musicians into three astonishing days — spanning jazz, soul, funk, blues, and every sound that has ever touched them.',
+     img:'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1600&q=85&fit=crop',
+     site:'https://www.northseajazz.com',yt:'https://www.youtube.com/results?search_query=North+Sea+Jazz+Festival+2025',
+     socials:{tw:'@NorthSeaJazz',ig:'@northseajazz',yt:'North Sea Jazz'}},
+    {name:'NEWPORT JAZZ FEST',loc:'Rhode Island, USA',date:'AUG 1–3, 2025',cap:'10K',hot:false,
+     desc:'The original. Newport Jazz Festival, founded in 1954, is the oldest jazz festival in the world — and the one that changed everything. Fort Adams State Park\'s intimate setting preserves that founding spirit of daring, discovery, and pure artistry.',
+     img:'https://images.unsplash.com/photo-1474679270684-b5e00ddc76b1?w=1600&q=85&fit=crop',
+     site:'https://www.newportjazz.org',yt:'https://www.youtube.com/results?search_query=Newport+Jazz+Festival+2025',
+     socials:{tw:'@NewportJazzFest',ig:'@newportjazz',yt:'Newport Jazz Festival'}},
+    {name:'CHICAGO JAZZ FEST',loc:'Chicago, USA',date:'SEP 4–7, 2025',cap:'200K',hot:false,
+     desc:'Free since its founding in 1979, Chicago Jazz Fest at Millennium Park is a democratic celebration of the music Chicago helped define. Four days on the lakefront, featuring both established legends and the city\'s most vital emerging voices.',
+     img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1600&q=85&fit=crop',
+     site:'https://chicagojazzfestival.us',yt:'https://www.youtube.com/results?search_query=Chicago+Jazz+Festival+2025',
+     socials:{tw:'@ChiJazzFest',ig:'@chicagojazzfestival',yt:'Chicago Jazz Festival'}},
+    {name:'JAZZALDIA',loc:'San Sebastián, Spain',date:'JUL 23–27, 2025',cap:'150K',hot:true,
+     desc:'Europe\'s most charming jazz festival on the Basque coast. Jazzaldia drapes the stages of San Sebastián — including the legendary open-air Zurriola beach stage — in five nights of sublime programming where Basque culture and jazz intertwine.',
+     img:'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1600&q=85&fit=crop',
+     site:'https://heinekenjazzaldia.eus',yt:'https://www.youtube.com/results?search_query=Jazzaldia+Festival+2025',
+     socials:{tw:'@jazzaldia',ig:'@jazzaldia',yt:'Jazzaldia'}},
+    {name:'MONTREAL JAZZ FEST',loc:'Montreal, Canada',date:'JUN 26 – JUL 5, 2025',cap:'3M',hot:true,
+     desc:'The most attended jazz festival on the planet. For 10 days, the Festival International de Jazz de Montréal transforms the city\'s Quartier des Spectacles into a world unto itself — 3,000 artists, 650 concerts, and most of it gloriously free.',
+     img:'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600&q=85&fit=crop',
+     site:'https://www.montrealjazzfest.com',yt:'https://www.youtube.com/results?search_query=Montreal+Jazz+Festival+2025',
+     socials:{tw:'@MontrealjazzFest',ig:'@montrealjazzfest',yt:'Festival Jazz Montréal'}},
+    {name:'COPENHAGEN JAZZ',loc:'Copenhagen, DK',date:'JUL 4–13, 2025',cap:'250K',hot:false,
+     desc:'Ten days of jazz woven into the fabric of Copenhagen. Over 100 venues from concert halls to canal-side cafés — the festival dissolves into the city itself, making all of Copenhagen a stage. Scandinavian cool meets musical heat.',
+     img:'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1600&q=85&fit=crop',
+     site:'https://www.cphjazz.dk',yt:'https://www.youtube.com/results?search_query=Copenhagen+Jazz+Festival+2025',
+     socials:{tw:'@cphjazz',ig:'@cphjazz',yt:'Copenhagen Jazz Festival'}},
+  ],
+  indie:[
+    {name:'PRIMAVERA SOUND',loc:'Barcelona, Spain',date:'JUN 5–7, 2025',cap:'220K',hot:true,
+     desc:'The indie world\'s most critically esteemed festival. Primavera Sound at Parc del Fòrum pairs curatorial fearlessness with the Mediterranean at its back — a lineup that moves between the bleeding underground and the most vital pop artists of the moment.',
+     img:'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=1600&q=85&fit=crop',
+     site:'https://www.primaverasound.com',yt:'https://www.youtube.com/results?search_query=Primavera+Sound+2025+aftermovie',
+     socials:{tw:'@primavera_sound',ig:'@primaverasound',yt:'Primavera Sound'}},
+{name:'PITCHFORK FESTIVAL',loc:'Chicago, USA',date:'JUL 18–20, 2025',cap:'50K',hot:false,
+     desc:'Three days of indie\'s most artfully curated programming in Union Park. Pitchfork Music Festival carries the DNA of its media parent — intelligent, opinionated, deeply invested in the album as art form — into a genuinely beloved summer gathering.',
+     img:'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1600&q=85&fit=crop',
+     site:'https://pitchforkmusicfestival.com',yt:'https://www.youtube.com/results?search_query=Pitchfork+Music+Festival+2025',
+     socials:{tw:'@pitchfork',ig:'@pitchforkmusicfestival',yt:'Pitchfork'}},
+    {name:'SXSW',loc:'Austin, Texas',date:'MAR 7–16, 2025',cap:'350K',hot:true,
+     desc:'The world\'s most important annual convergence of music, film, and technology. South by Southwest turns all of Austin into a stage for 10 days each March — 2,000 acts, countless showcases, and the perpetual possibility of witnessing something historic.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://www.sxsw.com',yt:'https://www.youtube.com/results?search_query=SXSW+2025+music+highlights',
+     socials:{tw:'@sxsw',ig:'@sxsw',yt:'SXSW'}},
+    {name:'ICELAND AIRWAVES',loc:'Reykjavik, Iceland',date:'NOV 5–8, 2025',cap:'20K',hot:false,
+     desc:'The world\'s most atmospheric music festival. Under the northern lights, in a country that produces more musicians per capita than anywhere else, Iceland Airwaves turns Reykjavík\'s bars, clubs, and concert halls into a discovery machine for four dark winter days.',
+     img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=85&fit=crop',
+     site:'https://icelandairwaves.is',yt:'https://www.youtube.com/results?search_query=Iceland+Airwaves+2025',
+     socials:{tw:'@IcelandAirwaves',ig:'@icelandairwaves',yt:'Iceland Airwaves'}},
+    {name:'LANEWAY FESTIVAL',loc:'Auckland, NZ',date:'FEB 1, 2025',cap:'15K',hot:false,
+     desc:'The Southern Hemisphere\'s finest international indie import. Laneway tours Australian and New Zealand cities each February with an unimpeachably strong indie lineup — a portal to the northern hemisphere\'s best music for antipodean audiences.',
+     img:'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1600&q=85&fit=crop',
+     site:'https://www.lanewayfestival.com',yt:'https://www.youtube.com/results?search_query=Laneway+Festival+2025',
+     socials:{tw:'@LanewayFest',ig:'@lanewayfestival',yt:'Laneway Festival'}},
+    {name:'FIELD DAY',loc:'London, UK',date:'JUN 7, 2025',cap:'10K',hot:false,
+     desc:'Victoria Park\'s one-day jewel. Field Day is London\'s most idiosyncratic day festival — a bill that has always chased the left-field over the obvious, creating an annual gathering of music lovers who trust the curation implicitly.',
+     img:'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=1600&q=85&fit=crop',
+     site:'https://fielddayfestivals.com',yt:'https://www.youtube.com/results?search_query=Field+Day+Festival+London+2025',
+     socials:{tw:'@fielddayfest',ig:'@fielddayfestivals',yt:'Field Day'}},
+    {name:'END OF THE ROAD',loc:'Dorset, UK',date:'AUG 28–31, 2025',cap:'15K',hot:true,
+     desc:'The festival that never disappoints. End of the Road in the Larmer Tree Gardens is British festival culture at its most beloved and intimate — four days of the best in alternative, folk, and indie, with a crowd that returns year after year.',
+     img:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=85&fit=crop',
+     site:'https://www.endoftheroadfestival.com',yt:'https://www.youtube.com/results?search_query=End+of+the+Road+Festival+2025',
+     socials:{tw:'@EOTRfestival',ig:'@endoftheroadfestival',yt:'End of the Road'}},
+    {name:'FEST',loc:'Gainesville, USA',date:'OCT 30 – NOV 1, 2025',cap:'12K',hot:false,
+     desc:'The punk world\'s most essential annual gathering. The Fest takes over Gainesville, Florida for Halloween weekend with 400 bands across 20 venues — three days of punk, hardcore, and emo that function as a global family reunion for the underground.',
+     img:'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1600&q=85&fit=crop',
+     site:'https://thefestfl.com',yt:'https://www.youtube.com/results?search_query=The+Fest+Gainesville+2025',
+     socials:{tw:'@FEST_Gainesville',ig:'@thefestfl',yt:'The Fest'}}
+  ],
+  afrobeats:[
+    {name:'AFRO NATION PORTUGAL',loc:'Portimão, Portugal',date:'JUL 3–5, 2025',cap:'80K',hot:true,
+     desc:'The world\'s #1 Afrobeats festival, born from a love letter to the diaspora. Afro Nation transforms Praia da Rocha\'s golden beach into an intercontinental explosion of Afrobeats, Afropop, Amapiano, and R&B — with the Atlantic as a backdrop.',
+     img:'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=1600&q=85&fit=crop',
+     site:'https://www.afronation.com',yt:'https://www.youtube.com/results?search_query=Afro+Nation+Portugal+2025+aftermovie',
+     socials:{tw:'@afronation',ig:'@afronation',yt:'Afro Nation'}},
+{name:'AFRO NATION GHANA',loc:'Accra, Ghana',date:'DEC 27–29, 2025',cap:'100K',hot:true,
+     desc:'A homecoming like no other. Afro Nation Ghana at Accra\'s beachfront is a monument to Pan-African unity — three nights where the diaspora returns home and the continent celebrates its own soundtrack with the ocean echoing every beat.',
+     img:'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1600&q=85&fit=crop',
+     site:'https://www.afronation.com',yt:'https://www.youtube.com/results?search_query=Afro+Nation+Ghana+2025',
+     socials:{tw:'@afronation',ig:'@afronation',yt:'Afro Nation'}},
+    {name:'LAGOS COUNTDOWN',loc:'Lagos, Nigeria',date:'DEC 29–31, 2025',cap:'50K',hot:false,
+     desc:'Nigeria\'s most anticipated end-of-year concert series. Lagos Countdown brings the biggest names in Afrobeats, Afropop, and Fuji together for three spectacular nights on the shores of Lagos — culminating in a midnight celebration that shakes the city.',
+     img:'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1600&q=85&fit=crop',
+     site:'https://www.lagoscountdown.com',yt:'https://www.youtube.com/results?search_query=Lagos+Countdown+2025',
+     socials:{tw:'@lagoscountdown',ig:'@lagoscountdown',yt:'Lagos Countdown'}},
+    {name:'DETTY DECEMBER',loc:'Accra, Ghana',date:'DEC 2025',cap:'MULTI',hot:true,
+     desc:'Not a single festival but a cultural season. Detty December is Ghana\'s month-long migration of the diaspora home — a constellation of concerts, beach parties, and events that make Accra the entertainment capital of Africa every December.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://twitter.com/search?q=dettydecember',yt:'https://www.youtube.com/results?search_query=Detty+December+Ghana+2025',
+     socials:{tw:'#DettyDecember',ig:'#dettydecember',yt:'Detty December'}},
+    {name:'AFROCHELLA',loc:'Accra, Ghana',date:'DEC 28, 2025',cap:'40K',hot:false,
+     desc:'Accra\'s cultural carnival. Now rebranded but no less essential, Afrochella at the El Wak Sports Stadium is Ghana\'s defining single-night concert event — a production that rivals anything the world\'s biggest festivals can offer.',
+     img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1600&q=85&fit=crop',
+     site:'https://afrochella.com',yt:'https://www.youtube.com/results?search_query=Afrochella+2025',
+     socials:{tw:'@AFROCHELLA',ig:'@afrochella',yt:'AFROCHELLA'}},
+    {name:'ONE AFRICA MUSIC FEST',loc:'Dubai, UAE',date:'OCT 2025',cap:'25K',hot:false,
+     desc:'Africa\'s sound in the Gulf. One Africa Music Fest brings the continent\'s biggest Afrobeats and highlife stars to Dubai — a bridge between Africa\'s global diaspora and the Middle East\'s growing appetite for the world\'s most energetic genre.',
+     img:'https://images.unsplash.com/photo-1474679270684-b5e00ddc76b1?w=1600&q=85&fit=crop',
+     site:'https://www.oneafricamusicfest.com',yt:'https://www.youtube.com/results?search_query=One+Africa+Music+Fest+2025',
+     socials:{tw:'@OneAfricaFest',ig:'@oneafricamusicfest',yt:'One Africa Music Fest'}},
+    {name:'FELABRATION',loc:'Lagos, Nigeria',date:'OCT 2025',cap:'30K',hot:true,
+     desc:'A living monument to Fela Kuti. Held annually at the Afrika Shrine in Lagos, Felabration is simultaneously a concert, a cultural festival, and a political rally — celebrating the godfather of Afrobeat and the revolution he embodied.',
+     img:'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=1600&q=85&fit=crop',
+     site:'https://felabration.net',yt:'https://www.youtube.com/results?search_query=Felabration+2025+Lagos',
+     socials:{tw:'@Felabration',ig:'@felabration',yt:'Felabration'}},
+    {name:'ABO MUSIC FESTIVAL',loc:'Johannesburg, SA',date:'JUL 2025',cap:'20K',hot:false,
+     desc:'Johannesburg\'s crossroads of sound. ABO Music Festival celebrates the confluence of Amapiano, Kwaito, Afrobeats, and jazz that makes South Africa\'s music scene one of the most explosively creative on the planet.',
+     img:'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1600&q=85&fit=crop',
+     site:'https://www.abomusicfestival.com',yt:'https://www.youtube.com/results?search_query=ABO+Music+Festival+Johannesburg+2025',
+     socials:{tw:'@AboFestival',ig:'@abomusicfestival',yt:'ABO Music Festival'}},
+  ],
+  latin:[
+    {name:'VIVE LATINO',loc:'Mexico City, MX',date:'MAR 21–23, 2025',cap:'180K',hot:true,
+     desc:'Latin America\'s most important rock and alternative festival. Vive Latino at the Foro Sol is a three-day national celebration — the pulse of Mexican youth culture, where rock en español, indie, and electronic collide with unstoppable energy.',
+     img:'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=1600&q=85&fit=crop',
+     site:'https://www.vivelatino.com.mx',yt:'https://www.youtube.com/results?search_query=Vive+Latino+2025+aftermovie',
+     socials:{tw:'@ViveLatino',ig:'@vivelatino',yt:'Vive Latino'}},
+{name:'CALLE OCHO FESTIVAL',loc:'Miami, USA',date:'MAR 9, 2025',cap:'650K',hot:false,
+     desc:'One of the world\'s largest street parties. Calle Ocho Festival in Miami\'s Little Havana spans 23 blocks of SW 8th Street for a single day of salsa, cumbia, reggaeton, and the full glorious spectrum of Latino culture. Attendance: everyone.',
+     img:'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1600&q=85&fit=crop',
+     site:'https://carnavalmiami.com/calle-ocho',yt:'https://www.youtube.com/results?search_query=Calle+Ocho+Festival+Miami+2025',
+     socials:{tw:'@CalleOchoFest',ig:'@calleocho',yt:'Calle Ocho Festival'}},
+    {name:'ESTÉREO PICNIC',loc:'Bogotá, Colombia',date:'MAR 26–30, 2025',cap:'140K',hot:true,
+     desc:'Colombia\'s cultural crown jewel. Estéreo Picnic at Briceño\'s Parque de Los Sueños has become South America\'s most internationally recognised festival — five days in which Bogotá\'s altitude and passion make every set feel transcendent.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://www.estereopicnic.com',yt:'https://www.youtube.com/results?search_query=Estereo+Picnic+2025+aftermovie',
+     socials:{tw:'@estereopicnic',ig:'@estereopicnic',yt:'Estéreo Picnic'}},
+    {name:'CORONA CAPITAL',loc:'Mexico City, MX',date:'NOV 2025',cap:'200K',hot:false,
+     desc:'Mexico City\'s blockbuster alternative festival. Corona Capital at Autódromo Hermanos Rodríguez has become one of the world\'s great urban festivals — a November weekend that consistently delivers the most ambitious international lineup on the Latin American circuit.',
+     img:'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600&q=85&fit=crop',
+     site:'https://www.coronacapital.com.mx',yt:'https://www.youtube.com/results?search_query=Corona+Capital+2025+aftermovie',
+     socials:{tw:'@CoronaCapital',ig:'@coronacapital',yt:'Corona Capital'}},
+    {name:'ASUNCIÓNICO',loc:'Asunción, Paraguay',date:'AUG 2025',cap:'50K',hot:false,
+     desc:'Paraguay\'s beloved music festival, bringing international and local artists together in the heart of Asunción. Asunciónico has become a symbol of the country\'s vibrant creative spirit and its growing place on the Latin American festival map.',
+     img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1600&q=85&fit=crop',
+     site:'https://www.asuncionico.com',yt:'https://www.youtube.com/results?search_query=Asuncionico+Festival+2025',
+     socials:{tw:'@Asuncionico',ig:'@asuncionico',yt:'Asunciónico'}},
+    {name:'COSQUÍN ROCK',loc:'Buenos Aires, AR',date:'MAR 15–16, 2025',cap:'120K',hot:false,
+     desc:'Argentina\'s rock institution. Born in the folklore heartland of Córdoba, Cosquín Rock has migrated to Buenos Aires but lost none of its fire — two days of Argentine rock, metal, and alternative music at full, glorious volume.',
+     img:'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1600&q=85&fit=crop',
+     site:'https://www.cosquinrock.net',yt:'https://www.youtube.com/results?search_query=Cosquin+Rock+2025+aftermovie',
+     socials:{tw:'@CosquinRock',ig:'@cosquinrock',yt:'Cosquín Rock'}},
+    {name:'LOLLAPALOOZA CHILE',loc:'Santiago, Chile',date:'MAR 28–30, 2025',cap:'80K',hot:true,
+     desc:'The Chilean edition of the global behemoth. Lollapalooza Chile at Parque Bicentenario de Cerrillos is South America\'s most commercially powerful festival — and a weekend that routinely delivers performances among the year\'s finest.',
+     img:'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1600&q=85&fit=crop',
+     site:'https://www.lollapaloozacl.com',yt:'https://www.youtube.com/results?search_query=Lollapalooza+Chile+2025+aftermovie',
+     socials:{tw:'@LollapaloozaCL',ig:'@lollapaloozachile',yt:'Lollapalooza Chile'}},
+    {name:'BAHIDORÁ',loc:'Las Estacas, MX',date:'FEB 14–16, 2025',cap:'10K',hot:false,
+     desc:'Mexico\'s most beautiful festival. Bahidorá at Las Estacas Natural Park — a crystalline river running through tropical jungle — is a sensory feast where electronic, indie, and world music play against one of the most extraordinary natural settings in the Americas.',
+     img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=85&fit=crop',
+     site:'https://www.bahidora.com',yt:'https://www.youtube.com/results?search_query=Bahidora+Festival+2025',
+     socials:{tw:'@Bahidora',ig:'@bahidora',yt:'Bahidorá'}}
+  ],
+  metal:[
+    {name:'WACKEN OPEN AIR',loc:'Wacken, Germany',date:'JUL 31 – AUG 2, 2025',cap:'85K',hot:true,
+     desc:'The mecca of heavy metal. What began as a small German village festival in 1990 has become a religious pilgrimage for 85,000 metalheads — three days in which the tiny town of Wacken becomes the loudest place on Earth.',
+     img:'https://images.unsplash.com/photo-1598387846148-47e82ee120cc?w=1600&q=85&fit=crop',
+     site:'https://www.wacken.com',yt:'https://www.youtube.com/results?search_query=Wacken+Open+Air+2025+aftermovie',
+     socials:{tw:'@WackenOpenAir',ig:'@wackenopenair',yt:'Wacken Open Air'}},
+     {name:'Dynamo Open Air',loc:'Miami, Netherlands',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Graspop Metal Meeting',loc:'Miami, Belgium',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Mangualde',loc:'Miami, POrtugal',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Blood Stock Open Air',loc:'Miami, England',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Hellfest summer open air',loc:'Miami, France',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+     {name:'Welcome to Rockville',loc:'Miami, USA',date:'MAR 28–30, 2025',cap:'165K',hot:true,
+     desc:'The original electronic music festival, Ultra Miami has launched careers and shaped global dance culture since 1999. Set against the Biscayne Bay skyline, its Mainstage remains the most coveted slot in electronic music.',
+     img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1600&q=85&fit=crop',
+     site:'https://ultramusicfestival.com',yt:'https://www.youtube.com/results?search_query=Ultra+Miami+2025+aftermovie',
+     socials:{tw:'@Ultra',ig:'@ultramusicfestival',yt:'Ultra Music Festival'}},
+{name:'DOWNLOAD FESTIVAL',loc:'Donington, UK',date:'JUN 6–8, 2025',cap:'100K',hot:false,
+     desc:'Donington Park has hosted heavy music since 1980 and Download carries that legacy proudly — three days of metal, rock, and everything between at the spiritual home of British heavy music, where every set feels like it was built for this very ground.',
+     img:'https://images.unsplash.com/photo-1598387846148-47e82ee120cc?w=1600&q=85&fit=crop',
+     site:'https://www.downloadfestival.co.uk',yt:'https://www.youtube.com/results?search_query=Download+Festival+2025+aftermovie',
+     socials:{tw:'@DownloadFest',ig:'@downloadfestival',yt:'Download Festival'}},
+    {name:'MARYLAND DEATHFEST',loc:'Baltimore, USA',date:'MAY 22–25, 2025',cap:'10K',hot:false,
+     desc:'The North American underground\'s holiest event. MDF is a no-frills, maximum-intensity gathering for death metal, grindcore, doom, and black metal — four days in Baltimore that function as both celebration and summit for the extreme music world.',
+     img:'https://images.unsplash.com/photo-1474679270684-b5e00ddc76b1?w=1600&q=85&fit=crop',
+     site:'https://www.marylanddeathfest.com',yt:'https://www.youtube.com/results?search_query=Maryland+Deathfest+2025',
+     socials:{tw:'@MDFestival',ig:'@marylanddeathfest',yt:'Maryland Deathfest'}},
+    {name:'BRUTAL ASSAULT',loc:'Josefov, Czechia',date:'AUG 6–9, 2025',cap:'15K',hot:false,
+     desc:'Metal in a military fortress. Brutal Assault takes place inside the stunning 18th-century Josefov military fortification in the Czech Republic — an extreme metal festival inside the walls of a baroque fort, four days of sonic warfare in perfect surroundings.',
+     img:'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1600&q=85&fit=crop',
+     site:'https://brutalassault.cz',yt:'https://www.youtube.com/results?search_query=Brutal+Assault+2025+aftermovie',
+     socials:{tw:'@BrutalAssault',ig:'@brutalassaultfestival',yt:'Brutal Assault'}},
+    {name:'BLOODSTOCK',loc:'Derbyshire, UK',date:'AUG 7–10, 2025',cap:'20K',hot:false,
+     desc:'The UK\'s finest independent metal festival. Bloodstock Open Air in Derbyshire\'s Catton Park punches well above its weight — four days of carefully curated heavy music championed by a community that lives and breathes metal 365 days a year.',
+     img:'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1600&q=85&fit=crop',
+     site:'https://www.bloodstock.uk.com',yt:'https://www.youtube.com/results?search_query=Bloodstock+Festival+2025',
+     socials:{tw:'@BOAFest',ig:'@bloodstockfestival',yt:'Bloodstock'}},
+    {name:'GRASPOP',loc:'Dessel, Belgium',date:'JUN 19–22, 2025',cap:'70K',hot:true,
+     desc:'Belgium\'s heavy crown. Graspop Metal Meeting draws 70,000 to the small town of Dessel for four days of the finest metal, hard rock, and alternative billing in Europe — a consistently excellent festival beloved for its warm, fanatical crowd.',
+     img:'https://images.unsplash.com/photo-1598387846148-47e82ee120cc?w=1600&q=85&fit=crop',
+     site:'https://www.graspop.be',yt:'https://www.youtube.com/results?search_query=Graspop+Metal+Meeting+2025+aftermovie',
+     socials:{tw:'@GraspopMetal',ig:'@graspopmetalmeeting',yt:'Graspop Metal Meeting'}},
+    {name:'SUMMER BREEZE',loc:'Dinkelsbühl, Germany',date:'AUG 13–16, 2025',cap:'45K',hot:false,
+     desc:'Germany\'s second-greatest metal gathering. Summer Breeze Open Air brings 45,000 to the medieval town of Dinkelsbühl for four days that balance mainstream heavy hitters with a deep underground programme — a perfectly balanced metal festival.',
+     img:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=85&fit=crop',
+     site:'https://www.summer-breeze.de',yt:'https://www.youtube.com/results?search_query=Summer+Breeze+Open+Air+2025',
+     socials:{tw:'@SummerBreeze_DE',ig:'@summerbreezeopenair',yt:'Summer Breeze Open Air'}},
+  ]
+};
+
+// Global pool of artists for dynamic year-round scheduler generator
+const SCHEDULER_ARTISTS = [
+  { artist: 'Burna Boy', genre: 'Afrobeats', url: 'https://burnaboy.com' },
+  { artist: 'Charlotte de Witte', genre: 'Electronic', url: 'https://charlottedewitte.com' },
+  { artist: 'Asake', genre: 'Afrobeats', url: 'https://asakemusic.com' },
+  { artist: 'Kendrick Lamar', genre: 'Hip-Hop', url: 'https://kendricklamar.com' },
+  { artist: 'Arctic Monkeys', genre: 'Rock', url: 'https://arcticmonkeys.com' },
+  { artist: 'Wizkid', genre: 'Afrobeats', url: 'https://wizkidofficial.com' },
+  { artist: 'Peggy Gou', genre: 'Electronic', url: 'https://peggygou.com' },
+  { artist: 'Amaarae', genre: 'R&B', url: 'https://amaaraemusic.com' },
+  { artist: 'Black Sherif', genre: 'Afro-Fusion', url: 'https://blacksherif.com' },
+  { artist: 'Fred again..', genre: 'Electronic', url: 'https://fredagain.com' },
+  { artist: 'Tems', genre: 'R&B', url: 'https://tems.com' },
+  { artist: 'Rüfüs Du Sol', genre: 'Electronic', url: 'https://rufusdusol.com' },
+  { artist: 'Fontaines D.C.', genre: 'Indie', url: 'https://fontainesdc.com' },
+  { artist: 'Gojira', genre: 'Metal', url: 'https://gojira-music.com' },
+  { artist: 'Metallica', genre: 'Metal', url: 'https://metallica.com' },
+  { artist: 'Rosalía', genre: 'Latin', url: 'https://rosalia.com' }
+];
+
+const EVENT_CLASSIFICATIONS = ['Tour', 'Guest Appearance', 'One-time Show'];
+
+let activeCityName = 'LONDON';
+let activeCityGigs = [];
+let activeCityBaseCoords = { lat: 51.5074, lon: -0.1278 };
+
+const ARENAS_DATABASE = [
+  {
+    id: 'o2',
+    name: 'THE O2 ARENA',
+    loc: 'London, United Kingdom',
+    cap: '20,000',
+    occupancy: 88,
+    decibels: 104,
+    desc: 'The UK\'s premier structural dome, hosting legendary stadium-level arena shows. Known for advanced acoustics and breathtaking modular stage integration.',
+    img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80',
+    layoutSeed: 12
+  },
+  {
+    id: 'msg',
+    name: 'MADISON SQUARE GARDEN',
+    loc: 'New York City, USA',
+    cap: '20,789',
+    occupancy: 95,
+    decibels: 112,
+    desc: 'The World\'s Most Famous Arena. Sits in the absolute heartbeat of Manhattan, welcoming cultural icons and high-octane global media tours.',
+    img: 'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=800&q=80',
+    layoutSeed: 44
+  },
+  {
+    id: 'wembley',
+    name: 'WEMBLEY STADIUM',
+    loc: 'London, United Kingdom',
+    cap: '90,000',
+    occupancy: 92,
+    decibels: 118,
+    desc: 'The iconic arch commands the horizon. Host to the grandest rock spectacles and historic global benefits. Absolute peak stadium amplification.',
+    img: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=800&q=80',
+    layoutSeed: 88
+  },
+  {
+    id: 'tokyo',
+    name: 'TOKYO DOME',
+    loc: 'Tokyo, Japan',
+    cap: '55,000',
+    occupancy: 81,
+    decibels: 98,
+    desc: 'The massive egg-shaped dome is the holy grail of eastern music venues. Integrates futuristic production screens and pristine ambient reverberation.',
+    img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80',
+    layoutSeed: 55
+  },
+  {
+    id: 'eko',
+    name: 'EKO DOME',
+    loc: 'Lagos, Nigeria',
+    cap: '10,000',
+    occupancy: 90,
+    decibels: 110,
+    desc: 'The epicenter of West African luxury entertainment. Known for hosting the absolute finest in Afrobeats history, featuring dynamic and highly lively visual screens.',
+    img: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&q=80',
+    layoutSeed: 22
+  }
+];
+
+let selectedArenaId = 'o2';
+
+
+
+
+(function() {
+    const toggle = document.getElementById('toggle');
+    const rail   = document.getElementById('rail');
+
+    function setOpen(open) {
+        rail.classList.toggle('open', open);
+        toggle.classList.toggle('active', open);
+        toggle.setAttribute('aria-expanded', String(open));
+    }
+
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setOpen(!rail.classList.contains('open'));
+    });
+
+    // click outside closes
+    document.addEventListener('click', function(e) {
+        if (rail.classList.contains('open')
+            && !rail.contains(e.target)
+            && !toggle.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    // Esc closes
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') setOpen(false);
+    });
+
+    // pluck animation on hover — nothing else
+    document.querySelectorAll('.row').forEach(function(row) {
+        const string = row.querySelector('.string');
+        row.addEventListener('mouseenter', function() {
+            string.classList.remove('plucked');
+            void string.offsetWidth;
+            string.classList.add('plucked');
+        });
+        // ❌ removed: row.addEventListener('click', e => e.preventDefault());
+    });
+})();
+
+
+
+/* ══════════════════════════════════════════
+   FESTIVALS SLIDE
+══════════════════════════════════════════ */
+let activeGenre = 'electronic';
+
+function buildFestivals() {
+  const tabsEl = document.getElementById('genreTabs');
+  const panelsEl = document.getElementById('festPanels');
+  tabsEl.innerHTML = '';
+  panelsEl.innerHTML = '';
+  document.getElementById('genreCount').textContent = GENRES.length + ' GENRES LOADED';
+
+  GENRES.forEach((g, i) => {
+    const t = document.createElement('button');
+    t.className = 'gtab' + (g.id === activeGenre ? ' active' : '');
+    t.textContent = g.name;
+    t.dataset.id = g.id;
+    t.onclick = () => switchGenre(g.id);
+    tabsEl.appendChild(t);
+
+    const p = document.createElement('div');
+    p.className = 'gpanel' + (g.id === activeGenre ? ' active' : '');
+    p.id = 'gp-' + g.id;
+
+    (FESTIVALS[g.id] || []).forEach(f => {
+      const c = document.createElement('div');
+      c.className = 'fcard';
+      var hotBadge = f.hot ? '<span class="fbadge trending">⚡ TRENDING</span>' : '';
+      c.innerHTML = 
+        '<div class="fcard-date">' + f.date + '</div>' +
+        '<div class="fcard-name">' + f.name + '</div>' +
+        '<div class="fcard-loc">⬡ ' + f.loc + '</div>' +
+        '<div class="fcard-meta">' +
+          '<span class="fbadge">' + f.cap + '</span>' +
+          hotBadge +
+        '</div>' +
+        '<div class="fcard-cta">VIEW DETAILS →</div>';
+      
+      c.addEventListener('click', () => {
+        openModal(f, g.name);
+      });
+      p.appendChild(c);
+    });
+
+    panelsEl.appendChild(p);
+  });
+}
+
+function switchGenre(id) {
+  activeGenre = id;
+  document.querySelectorAll('.gtab').forEach(t => t.classList.toggle('active', t.dataset.id === id));
+  document.querySelectorAll('.gpanel').forEach(p => p.classList.toggle('active', p.id === 'gp-' + id));
+}
+
+/* ══════════════════════════════════════════
+   CALENDAR & SCHEDULER
+══════════════════════════════════════════ */
+const NOW = new Date();
+let cY = NOW.getFullYear(), cM = NOW.getMonth();
+const MNAMES = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+function gigDates(y, m) {
+  const s = new Set(); const seed = y * 100 + m;
+  for (let i = 0; i < 9; i++) s.add(((seed*(i+7)*17) % 27) + 1);
+  return s;
+}
+
+function generateAnnualGigsForCity(city, baseLat = 51.5074, baseLon = -0.1278) {
+  activeCityName = city.toUpperCase();
+  activeCityBaseCoords = { lat: baseLat, lon: baseLon };
+  activeCityGigs = [];
+  
+  let seed = 0;
+  for(let i=0; i<city.length; i++) seed += city.charCodeAt(i);
+
+  const totalGigs = 25 + (seed % 15);
+  for(let i = 0; i < totalGigs; i++) {
+    const monthIdx = (seed + i * 7) % 12;
+    const day = ((seed + i * 13) % 28) + 1;
+    const artistObj = SCHEDULER_ARTISTS[(seed + i * 3) % SCHEDULER_ARTISTS.length];
+    const classification = EVENT_CLASSIFICATIONS[(seed + i * 11) % EVENT_CLASSIFICATIONS.length];
+    
+    const arenaName = ARENAS_DATABASE[(seed + i) % ARENAS_DATABASE.length].name;
+    
+    // Offset each venue slightly so they populate realistic distinct coordinate pinpoints
+    const offsetLat = baseLat + ((seed + i * 17) % 100 - 50) * 0.003;
+    const offsetLon = baseLon + ((seed + i * 29) % 100 - 50) * 0.003;
+    
+    activeCityGigs.push({
+      id: "gig-" + i + "-" + seed,
+      day: String(day).padStart(2, '0'),
+      month: monthIdx,
+      mo: MNAMES[monthIdx],
+      artist: artistObj.artist,
+      venue: `${arenaName}, ${city}`,
+      genre: artistObj.genre,
+      classification: classification,
+      url: artistObj.url,
+      lat: offsetLat,
+      lon: offsetLon
+    });
+  }
+
+  activeCityGigs.sort((a,b) => (a.month - b.month) || (parseInt(a.day) - parseInt(b.day)));
+}
+
+function getGigsForActiveMonth() {
+  return activeCityGigs.filter(g => g.month === cM);
+}
+
+function drawCal() {
+  document.getElementById('calMonth').textContent = MNAMES[cM] + ' ' + cY;
+  const g = document.getElementById('calGrid');
+  
+  const currentMonthGigs = getGigsForActiveMonth();
+  const gigDaysSet = new Set(currentMonthGigs.map(g => parseInt(g.day)));
+
+  const fd = new Date(cY, cM, 1).getDay();
+  const dim = new Date(cY, cM + 1, 0).getDate();
+  const days = ['SU','MO','TU','WE','TH','FR','SA'];
+  
+  g.innerHTML = days.map(d => '<div class="cdh">' + d + '</div>').join('');
+  
+  for (let i = 0; i < fd; i++) {
+    g.innerHTML += '<div class="cd empty"></div>';
+  }
+  
+  for (let d = 1; d <= dim; d++) {
+    const isToday = d === NOW.getDate() && cM === NOW.getMonth() && cY === NOW.getFullYear();
+    const hasGig = gigDaysSet.has(d);
+    
+    var cdClass = "cd";
+    if (isToday) cdClass += " today";
+    if (hasGig) cdClass += " hasgig";
+    
+    g.innerHTML += '<div class="' + cdClass + '" onclick="focusOnGigDate(' + d + ')">' + d + '</div>';
+  }
+}
+
+function focusOnGigDate(day) {
+  const targetDay = String(day).padStart(2, '0');
+  const matchedGigs = activeCityGigs.filter(g => g.month === cM && g.day === targetDay);
+  if(matchedGigs.length > 0) {
+    renderGigsList(matchedGigs, `${MNAMES[cM]} ${day} GIGS — ${activeCityName}`);
+  } else {
+    renderGigsList(getGigsForActiveMonth(), `${MNAMES[cM]} GIGS — ${activeCityName}`);
+  }
+}
+
+function shiftMonth(dir) {
+  cM += dir;
+  if (cM > 11) { cM = 0; cY++; }
+  if (cM < 0)  { cM = 11; cY--; }
+  drawCal();
+  renderGigsList(getGigsForActiveMonth(), `${MNAMES[cM]} GIGS — ${activeCityName}`);
+}
+
+function renderGigsList(gigsArr, titleOverride) {
+  document.getElementById('gigHd').textContent = titleOverride || `UPCOMING GIGS — ${activeCityName}`;
+  const listEl = document.getElementById('gigList');
+  
+  if (gigsArr.length === 0) {
+    listEl.innerHTML = `
+      <div style="font-family:var(--fm);font-size:.7rem;color:var(--ghost);padding:1.5rem 0;text-align:center;">
+        NO REGISTERED GIGS FOUND FOR THIS TARGET CHRONO RANGE.
+      </div>`;
+    return;
+  }
+
+  listEl.innerHTML = gigsArr.map(g => {
+    return '<div class="gig-item" onclick="openGigModal(\'' + g.id + '\')">' +
+      '<div class="gig-db">' +
+        '<div class="gig-dd">' + g.day + '</div>' +
+        '<div class="gig-dm">' + g.mo + '</div>' +
+      '</div>' +
+      '<div class="gig-info">' +
+        '<div class="gig-artist">' + g.artist + '</div>' +
+        '<div class="gig-venue">' + g.venue + '</div>' +
+      '</div>' +
+      '<div class="gig-tag">' + g.genre + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   THREE.JS INTERACTIVE GLOBE (NASA OVERHAUL)
+══════════════════════════════════════════ */
+let scene, camera, renderer, globe, atmos;
+let spinning = true;
+let targetLat = 0, targetLon = 0;
+let markerGroup = null;
+let cityGroup = null; 
+
+let isDragging = false;
+let previousMousePosition = { x: 0, y: 0 };
+
+// Dynamic Double-Action zoom parameters (Distance + FOV Scaling)
+let targetCameraZ = 2.8;
+let targetFOV = 40;
+
+function buildEarthTexture() {
+  const W = 2048, H = 1024;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+
+  const og = ctx.createLinearGradient(0, 0, 0, H);
+  og.addColorStop(0, '#010b1c');
+  og.addColorStop(0.5, '#021325');
+  og.addColorStop(1, '#010810');
+  ctx.fillStyle = og;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(0,180,255,.14)';
+  ctx.lineWidth = 1;
+  for (let lat = -80; lat <= 80; lat += 20) {
+    const y = ((90-lat)/180)*H;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+  for (let lon = -180; lon <= 180; lon += 20) {
+    const x = ((lon+180)/360)*W;
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+  }
+
+  const ll = (lat, lon) => [((lon+180)/360)*W, ((90-lat)/180)*H];
+
+  const drawLand = (pts, fill, stroke) => {
+    ctx.beginPath();
+    let first = true;
+    pts.forEach(p => {
+      const [x,y] = ll(...p);
+      if (first) { ctx.moveTo(x,y); first=false; } else ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.2; ctx.stroke(); }
+  };
+
+  const lf = 'rgba(6,28,58,.94)';
+  const ls = 'rgba(0,100,190,.45)';
+
+  /* N.America */
+  drawLand([[70,-138],[68,-100],[62,-66],[50,-55],[44,-60],[38,-75],[25,-80],[10,-85],[8,-77],[15,-60],[25,-78],[32,-80],[42,-70],[48,-68],[56,-60],[62,-66],[68,-80],[72,-90],[70,-110],[68,-130],[70,-138]],lf,ls);
+  /* S.America */
+  drawLand([[12,-72],[8,-62],[3,-50],[-5,-35],[-15,-39],[-25,-48],[-35,-57],[-45,-65],[-55,-65],[-55,-68],[-45,-75],[-35,-72],[-25,-70],[-15,-75],[-5,-78],[0,-78],[5,-77],[8,-77],[12,-72]],lf,ls);
+  /* Europe */
+  drawLand([[71,28],[65,15],[60,5],[53,8],[50,3],[45,0],[38,28],[43,28],[50,30],[58,25],[65,28],[70,22],[71,28]],lf,ls);
+  /* Africa */
+  drawLand([[37,10],[30,32],[20,37],[10,42],[0,42],[-10,38],[-25,33],[-35,18],[-34,26],[-20,14],[-5,10],[5,2],[10,-3],[5,-8],[0,-8],[10,0],[15,-5],[20,-16],[30,-10],[35,0],[37,10]],lf,ls);
+  /* Asia */
+  drawLand([[72,45],[65,70],[55,100],[45,120],[38,130],[28,122],[20,110],[10,100],[0,103],[5,100],[15,103],[22,90],[30,78],[38,48],[42,40],[50,30],[58,38],[65,40],[72,45]],lf,ls);
+  /* Australia */
+  drawLand([[-20,114],[-30,115],[-38,140],[-38,148],[-32,152],[-22,150],[-16,136],[-12,130],[-15,120],[-20,114]],lf,ls);
+
+  /* Ice Caps */
+  const iceCap = 'rgba(8,30,60,.6)';
+  drawLand([[90,-180],[70,-180],[70,180],[90,180]],[iceCap],'');
+  drawLand([[-90,-180],[-70,-180],[-70,180],[-90,180]],[iceCap],'');
+
+  return new THREE.CanvasTexture(cv);
+}
+
+function initGlobe() {
+  const canvas = document.getElementById('globeCanvas');
+  const cont = canvas.parentElement;
+
+  scene = new THREE.Scene();
+  // Near plane set ultra-low (0.005) to ensure structures stay fully visible on absolute extreme close ups
+  camera = new THREE.PerspectiveCamera(40, cont.clientWidth/cont.clientHeight, 0.005, 500);
+  camera.position.z = 2.8;
+
+  renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setSize(cont.clientWidth, cont.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  scene.add(new THREE.AmbientLight(0x0a2040, 1.2));
+  const pl = new THREE.PointLight(0x00e5ff, 2.5, 100);
+  pl.position.set(5, 3, 5); scene.add(pl);
+  
+  const pl2 = new THREE.PointLight(0x0e4080, 1.5, 100);
+  pl2.position.set(-5, -3, -5); scene.add(pl2);
+
+  const fallbackTex = buildEarthTexture();
+  globe = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 64, 32),
+    new THREE.MeshPhongMaterial({
+      map: fallbackTex,
+      shininess: 25,
+      specular: new THREE.Color(0x00aaff),
+      emissive: new THREE.Color(0x01122a),
+      emissiveIntensity: 0.6
+    })
+  );
+  scene.add(globe);
+
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.load(
+    'https://unpkg.com/three-globe/example/img/earth-night.jpg',
+    function(nasaTexture) {
+      globe.material.map = nasaTexture;
+      globe.material.emissiveMap = nasaTexture;
+      globe.material.emissive = new THREE.Color(0x00ffff);
+      globe.material.emissiveIntensity = 1.3;
+      globe.material.needsUpdate = true;
+      document.getElementById('hudStat').textContent = 'NASA_SAT_LINK_ACTIVE';
+    },
+    undefined,
+    function() {
+      console.warn("NASA sat-link offline. Using internal coordinates.");
+    }
+  );
+
+  const wm = new THREE.MeshBasicMaterial({color:0x00aaff, wireframe:true, transparent:true, opacity:.08});
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.004, 36, 18), wm));
+
+  atmos = new THREE.Mesh(
+    new THREE.SphereGeometry(1.15, 32, 16),
+    new THREE.MeshPhongMaterial({color:0x002255, transparent:true, opacity:.12, side:THREE.BackSide})
+  );
+  scene.add(atmos);
+
+  const sg = new THREE.BufferGeometry();
+  const sp = new Float32Array(2000 * 3);
+  for (let i=0; i<sp.length; i++) sp[i] = (Math.random() - .5) * 80;
+  sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({color:0x1a3050, size:0.04})));
+
+  setupGlobeInteractivity(cont);
+
+  window.addEventListener('resize', () => {
+    camera.aspect = cont.clientWidth / cont.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(cont.clientWidth, cont.clientHeight);
+  });
+
+  animGlobe();
+}
+
+function setupGlobeInteractivity(container) {
+  const onMouseDown = (e) => {
+    isDragging = true;
+    spinning = false;
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+  };
+
+  const onMouseMove = (e) => {
+    if (!isDragging) return;
+    
+    const deltaMove = {
+      x: e.clientX - previousMousePosition.x,
+      y: e.clientY - previousMousePosition.y
+    };
+
+    globe.rotation.y += deltaMove.x * 0.005;
+    globe.rotation.x += deltaMove.y * 0.005;
+
+    globe.rotation.x = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, globe.rotation.x));
+
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+  };
+
+  const onMouseUpOrLeave = () => {
+    isDragging = false;
+  };
+
+  container.addEventListener('mousedown', onMouseDown);
+  container.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUpOrLeave);
+  container.addEventListener('mouseleave', onMouseUpOrLeave);
+}
+
+function animGlobe() {
+  requestAnimationFrame(animGlobe);
+  
+  // Smoothly interpolate the camera's position and FOV to simulate close-up transitions
+  camera.position.z += (targetCameraZ - camera.position.z) * 0.065;
+  if (Math.abs(camera.fov - targetFOV) > 0.1) {
+    camera.fov += (targetFOV - camera.fov) * 0.065;
+    camera.updateProjectionMatrix();
+  }
+
+  if (spinning) {
+    globe.rotation.y += 0.0016;
+  } else if (!isDragging) {
+    const targetRotY = -targetLon * Math.PI / 180;
+    const targetRotX = targetLat * Math.PI / 180;
+
+    globe.rotation.y += (targetRotY - globe.rotation.y) * 0.07;
+    globe.rotation.x += (targetRotX - globe.rotation.x) * 0.07;
+  }
+
+  // Smoothly animate the holographic city scales
+  if (cityGroup) {
+    if (targetCameraZ < 1.4) {
+      // Zoomed in: Scale up structures
+      cityGroup.scale.x += (1.0 - cityGroup.scale.x) * 0.08;
+      cityGroup.scale.y += (1.0 - cityGroup.scale.y) * 0.08;
+      cityGroup.scale.z += (1.0 - cityGroup.scale.z) * 0.08;
+    } else {
+      // Zoomed out: Scale down to keep planet look neat
+      cityGroup.scale.x += (0.001 - cityGroup.scale.x) * 0.12;
+      cityGroup.scale.y += (0.001 - cityGroup.scale.y) * 0.12;
+      cityGroup.scale.z += (0.001 - cityGroup.scale.z) * 0.12;
+    }
+  }
+
+  atmos.rotation.y = globe.rotation.y * 0.94;
+  renderer.render(scene, camera);
+}
+
+function getVectorFromLatLng(lat, lon, radius = 1) {
+  const phi = (90 - lat) * Math.PI / 180;
+  const theta = (lon + 180) * Math.PI / 180;
+  return new THREE.Vector3(
+    Math.sin(phi) * Math.cos(theta) * radius,
+    Math.cos(phi) * radius,
+    Math.sin(phi) * Math.sin(theta) * radius
+  );
+}
+
+/* ══════════════════════════════════════════
+   REAL EARTH STRUCTURAL Blueprint Extruder (OSM API Integration)
+══════════════════════════════════════════ */
+async function buildRealEarthCity(lat, lon) {
+  if (cityGroup) globe.remove(cityGroup);
+  cityGroup = new THREE.Group();
+
+  const basePos = getVectorFromLatLng(lat, lon, 1.0);
+  cityGroup.position.copy(basePos);
+
+  // Align holographic group perpendicular to the sphere surface normal
+  const normal = basePos.clone().normalize();
+  const localUp = new THREE.Vector3(0, 1, 0);
+  cityGroup.quaternion.setFromUnitVectors(localUp, normal);
+
+  globe.add(cityGroup);
+
+  // Unified materials for structural outlines
+  const buildingMaterial = new THREE.MeshPhongMaterial({
+    color: 0x0088cc,
+    emissive: 0x001d33,
+    transparent: true,
+    opacity: 0.65,
+    shininess: 40,
+    flatShading: true,
+    side: THREE.DoubleSide
+  });
+
+  const lineMaterial = new THREE.LineBasicMaterial({
+    color: 0x00e5ff,
+    transparent: true,
+    opacity: 0.9
+  });
+
+  try {
+    document.getElementById('hudStat').textContent = 'FETCHING_SAT_GEOMETRY...';
+    
+    // Query OSM Overpass API dynamically for ways mapped as buildings around clicked venue
+    const query = '[out:json][timeout:15];\n' +
+      '(\n' +
+      '  way["building"](around:250, ' + lat + ', ' + lon + ');\n' +
+      ');\n' +
+      'out body;\n' +
+      '>;\n' +
+      'out skel qt;';
+
+    const response = await fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      body: query
+    });
+    
+    if (!response.ok) throw new Error('OSM network error');
+    
+    const osmData = await response.json();
+    
+    const nodes = {};
+    if (osmData && osmData.elements) {
+      osmData.elements.forEach(el => {
+        if (el.type === 'node') {
+          nodes[el.id] = { lat: el.lat, lon: el.lon };
+        }
+      });
+
+      let waysLoaded = 0;
+
+      // Extract geometry pathways
+      osmData.elements.forEach(el => {
+        if (el.type === 'way' && el.tags && el.tags.building) {
+          const shapePoints = [];
+          let valid = true;
+          
+          el.nodes.forEach(nodeId => {
+            const node = nodes[nodeId];
+            if (node) {
+              // Flat offset in relative tangent meter scale centered on base coordinates
+              const dLat = node.lat - lat;
+              const dLon = node.lon - lon;
+              const radLat = lat * Math.PI / 180;
+              const x = dLon * Math.cos(radLat) * 111320;
+              const z = dLat * 110540;
+
+              // Convert meter offsets directly to globe space scale coordinates
+              const localX = x * 0.00035;
+              const localZ = z * 0.00035;
+              shapePoints.push(new THREE.Vector2(localX, localZ));
+            } else {
+              valid = false;
+            }
+          });
+
+          if (valid && shapePoints.length > 2) {
+            waysLoaded++;
+            const shape = new THREE.Shape(shapePoints);
+            
+            // Derive height based on metadata (fallback to random skyscrapers if missing)
+            let heightInMeters = 15;
+            if (el.tags.height) {
+              const h = parseFloat(el.tags.height);
+              if (!isNaN(h)) heightInMeters = h;
+            } else if (el.tags['building:levels']) {
+              const l = parseFloat(el.tags['building:levels']);
+              if (!isNaN(l)) heightInMeters = l * 3.5;
+            } else {
+              heightInMeters = 10 + (el.id % 30); // organic variation
+            }
+
+            const localHeight = heightInMeters * 0.00035;
+
+            const geom = new THREE.ExtrudeGeometry(shape, {
+              depth: localHeight,
+              bevelEnabled: false
+            });
+
+            const mesh = new THREE.Mesh(geom, buildingMaterial);
+            mesh.rotation.x = -Math.PI / 2; // Orient upright relative to ground tangent plane
+
+            // Outlines for holographic projection
+            const edges = new THREE.EdgesGeometry(geom);
+            const line = new THREE.LineSegments(edges, lineMaterial);
+            mesh.add(line);
+
+            cityGroup.add(mesh);
+          }
+        }
+      });
+
+      if (waysLoaded > 0) {
+        document.getElementById('hudStat').textContent = `REAL_GEOMETRY_LOCKED`;
+        cityGroup.scale.set(0.001, 0.001, 0.001);
+        return;
+      }
+    }
+    
+    // Throw error to trigger procedural fallback if no buildings parsed
+    throw new Error('No physical structures found');
+
+  } catch (error) {
+    console.warn("Overpass sat-link failed or offline. Reverting to structural procedural mapping.");
+    document.getElementById('hudStat').textContent = 'TACTICAL_FALLBACK';
+    buildProceduralCityFallback(buildingMaterial, lineMaterial);
+  }
+}
+
+// Seamless procedural city block generation for safety
+function buildProceduralCityFallback(buildingMaterial, lineMaterial) {
+  const domeRadius = 0.016;
+  const domeGeo = new THREE.SphereGeometry(domeRadius, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+  const domeMat = new THREE.MeshPhongMaterial({
+    color: 0x00ffcc,
+    emissive: 0x003322,
+    transparent: true,
+    opacity: 0.8
+  });
+  const arenaDome = new THREE.Mesh(domeGeo, domeMat);
+  cityGroup.add(arenaDome);
+
+  const ringGeo = new THREE.RingGeometry(domeRadius + 0.005, domeRadius + 0.015, 24);
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: 0x00aaff,
+    transparent: true,
+    opacity: 0.45,
+    wireframe: true,
+    side: THREE.DoubleSide
+  });
+  const arenaRing = new THREE.Mesh(ringGeo, ringMat);
+  arenaRing.rotation.x = Math.PI / 2;
+  cityGroup.add(arenaRing);
+
+  const buildingCount = 28;
+  for (let i = 0; i < buildingCount; i++) {
+    const h = 0.02 + Math.random() * 0.065;
+    const w = 0.005 + Math.random() * 0.008;
+    const d = 0.005 + Math.random() * 0.008;
+
+    const bGeo = new THREE.BoxGeometry(w, h, d);
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 0.022 + Math.random() * 0.05;
+    const localX = Math.cos(angle) * dist;
+    const localZ = Math.sin(angle) * dist;
+
+    const bMesh = new THREE.Mesh(bGeo, buildingMaterial);
+    bMesh.position.set(localX, h / 2, localZ);
+
+    const edges = new THREE.EdgesGeometry(bGeo);
+    const line = new THREE.LineSegments(edges, lineMaterial);
+    bMesh.add(line);
+
+    cityGroup.add(bMesh);
+  }
+  cityGroup.scale.set(0.001, 0.001, 0.001);
+}
+
+function spinGlobeTo(lat, lon, zoomIn = false) {
+  spinning = false;
+  isDragging = false;
+  targetLat = lat;
+  targetLon = lon;
+  
+  // Tactical zoom-in to surface bounds showing structural architecture
+  targetCameraZ = zoomIn ? 1.04 : 2.8; 
+  targetFOV = zoomIn ? 15 : 40; // Double-action optical tighten
+}
+
+function placeMarker(lat, lon) {
+  if (markerGroup) globe.remove(markerGroup);
+  markerGroup = new THREE.Group();
+
+  const phi = (90 - lat) * Math.PI / 180;
+  const theta = (lon + 180) * Math.PI / 180;
+  
+  const x = Math.sin(phi) * Math.cos(theta);
+  const y = Math.cos(phi);
+  const z = Math.sin(phi) * Math.sin(theta);
+
+  const dot = new THREE.Mesh(
+    new THREE.SphereGeometry(0.016, 8, 8),
+    new THREE.MeshBasicMaterial({color:0x00e5ff})
+  );
+  dot.position.set(x * 1.01, y * 1.01, z * 1.01);
+  markerGroup.add(dot);
+
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(0.02, 0.035, 16),
+    new THREE.MeshBasicMaterial({color:0x00aaff, transparent:true, opacity:.75, side:THREE.DoubleSide})
+  );
+  ring.position.set(x * 1.012, y * 1.012, z * 1.012);
+  ring.lookAt(new THREE.Vector3(x * 3, y * 3, z * 3));
+  markerGroup.add(ring);
+
+  globe.add(markerGroup);
+}
+
+/* ══════════════════════════════════════════
+   WEATHER DIAGNOSTICS SYSTEMS
+══════════════════════════════════════════ */
+async function fetchMeteoDiagnostics(lat, lon, elementId, isLocalPill = false) {
+  try {
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&current_weather=true";
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data && data.current_weather) {
+      const temp = data.current_weather.temperature;
+      const code = data.current_weather.weathercode;
+      const statusStr = WEATHER_CODES[code] || "STABLE CONDITIONS";
+      
+      if (isLocalPill) {
+        document.getElementById(elementId).textContent = "[LOCAL_NODE: " + temp + "°C - " + statusStr + "]";
+      } else {
+        document.getElementById(elementId).textContent = temp + "°C - " + statusStr;
+      }
+    } else {
+      document.getElementById(elementId).textContent = "DIAGNOSTICS_OFFLINE";
+    }
+  } catch(e) {
+    document.getElementById(elementId).textContent = "COMM_LINK_ERROR";
+  }
+}
+
+// Automatically detect visitor location coordinates to stream atmospheric data on start
+function initLocalMeteo() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        fetchMeteoDiagnostics(pos.coords.latitude, pos.coords.longitude, "localWeatherPill", true);
+      },
+      () => {
+        // Safe default: London sector override
+        fetchMeteoDiagnostics(51.5074, -0.1278, "localWeatherPill", true);
+      }
+    );
+  } else {
+    fetchMeteoDiagnostics(51.5074, -0.1278, "localWeatherPill", true);
+  }
+}
+
+/* ══════════════════════════════════════════
+   CITY DIRECTORY SEARCH MODULE
+══════════════════════════════════════════ */
+async function doSearch() {
+  const val = document.getElementById('cityInput').value.trim();
+  if (!val) return;
+
+  const info = document.getElementById('locInfo');
+  info.innerHTML = `<span class="spin"></span> Searching Tactical Network Coordinates…`;
+  info.className = 'loc-info';
+
+  try {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&limit=1`,
+      {headers:{'Accept-Language':'en'}}
+    );
+    const d = await r.json();
+
+    if (d.length) {
+      const {lat, lon, display_name} = d[0];
+      const la = parseFloat(lat), lo = parseFloat(lon);
+      
+      const parts = display_name.split(',');
+      const city = parts[0].toUpperCase();
+      const country = (parts[parts.length - 1] || '').trim();
+
+      info.textContent = `✓ LOCK CONFIRMED // ${city}, ${country}`;
+      info.className = 'loc-info ok';
+
+      // Pivot and lock coordinates
+      spinGlobeTo(la, lo, false);
+      placeMarker(la, lo);
+
+      document.getElementById('globeCity').textContent = city;
+      document.getElementById('globeCity').classList.add('show');
+      document.getElementById('globeCoord').textContent =
+        Math.abs(la).toFixed(3) + "° " + (la >= 0 ? "N" : "S") + "  " + Math.abs(lo).toFixed(3) + "° " + (lo >= 0 ? "E" : "W");
+
+      document.getElementById('hudLat').textContent = la.toFixed(4);
+      document.getElementById('hudLon').textContent = lo.toFixed(4);
+      document.getElementById('hudStat').textContent = 'GRID_LOCKED';
+
+      // Stream current meteorological conditions for target search sector
+      document.getElementById('hudWeather').textContent = "PULLING DATA...";
+      fetchMeteoDiagnostics(la, lo, "hudWeather");
+
+      generateAnnualGigsForCity(parts[0], la, lo);
+      drawCal();
+      renderGigsList(getGigsForActiveMonth());
+
+    } else {
+      info.textContent = '✗ LOCATION OUTSIDE NETWORK SECTOR. REDEFINE QUERY.';
+      info.className = 'loc-info err';
+    }
+  } catch(e) {
+    info.textContent = '✗ INTER-GRID CONNECTION ERROR. CHECK SYSTEM TRANSCEIVERS.';
+    info.className = 'loc-info err';
+  }
+}
+
+/* ══════════════════════════════════════════
+   FESTIVAL HIGHLIGHT CAROUSEL
+══════════════════════════════════════════ */
+const HL_DURATION  = 4200;
+const HL_ENTER_MS  = 900;
+const HL_LEAVE_MS  = 750;
+
+const HL_POOL = (() => {
+  const pool = [];
+  Object.entries(FESTIVALS).forEach(([genreId, list]) => {
+    const genre = GENRES.find(g => g.id === genreId);
+    list.forEach(f => pool.push({ ...f, genre: genre ? genre.name.toUpperCase() : genreId.toUpperCase(), rawGenre: genreId }));
+  });
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = (i * 1103515245 + 12345) % (i + 1);
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool;
+})();
+
+let hlIndex = 0;
+let hlTimer = null;
+
+function buildHlSlide(item, idx) {
+  const el = document.createElement('div');
+  el.className = 'hl-slide';
+  
+  const eventNameHtml = item.name.split(' ').map((w, i) => {
+    return i === 0 ? '<strong>' + w + '</strong>' : '<span>' + w + '</span>';
+  }).join(' ');
+
+  el.innerHTML = `
+    <div class="hl-bg-name">${item.name}</div>
+    <div class="hl-detail">
+      <div class="hl-genre-tag">// ${item.genre}</div>
+      <div class="hl-event-name">
+        ${eventNameHtml}
+      </div>
+      <div class="hl-meta-row">
+        <span class="hl-date">${item.date}</span>
+        <div class="hl-cap-dot"></div>
+        <span class="hl-loc">${item.loc}</span>
+        ${item.hot ? '<div class="hl-cap-dot" style="background:rgba(255,107,53,.5)"></div><span style="font-family:var(--fm);font-size:.6rem;letter-spacing:.1em;color:rgba(255,107,53,.4)">TRENDING</span>' : ''}
+      </div>
+    </div>
+    <div class="hl-index">${String(idx + 1).padStart(2,'0')}</div>
+  `;
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', () => {
+    openModal(item, item.genre);
+  });
+  return el;
+}
+
+function hlShow(item, idx) {
+  const container = document.getElementById('fest-highlights');
+  const el = buildHlSlide(item, idx);
+  container.appendChild(el);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      el.classList.add('hl-enter');
+    });
+  });
+
+  setTimeout(() => {
+    el.classList.remove('hl-enter');
+    el.classList.add('hl-hold');
+
+    hlTimer = setTimeout(() => {
+      el.classList.remove('hl-hold');
+      el.classList.add('hl-leave');
+
+      setTimeout(() => { el.remove(); }, HL_LEAVE_MS + 100);
+
+      hlIndex = (hlIndex + 1) % HL_POOL.length;
+      hlTimer = setTimeout(() => hlShow(HL_POOL[hlIndex], hlIndex), HL_LEAVE_MS - 200);
+
+    }, HL_DURATION);
+  }, HL_ENTER_MS);
+}
+
+function initHighlights() {
+  hlShow(HL_POOL[hlIndex], hlIndex);
+}
+
+/* ══════════════════════════════════════════
+   FESTIVAL MODAL
+══════════════════════════════════════════ */
+let fModalParticleRAF = null;
+
+function openModal(f, genreName) {
+  const modal   = document.getElementById('fmodal');
+  const imgEl   = document.getElementById('fmodal-img');
+  const badge   = document.getElementById('fmodal-genre-badge');
+  const trbadge = document.getElementById('fmodal-trending-badge');
+  const nameEl  = document.getElementById('fmodal-name');
+  const eyeEl   = document.getElementById('fmodal-eyebrow');
+  const metaLoc = document.getElementById('fmodal-loc');
+  const metaCap = document.getElementById('fmodal-cap');
+  const descEl  = document.getElementById('fmodal-desc');
+  const siteEl  = document.getElementById('fmodal-site');
+  const ytEl    = document.getElementById('fmodal-yt');
+  const twEl    = document.getElementById('fmodal-tw');
+  const igEl    = document.getElementById('fmodal-ig');
+
+  badge.textContent = '// ' + genreName.toUpperCase();
+  nameEl.textContent = f.name;
+  eyeEl.textContent  = f.date + ' — ' + f.loc;
+  
+  metaLoc.textContent = f.loc;
+  metaCap.textContent = 'CAP ' + f.cap;
+  descEl.textContent = f.desc || 'An unforgettable celebration of music, art, and culture.';
+  document.getElementById('fmodal-panel').setAttribute('data-name', f.name);
+
+  if (f.img) {
+    imgEl.style.backgroundImage = "url('" + f.img + "')";
+  } else {
+    imgEl.style.backgroundImage = 'linear-gradient(135deg,#020d20,#041530,#010810)';
+  }
+
+  siteEl.href = f.site || '#';
+  ytEl.href   = f.yt   || '#';
+
+  if (f.socials) {
+    twEl.textContent = f.socials.tw || '@3hrillmusic';
+    igEl.textContent = f.socials.ig || '@3hrillmusic';
+    
+    const cleanTw = (f.socials.tw||'').replace('@','').replace('#','');
+    const cleanIg = (f.socials.ig||'').replace('@','').replace('#','');
+    
+    twEl.href = "https://twitter.com/" + cleanTw;
+    igEl.href = "https://instagram.com/" + cleanIg;
+  }
+
+  if (f.hot) {
+    trbadge.style.display = 'block';
+    trbadge.classList.add('show');
+  } else {
+    trbadge.style.display = 'none';
+    trbadge.classList.remove('show');
+  }
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  startFModalParticles();
+
+  imgEl.style.animation = 'none';
+  imgEl.offsetHeight; 
+  imgEl.style.animation = '';
+}
+
+function closeModal() {
+  const modal = document.getElementById('fmodal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('fmodal-trending-badge').classList.remove('show');
+  stopFModalParticles();
+  
+  setTimeout(() => {
+    document.getElementById('fmodal-img').style.backgroundImage = '';
+  }, 380);
+}
+
+function startFModalParticles() {
+  const cv = document.getElementById('fmodal-particles');
+  const ctx = cv.getContext('2d');
+  cv.width  = window.innerWidth;
+  cv.height = window.innerHeight;
+
+  const PX = Array.from({length:35}, () => ({
+    x: Math.random() * cv.width,
+    y: cv.height + 10 + Math.random() * 80,
+    r: 0.6 + Math.random() * 1.5,
+    vx: (Math.random() - .5) * 0.4,
+    vy: -(0.3 + Math.random() * 0.9),
+    a: 0.12 + Math.random() * 0.4,
+    hue: 180 + Math.random() * 50,
+  }));
+
+  function frame() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    PX.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.y < -10) { p.y = cv.height + 10; p.x = Math.random() * cv.width; }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue},85%,65%,${p.a})`;
+      ctx.fill();
+    });
+    fModalParticleRAF = requestAnimationFrame(frame);
+  }
+
+  stopFModalParticles();
+  fModalParticleRAF = requestAnimationFrame(frame);
+}
+
+function stopFModalParticles() {
+  if (fModalParticleRAF) { cancelAnimationFrame(fModalParticleRAF); fModalParticleRAF = null; }
+  const cv = document.getElementById('fmodal-particles');
+  if (cv) cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+}
+
+/* ══════════════════════════════════════════
+   GIGS INTERACTIVE DETAIL MODAL & AERIAL ZOOM
+══════════════════════════════════════════ */
+function openGigModal(gigId) {
+  const gig = activeCityGigs.find(g => g.id === gigId);
+  if(!gig) return;
+
+  // Render modal details
+  document.getElementById('gmodalType').textContent = gig.classification.toUpperCase();
+  document.getElementById('gmodalTitle').textContent = gig.artist.toUpperCase();
+  document.getElementById('gmodalVenue').textContent = gig.venue;
+  document.getElementById('gmodalDate').textContent = gig.day + " " + gig.mo + " 2025";
+  document.getElementById('gmodalGenre').textContent = gig.genre.toUpperCase();
+  
+  document.getElementById('gmodalTicketBtn').href = "https://www.google.com/search?q=" + encodeURIComponent(gig.artist + ' tickets ' + gig.venue);
+  document.getElementById('gmodalSiteBtn').href = gig.url;
+
+  // Smoothly open left-anchored modal panel
+  document.getElementById('gmodal').classList.add('open');
+
+  // Trigger high-resolution tactical 3D zoom and face matching target coordinate offset
+  spinGlobeTo(gig.lat, gig.lon, true);
+  placeMarker(gig.lat, gig.lon);
+
+  // Spawns REAL geographic coordinates extrusion blueprints from OpenStreetMap
+  buildRealEarthCity(gig.lat, gig.lon);
+
+  // Update HUD terminal with real-time coordinate matching telemetry
+  document.getElementById('hudLat').textContent = gig.lat.toFixed(4);
+  document.getElementById('hudLon').textContent = gig.lon.toFixed(4);
+  document.getElementById('hudStat').textContent = 'AERIAL_ZOOM_ACTIVE';
+
+  // Stream current weather readouts for specific pinpointed gig coordinates
+  document.getElementById('hudWeather').textContent = "STREAMPATH ACQUIRED...";
+  fetchMeteoDiagnostics(gig.lat, gig.lon, "hudWeather");
+}
+
+function closeGigModal() {
+  document.getElementById('gmodal').classList.remove('open');
+
+  // Smoothly revert globe back to orbital view and resume idle rotation
+  targetCameraZ = 2.8;
+  targetFOV = 40;
+  
+  setTimeout(() => {
+    if (document.getElementById('gmodal').classList.contains('open') === false) {
+      spinning = true;
+      document.getElementById('hudStat').textContent = 'NASA_SAT_LINK_ACTIVE';
+      // Recenter back to active searched city coordinates without deep zoom
+      targetLat = activeCityBaseCoords.lat;
+      targetLon = activeCityBaseCoords.lon;
+
+      // Wipe close-up physical buildings from outer space view for aesthetic clarity
+      if (cityGroup) {
+        globe.remove(cityGroup);
+        cityGroup = null;
+      }
+    }
+  }, 400);
+}
+
+/* ══════════════════════════════════════════
+   SLIDE 3: ARENAS MANAGEMENT
+══════════════════════════════════════════ */
+let blueprintCtx, blueprintInterval, blueprintAngle = 0;
+
+function populateArenasSelector() {
+  const sel = document.getElementById('arenaSelector');
+  sel.innerHTML = ARENAS_DATABASE.map(a => `<option value="${a.id}">${a.name} — ${a.loc.toUpperCase()}</option>`).join('');
+}
+
+function selectArena(id) {
+  selectedArenaId = id;
+  const arena = ARENAS_DATABASE.find(a => a.id === id);
+  if(!arena) return;
+
+  document.getElementById('arenaPhoto').style.backgroundImage = "url('" + arena.img + "')";
+  document.getElementById('arenaCapacity').textContent = `EST. CAPACITY: ${arena.cap}`;
+  document.getElementById('arenaName').textContent = arena.name;
+  document.getElementById('arenaLoc').textContent = `⬡ ${arena.loc}`;
+  document.getElementById('arenaDesc').textContent = arena.desc;
+
+  animateArenaHUDMeter('occupancy', arena.occupancy, '%');
+  animateArenaHUDMeter('decibel', arena.decibels, ' dB');
+
+  generateArenaSchedule(arena);
+
+  initArenaBlueprintCanvas(arena.layoutSeed);
+}
+
+function animateArenaHUDMeter(metric, value, unit) {
+  const fillBar = document.getElementById(metric + "Bar");
+  const textVal = document.getElementById(metric + "Val");
+  
+  fillBar.style.width = '0%';
+  setTimeout(() => {
+    fillBar.style.width = `${Math.min(value, 100)}%`;
+    textVal.textContent = value + unit;
+  }, 100);
+}
+
+function generateArenaSchedule(arena) {
+  const container = document.getElementById('arenaSchedule');
+  container.innerHTML = '';
+
+  const seed = arena.layoutSeed;
+  const scheduleCount = 4;
+  const months = ['JAN','MAR','JUN','SEP','NOV'];
+
+  for(let i=0; i<scheduleCount; i++) {
+    const artistIdx = (seed + i * 5) % SCHEDULER_ARTISTS.length;
+    const day = ((seed + i * 9) % 28) + 1;
+    const mo = months[i % months.length];
+    const artist = SCHEDULER_ARTISTS[artistIdx];
+
+    const row = document.createElement('div');
+    row.className = 'schedule-row';
+    row.innerHTML = 
+      '<div class="schedule-date">' +
+        '<span>' + String(day).padStart(2,'0') + '</span>' +
+        '<span class="yr">' + mo + '</span>' +
+      '</div>' +
+      '<div class="schedule-event-info">' +
+        '<div class="schedule-artist">' + artist.artist + '</div>' +
+        '<div class="schedule-genre">// CLASSIFICATION: ' + artist.genre.toUpperCase() + '</div>' +
+      '</div>' +
+      '<button class="gtab" onclick="openDynamicBooking(\'' + artist.artist.replace(/'/g, "\\'") + '\', \'' + arena.name.replace(/'/g, "\\'") + '\', \'' + day + ' ' + mo + '\')" style="font-size:.55rem;padding:.3rem .6rem">BOOK SEAT</button>';
+    container.appendChild(row);
+  }
+}
+
+function openDynamicBooking(artist, arenaName, dateString) {
+  document.getElementById('gmodalType').textContent = "SEAT DISPATCH RESERVATION";
+  document.getElementById('gmodalTitle').textContent = artist.toUpperCase();
+  document.getElementById('gmodalVenue').textContent = `${arenaName} (SEC FLOOR_3A)`;
+  document.getElementById('gmodalDate').textContent = `${dateString} 2025`;
+  document.getElementById('gmodalGenre').textContent = "SYSTEM LIVE ACQUISITION";
+  
+  document.getElementById('gmodalTicketBtn').href = "https://www.google.com/search?q=" + encodeURIComponent(artist + " " + arenaName + " tickets");
+  document.getElementById('gmodalSiteBtn').href = '#';
+
+  document.getElementById('gmodal').classList.add('open');
+}
+
+function triggerArenaBooking() {
+  const arena = ARENAS_DATABASE.find(a => a.id === selectedArenaId);
+  openDynamicBooking("GLOBAL ARENA PASS", arena.name, "ANNUAL CYCLE");
+}
+
+function initArenaBlueprintCanvas(layoutSeed) {
+  const canvas = document.getElementById('arenaBlueprintCanvas');
+  blueprintCtx = canvas.getContext('2d');
+
+  if(blueprintInterval) clearInterval(blueprintInterval);
+
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+
+  blueprintAngle = 0;
+
+  function draw() {
+    blueprintCtx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    blueprintAngle += 0.005;
+
+    blueprintCtx.strokeStyle = 'rgba(0, 170, 255, 0.06)';
+    blueprintCtx.lineWidth = 1;
+    for(let i=0; i<canvas.width; i+=40) {
+      blueprintCtx.beginPath();
+      blueprintCtx.moveTo(i, 0);
+      blueprintCtx.lineTo(i, canvas.height);
+      blueprintCtx.stroke();
+    }
+
+    blueprintCtx.strokeStyle = 'rgba(0, 229, 255, 0.35)';
+    blueprintCtx.shadowBlur = 12;
+    blueprintCtx.shadowColor = '#00e5ff';
+
+    blueprintCtx.lineWidth = 1.5;
+    const ringCount = 3 + (layoutSeed % 3);
+    for(let r=0; r < ringCount; r++) {
+      const radiusX = 140 - (r * 25);
+      const radiusY = 60 - (r * 11);
+      
+      blueprintCtx.beginPath();
+      blueprintCtx.ellipse(cx, cy, radiusX, radiusY, blueprintAngle * (r % 2 === 0 ? 1 : -1), 0, Math.PI * 2);
+      blueprintCtx.stroke();
+    }
+
+    blueprintCtx.strokeStyle = 'rgba(0, 170, 255, 0.18)';
+    blueprintCtx.lineWidth = 1;
+    blueprintCtx.shadowBlur = 0;
+    
+    const spokeCount = 8 + (layoutSeed % 6);
+    for(let i=0; i < spokeCount; i++) {
+      const angle = (i * Math.PI * 2) / spokeCount + blueprintAngle;
+      const xStart = cx + Math.cos(angle) * 30;
+      const yStart = cy + Math.sin(angle) * 12;
+      const xEnd = cx + Math.cos(angle) * 140;
+      const yEnd = cy + Math.sin(angle) * 60;
+
+      blueprintCtx.beginPath();
+      blueprintCtx.moveTo(xStart, yStart);
+      blueprintCtx.lineTo(xEnd, yEnd);
+      blueprintCtx.stroke();
+    }
+
+    blueprintCtx.fillStyle = '#00e5ff';
+    blueprintCtx.shadowBlur = 15;
+    blueprintCtx.shadowColor = '#00e5ff';
+    blueprintCtx.beginPath();
+    blueprintCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+    blueprintCtx.fill();
+  }
+
+  blueprintInterval = setInterval(draw, 30);
+}
+
+
+
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+function goSlide(idx) {
+  const s = document.getElementById('slides');
+  const els = s.querySelectorAll('.slide');
+  if (els[idx]) els[idx].scrollIntoView({behavior:'smooth'});
+  updateNav(idx);
+}
+
+function updateNav(idx) {
+  const navFest = document.getElementById('nav-fest');
+  const navGigs = document.getElementById('nav-gigs');
+  const navArenas = document.getElementById('nav-arenas');
+  if (navFest) navFest.classList.toggle('active', idx===0);
+  if (navGigs) navGigs.classList.toggle('active', idx===1);
+  if (navArenas) navArenas.classList.toggle('active', idx===2);
+}
+
+document.getElementById('slides').addEventListener('scroll', function() {
+  const idx = Math.round(this.scrollTop / this.clientHeight);
+  updateNav(idx);
+});
+
+/* ══════════════════════════════════════════
+   SYSTEM CLOCK
+══════════════════════════════════════════ */
+function tick() {
+  const el = document.getElementById('liveTime');
+  if (!el) return;
+  const d = new Date();
+  el.textContent = d.toUTCString().slice(17,22) + ' UTC';
+}
+tick(); setInterval(tick, 1000);
+
+/* Close all open modals on ESC key */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeGigModal();
+  }
+});
+
+ 
+
+/* ══════════════════════════════════════════
+   INITIALIZATION PIPELINE
+══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  buildFestivals();
+  
+  // Initialize default core parameters (London Node)
+  generateAnnualGigsForCity('LONDON', 51.5074, -0.1278);
+  drawCal();
+  renderGigsList(getGigsForActiveMonth());
+  
+  populateArenasSelector();
+  selectArena('o2');
+
+  initGlobe();
+  
+  initHighlights();
+  
+  // Start Geolocation-based weather telemetry system
+  initLocalMeteo();
+});
+
+
+/* ════════════════════════════════════════════
+   FOOTER BREADCRUMB — SITE MAP + COOKIE CONSENT
+════════════════════════════════════════════ */
+
+// ── Site Map dropdown toggle ──
+function toggleSitemap(e) {
+    e.stopPropagation();
+    const btn = document.getElementById('sitemapBtn');
+    btn.classList.toggle('open');
+}
+
+// Close sitemap when clicking outside
+document.addEventListener('click', e => {
+    const btn = document.getElementById('sitemapBtn');
+    if (btn && !btn.contains(e.target)) {
+        btn.classList.remove('open');
+    }
+});
+
+// ── Cookie consent modal ──
+function openCookieConsent() {
+    document.getElementById('cookieOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCookieConsent() {
+    document.getElementById('cookieOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function cookieChoice(action) {
+    const analytics = document.getElementById('cookieAnalytics').checked;
+    const marketing = document.getElementById('cookieMarketing').checked;
+
+    const prefs = {
+        essential: true,
+        analytics: action === 'accept' ? true : action === 'reject' ? false : analytics,
+        marketing: action === 'accept' ? true : action === 'reject' ? false : marketing,
+        timestamp: new Date().toISOString()
+    };
+
+    // Store in localStorage
+    try {
+        localStorage.setItem('3hrill_cookie_prefs', JSON.stringify(prefs));
+    } catch (err) {
+        console.warn('Cookie preferences could not be saved:', err);
+    }
+
+    // Visual feedback
+    const messages = {
+        accept: '✓ All cookies accepted',
+        reject: '✓ Only essential cookies active',
+        save: '✓ Preferences saved'
+    };
+    showFooterToast(messages[action] || '✓ Saved');
+
+    closeCookieConsent();
+}
+
+// Small toast feedback
+function showFooterToast(msg) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 4.5rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        z-index: 800;
+        background: linear-gradient(140deg, rgba(240, 192, 64, .12), rgba(4, 10, 22, .98));
+        border: 1px solid rgba(240, 192, 64, .35);
+        color: var(--gold);
+        font-family: var(--fm);
+        font-size: .55rem;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        padding: .55rem 1.2rem;
+        border-radius: 2px;
+        opacity: 0;
+        transition: opacity .3s ease, transform .3s ease;
+        pointer-events: none;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+    `;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(10px)';
+        setTimeout(() => toast.remove(), 400);
+    }, 2400);
+}
+
+// ── Escape key closes cookie modal ──
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('cookieOverlay').classList.contains('open')) {
+        closeCookieConsent();
+    }
+});
+
+
+
+// ── Auto-restore saved preferences on load (optional) ──
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const saved = localStorage.getItem('3hrill_cookie_prefs');
+        if (saved) {
+            const prefs = JSON.parse(saved);
+            const analyticsEl = document.getElementById('cookieAnalytics');
+            const marketingEl = document.getElementById('cookieMarketing');
+            if (analyticsEl) analyticsEl.checked = !!prefs.analytics;
+            if (marketingEl) marketingEl.checked = !!prefs.marketing;
+        }
+    } catch (err) {
+        // no saved preferences
+    }
+});
+
+/* ═══════════════════════════════════════════
+   COOKIE CONSENT — controller
+═══════════════════════════════════════════ */
+(function () {
+    const STORAGE_KEY = '3hrill_cookie_consent_v1';
+
+    const banner = document.getElementById('consentBanner');
+    const prefsEl = document.getElementById('consentPrefs');
+    const openPrefsBtn = document.getElementById('openPrefs');
+    const savePrefsBtn = document.getElementById('savePrefs');
+    const acceptAllBtn = document.getElementById('acceptAll');
+    const rejectAllBtn = document.getElementById('rejectAll');
+    const switches = banner.querySelectorAll('.switch[data-cat]');
+
+    if (!banner) return;
+
+    /* ── Read / write consent state ── */
+    function readConsent() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (err) { return null; }
+    }
+
+    function writeConsent(state) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                essential: true,
+                analytics: !!state.analytics,
+                personalization: !!state.personalization,
+                timestamp: new Date().toISOString()
+            }));
+        } catch (err) { /* storage may be blocked — ignore */ }
+    }
+
+    /* ── Apply saved state to switches ── */
+    function applyState(state) {
+        switches.forEach(sw => {
+            const cat = sw.dataset.cat;
+            if (cat === 'essential') return;
+            const isOn = !!state[cat];
+            sw.classList.toggle('on', isOn);
+            sw.setAttribute('aria-checked', String(isOn));
+        });
+    }
+
+    /* ── Read current switch state ── */
+    function readSwitches() {
+        const out = { essential: true, analytics: false, personalization: false };
+        switches.forEach(sw => {
+            const cat = sw.dataset.cat;
+            if (cat === 'essential') return;
+            out[cat] = sw.classList.contains('on');
+        });
+        return out;
+    }
+
+    /* ── Toggle a switch ── */
+    function toggleSwitch(sw) {
+        if (sw.classList.contains('locked')) return;
+        const next = !sw.classList.contains('on');
+        sw.classList.toggle('on', next);
+        sw.setAttribute('aria-checked', String(next));
+    }
+
+    /* ── Open / close ── */
+    function openBanner() {
+        // Restore saved state if it exists
+        const saved = readConsent();
+        if (saved) applyState(saved);
+        banner.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeBanner() {
+        banner.classList.remove('open');
+        document.body.style.overflow = '';
+        // Reset customise panel to collapsed
+        prefsEl.classList.remove('open');
+        openPrefsBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Toast ── */
+    function toast(msg) {
+        const el = document.createElement('div');
+        el.className = 'consent-toast';
+        el.textContent = msg;
+        document.body.appendChild(el);
+        requestAnimationFrame(() => el.classList.add('show'));
+        setTimeout(() => {
+            el.classList.remove('show');
+            setTimeout(() => el.remove(), 400);
+        }, 2200);
+    }
+
+    /* ── Switch interactions ── */
+    switches.forEach(sw => {
+        sw.addEventListener('click', () => toggleSwitch(sw));
+        sw.addEventListener('keydown', e => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleSwitch(sw);
+            }
+        });
+    });
+
+    /* ── Customise toggle ── */
+    openPrefsBtn.addEventListener('click', () => {
+        const isOpen = prefsEl.classList.toggle('open');
+        openPrefsBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    /* ── Save preferences (custom) ── */
+    savePrefsBtn.addEventListener('click', () => {
+        const state = readSwitches();
+        writeConsent(state);
+        toast('✓ Preferences saved');
+        closeBanner();
+    });
+
+    /* ── Accept all ── */
+    acceptAllBtn.addEventListener('click', () => {
+        const state = { essential: true, analytics: true, personalization: true };
+        applyState(state);
+        writeConsent(state);
+        toast('✓ All cookies accepted');
+        closeBanner();
+    });
+
+    /* ── Reject all ── */
+    rejectAllBtn.addEventListener('click', () => {
+        const state = { essential: true, analytics: false, personalization: false };
+        applyState(state);
+        writeConsent(state);
+        toast('✓ Only essential cookies active');
+        closeBanner();
+    });
+
+    /* ── Escape closes ── */
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && banner.classList.contains('open')) {
+            closeBanner();
+        }
+    });
+
+    /* ── Backdrop click closes (if you want) — click outside card ── */
+    banner.addEventListener('click', e => {
+        if (e.target === banner) closeBanner();
+    });
+
+    /* ═══════════════════════════════════════════
+       Wire it to the FOOTER Cookie Preferences link
+    ═══════════════════════════════════════════ */
+    window.openCookieConsent = openBanner;
+
+    /* ═══════════════════════════════════════════
+       Auto-open on first visit (only if no choice saved)
+    ═══════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
+        const saved = readConsent();
+        if (!saved) {
+            setTimeout(openBanner, 1000);
+        }
+    });
+})();
+/* Close modal when clicking the backdrop */
+document.addEventListener('click', e => {
+    const overlay = document.getElementById('cookieOverlay');
+    if (overlay && e.target === overlay) closeCookieConsent();
+});
+
+/* Close modal with Escape key */
+document.addEventListener('keydown', e => {
+    const overlay = document.getElementById('cookieOverlay');
+    if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+        closeCookieConsent();
+    }
+});
+</script>
+
+</body>
+</html>

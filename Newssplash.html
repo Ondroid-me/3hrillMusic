@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3HRILL MUSIC — The Pulse</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --void:#020810;--deep:#040c1a;--dark:#060f1e;--panel:#0a1828;
+  --elec:#00aaff;--cyan:#00e5ff;--hot:#ff6b35;--gold:#f0c040;
+  --warm:#c084fc;--cold:#38bdf8;
+  --white:#e8f4ff;--muted:#3a6080;--ghost:#152535;
+  --fd:'Bebas Neue',sans-serif;--fb:'Barlow Condensed',sans-serif;
+  --fm:'JetBrains Mono',monospace;--fp:'Playfair Display',serif;
+}
+html,body{background:var(--void);color:var(--white);font-family:var(--fb);overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,170,255,.008) 3px,rgba(0,170,255,.008) 4px)}
+
+/* ── WRAPPER ── */
+.hmenu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 0;                /* don't let it push anything */
+    height: 0;
+    z-index: 999;
+}
+
+/* ── TOGGLE ── */
+.toggle {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;           /* above the rail */
+    transition: transform .15s ease, background .3s ease, box-shadow .3s ease;
+}
+.toggle:hover  { background: rgba(12,17,32,.96); }
+.toggle:active { transform: scale(.92); }
+
+.toggle .peg {
+    width: 1px;
+    height: 20px;
+    border-radius: 2px;
+    background: var(--steel);
+    transition: background .3s ease, height .3s ease, width .3s ease;
+}
+.toggle .peg[data-p="0"] { width: 2.8px; height: 24px; background: #e7c98f; }
+.toggle .peg[data-p="1"] { width: 2.4px; height: 22px; background: #8fcbff; }
+.toggle .peg[data-p="2"] { width: 2px;   height: 20px; background: #b8a5ff; }
+.toggle .peg[data-p="3"] { width: 1.6px; height: 18px; background: #7dd8c0; }
+.toggle .peg[data-p="4"] { width: 1.2px; height: 15px; background: #ff9a9a; }
+
+/* ── RAIL ── */
+.rail {
+    position: absolute;
+    top: 20px;
+    right: 177px;
+    width: 95px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 17px;       /* leave room for the toggle */
+    background: linear-gradient(to left, rgba(12,17,32,.95), rgba(12,17,32,0));
+    border-left: 1px solid rgba(63,224,255,.12);
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform .55s cubic-bezier(.22,1,.36,1),
+                opacity .35s ease,
+                visibility .35s ease;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+.rail.open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* ── ROW (the <a>) ── */
+.row {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    /* nothing else — no top/right offsets, those broke hit-testing */
+}
+
+/* the thin visual line */
+.string {
+    height: 2px;
+    width: 130px;
+    border-radius: 3px;
+    background: #e7c98f;
+    pointer-events: none;    /* clicks go to the <a> */
+    transition: height .3s ease, background .3s ease, filter .3s ease, box-shadow .3s ease;
+}
+.row:hover .string {
+    height: 48%;
+    background: #3fe0ff;
+    filter: drop-shadow(0 0 12px rgba(63,224,255,.7));
+    box-shadow: 0 0 20px rgba(63,224,255,.2);
+}
+
+/* ── FLYOUT ── */
+.flyout {
+    position: absolute;
+    right: calc(100% + 14px);
+    top: 50%;
+    transform: translate(10px, -50%);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 18px;
+    background: rgba(12,17,32,.95);
+    border: 1px solid rgba(63,224,255,.12);
+    border-right: 2px solid #3d4a63;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;    /* hidden by default */
+    transition: opacity .3s ease,
+                transform .3s cubic-bezier(.2,1,.3,1),
+                border-color .25s ease;
+    backdrop-filter: blur(8px);
+}
+
+/* show flyout when hovering EITHER the row OR the flyout itself */
+.row:hover .flyout,
+.flyout:hover {
+    opacity: 1;
+    transform: translate(0, -50%);
+    pointer-events: auto;    /* now clickable */
+    border-right-color: #3fe0ff;
+}
+
+/* ── TICKER ── */
+.ticker-bar{background:rgba(0,130,200,.06);border-bottom:1px solid rgba(0,130,200,.1);
+  padding:.35rem 2.5rem;display:flex;align-items:center;gap:1.2rem;overflow:hidden}
+.ticker-label{font-family:var(--fm);font-size:.52rem;letter-spacing:.2em;color:var(--elec);
+  background:rgba(0,180,255,.1);border:1px solid rgba(0,180,255,.2);border-radius:2px;
+  padding:.16rem .55rem;white-space:nowrap;flex-shrink:0}
+.ticker-content{font-family:var(--fm);font-size:.56rem;letter-spacing:.05em;color:var(--muted);
+  white-space:nowrap;overflow:hidden;animation:tick 50s linear infinite;flex:1}
+@keyframes tick{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+.pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--elec);
+  animation:pulseAnim 1.8s ease infinite;vertical-align:middle;margin-right:.4rem}
+@keyframes pulseAnim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+
+/* ── PAGE ── */
+.page{max-width:1440px;margin:0 auto;padding:0 2.5rem 5rem}
+
+/* ── MASTHEAD ── */
+.masthead{padding:2rem 0 1.2rem;border-bottom:1px solid rgba(0,130,200,.1);
+  display:flex;align-items:flex-end;justify-content:space-between}
+.masthead-eyebrow{font-family:var(--fm);font-size:.56rem;display:none;letter-spacing:.3em;
+  color:var(--elec);opacity:.5;text-transform:uppercase;margin-bottom:.35rem}
+.masthead-title{font-family:var(--fd);font-size:clamp(6rem,6vw,5.2rem);letter-spacing:.06em;
+  line-height:.9;background:linear-gradient(110deg,var(--white),rgba(180,220,255,.65));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.masthead-image{position:absolute;right:10px;top:4px;width:18px;height:36%;
+  }
+
+
+/* ── ZONE TABS ── */
+.zone-tabs{display:flex;gap:0;padding:1.2rem 0 0;border-bottom:1px solid rgba(0,130,200,.07)}
+.ztab{flex:1;display:flex;align-items:center;justify-content:center;gap:.7rem;
+  padding:.9rem 1rem;cursor:pointer;border:1px solid rgba(0,120,190,.12);
+  border-bottom:none;background:rgba(6,14,28,.5);transition:all .22s;
+  font-family:var(--fb);font-size:.9rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);position:relative}
+.ztab:first-child{border-radius:3px 0 0 0}
+.ztab:last-child{border-radius:0 3px 0 0}
+.ztab .ztab-icon{font-size:1.1rem}
+.ztab .ztab-badge{font-family:var(--fm);font-size:.48rem;letter-spacing:.05em;
+  padding:.1rem .35rem;border-radius:2px;opacity:.7}
+
+.ztab.hot-tab{--zone-color:var(--hot)}
+.ztab.warm-tab{--zone-color:var(--warm)}
+.ztab.cold-tab{--zone-color:var(--cold)}
+
+.ztab.active{background:rgba(6,14,28,.9);color:var(--white);
+  border-color:rgba(255,255,255,.08);border-bottom-color:var(--void)}
+.ztab.hot-tab.active{box-shadow:inset 0 2px 0 var(--hot);color:var(--hot)}
+.ztab.warm-tab.active{box-shadow:inset 0 2px 0 var(--warm);color:var(--warm)}
+.ztab.cold-tab.active{box-shadow:inset 0 2px 0 var(--cold);color:var(--cold)}
+
+.ztab .ztab-sub{font-family:var(--fm);font-size:.48rem;letter-spacing:.06em;
+  color:var(--ghost);font-weight:400;text-transform:none;margin-top:.18rem;display:block}
+
+/* ── ZONE PANELS ── */
+.zone-panel{display:none;padding-top:1.8rem}
+.zone-panel.active{display:block}
+
+/* ── ZONE HEADER ── */
+.zone-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.4rem;
+  padding-bottom:.8rem;border-bottom:1px solid rgba(255,255,255,.05)}
+.zone-icon{font-size:2rem}
+.zone-title{font-family:var(--fd);font-size:2.2rem;letter-spacing:.1em}
+.zone-desc{font-family:var(--fm);font-size:.58rem;letter-spacing:.08em;
+  color:var(--ghost);line-height:1.6;max-width:500px;margin-left:auto}
+
+/* ── GRID ── */
+.news-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem}
+.ncard.hero{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;min-height:320px}
+.ncard.feature{grid-column:span 2;min-height:220px}
+.ncard.std{min-height:190px}
+.side-stack{display:flex;flex-direction:column;gap:1.5rem}
+.ncard.mini{flex:1;min-height:0}
+
+/* Section dividers between batches */
+.batch-divider{grid-column:1/-1;display:flex;align-items:center;gap:1rem;
+  padding:.5rem 0;margin:.4rem 0}
+.batch-divider-line{flex:1;height:1px;background:rgba(0,130,200,.1)}
+.batch-divider-label{font-family:var(--fm);font-size:.5rem;letter-spacing:.2em;
+  color:var(--ghost);text-transform:uppercase;white-space:nowrap}
+.batch-progress{font-family:var(--fm);font-size:.52rem;letter-spacing:.1em;
+  color:var(--elec);opacity:.6;padding:.1rem .4rem;border:1px solid rgba(0,150,220,.15);
+  border-radius:2px;white-space:nowrap}
+
+/* ── BASE CARD ── */
+.ncard{background:linear-gradient(145deg,rgba(8,18,36,.95),rgba(4,10,22,.98));
+  border:1px solid rgba(0,120,190,.1);border-radius:3px;overflow:hidden;cursor:pointer;
+  position:relative;transition:border-color .24s,transform .24s,box-shadow .24s}
+.ncard::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--zone-c,var(--elec)),transparent);
+  opacity:0;transition:opacity .24s}
+.ncard:hover::after{opacity:.5}
+.ncard:hover{transform:translateY(-3px);box-shadow:0 12px 42px rgba(0,40,140,.22)}
+
+/* zone accent borders */
+.zone-hot .ncard:hover{border-color:rgba(255,107,53,.25)}
+.zone-warm .ncard:hover{border-color:rgba(192,132,252,.25)}
+.zone-cold .ncard:hover{border-color:rgba(56,189,248,.25)}
+
+/* card image */
+.ncard-img{width:100%;height:100%;background-size:cover;background-position:center;
+  position:relative;overflow:hidden;min-height:150px}
+.ncard-img::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 30%,rgba(2,6,14,.96) 100%)}
+.ncard.hero .ncard-img{min-height:unset;border-right:1px solid rgba(0,120,190,.1)}
+.ncard.hero .ncard-img::after{background:linear-gradient(90deg,transparent 20%,rgba(2,6,14,.92) 100%)}
+
+/* ribbon */
+.ncard-ribbon{position:absolute;top:.75rem;left:.75rem;z-index:2;
+  font-family:var(--fm);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--void);background:var(--elec);padding:.16rem .5rem;border-radius:2px}
+.ncard-ribbon.hot-r{background:var(--hot)}
+.ncard-ribbon.warm-r{background:var(--warm)}
+.ncard-ribbon.cold-r{background:var(--cold)}
+
+/* card body */
+.ncard-body{padding:1rem 1.2rem 1.1rem;display:flex;flex-direction:column;gap:.45rem;height:100%}
+.ncard.hero .ncard-body{justify-content:center;padding:1.6rem 1.8rem}
+.ncard.mini .ncard-body{padding:.85rem .95rem;gap:.3rem}
+
+.ncard-meta{display:flex;gap:.5rem;align-items:center;font-family:var(--fm);
+  font-size:.51rem;letter-spacing:.09em;color:var(--muted);text-transform:uppercase}
+.ncard-source{color:var(--elec);opacity:.75}
+.ncard-dot{width:2px;height:2px;border-radius:50%;background:rgba(0,150,200,.3)}
+.ncard-hed{font-family:var(--fb);font-weight:700;font-size:.98rem;line-height:1.22;color:var(--white)}
+.ncard.hero .ncard-hed{font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.12}
+.ncard.feature .ncard-hed{font-size:1.15rem}
+.ncard.mini .ncard-hed{font-size:.85rem}
+.ncard-kicker{font-family:var(--fp);font-size:.82rem;font-style:italic;
+  color:rgba(140,200,240,.5);line-height:1.38}
+.ncard.hero .ncard-kicker{font-size:.95rem}
+.ncard-read{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--fm);
+  font-size:.52rem;letter-spacing:.14em;color:rgba(0,180,255,.4);text-transform:uppercase;
+  margin-top:auto;transition:color .2s}
+.ncard:hover .ncard-read{color:var(--cyan)}
+.ncard-read::after{content:'→';transition:transform .2s}
+.ncard:hover .ncard-read::after{transform:translateX(4px)}
+
+/* zone-colour accents on sources */
+.zone-hot .ncard-source{color:var(--hot);opacity:.8}
+.zone-warm .ncard-source{color:var(--warm);opacity:.8}
+.zone-cold .ncard-source{color:var(--cold);opacity:.8}
+
+/* ── LOAD STATE ── */
+.zone-load{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:260px;gap:1rem}
+.load-ring{width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(0,130,200,.18);
+  border-top-color:var(--elec);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-msg{font-family:var(--fm);font-size:.65rem;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;text-align:center;max-width:320px;line-height:1.6}
+
+/* ring colours per zone */
+.zone-hot .load-ring{border-top-color:var(--hot)}
+.zone-warm .load-ring{border-top-color:var(--warm)}
+.zone-cold .load-ring{border-top-color:var(--cold)}
+
+/* ── ERROR ── */
+.error-state{grid-column:1/-1;padding:2.5rem;text-align:center;
+  border:1px dashed rgba(0,100,180,.14);border-radius:3px}
+.error-state h3{font-family:var(--fd);font-size:1.6rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.4rem}
+.error-state p{font-family:var(--fm);font-size:.6rem;color:var(--ghost);letter-spacing:.07em;line-height:1.6}
+
+/* ── REFRESH ROW ── */
+.refresh-row{display:flex;align-items:center;justify-content:space-between;
+  padding:.8rem 0 0;border-top:1px solid rgba(0,130,200,.07);margin-top:1rem}
+.refresh-btn{display:flex;align-items:center;gap:.5rem;font-family:var(--fm);font-size:.58rem;
+  letter-spacing:.16em;color:var(--muted);text-transform:uppercase;background:rgba(6,14,28,.7);
+  border:1px solid rgba(0,120,190,.18);border-radius:2px;padding:.42rem 1rem;cursor:pointer;transition:all .2s}
+.refresh-btn:hover{border-color:var(--elec);color:var(--elec)}
+.refresh-btn svg{transition:transform .5s}
+.refresh-btn:hover svg{transform:rotate(180deg)}
+.last-updated{font-family:var(--fm);font-size:.52rem;letter-spacing:.09em;color:var(--ghost)}
+
+/* ── ARTICLE MODAL ── */
+#art-modal{position:fixed;inset:0;z-index:500;display:flex;align-items:flex-end;
+  justify-content:center;background:rgba(2,6,16,0);pointer-events:none;transition:background .3s}
+#art-modal.open{background:rgba(2,6,16,.92);pointer-events:all}
+#art-panel{background:linear-gradient(180deg,rgba(4,12,26,.98),rgba(2,8,18,.99));
+  border:1px solid rgba(0,140,220,.14);border-bottom:none;border-radius:4px 4px 0 0;
+  width:100%;max-width:800px;padding:2.4rem 2.8rem 3.2rem;max-height:88vh;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:rgba(0,100,180,.12) transparent;
+  transform:translateY(100%);transition:transform .42s cubic-bezier(.22,1,.36,1);position:relative}
+#art-modal.open #art-panel{transform:translateY(0)}
+.art-close{position:absolute;top:1.1rem;right:1.4rem;width:32px;height:32px;
+  background:rgba(0,100,180,.08);border:1px solid rgba(0,140,220,.16);border-radius:2px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.art-close:hover{background:rgba(0,180,255,.14);border-color:var(--cyan)}
+.art-close span{position:absolute;width:13px;height:1px;background:var(--white)}
+.art-close span:first-child{transform:rotate(45deg)}
+.art-close span:last-child{transform:rotate(-45deg)}
+#art-zone-tag{display:inline-block;font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;
+  text-transform:uppercase;padding:.14rem .5rem;border-radius:2px;margin-bottom:.6rem}
+#art-eyebrow{font-family:var(--fm);font-size:.56rem;letter-spacing:.22em;color:var(--elec);
+  opacity:.55;text-transform:uppercase;margin-bottom:.5rem}
+#art-headline{font-family:var(--fb);font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:700;
+  line-height:1.1;color:var(--white);margin-bottom:.75rem}
+#art-byline{font-family:var(--fm);font-size:.56rem;letter-spacing:.09em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:1.3rem;display:flex;gap:.75rem}
+#art-body{font-family:var(--fb);font-size:1rem;font-weight:400;line-height:1.7;
+  color:rgba(175,210,242,.76)}
+#art-body p{margin-bottom:.95rem}
+#art-body strong{color:var(--white);font-weight:700}
+#art-link-row{margin-top:1.6rem;padding-top:1.1rem;border-top:1px solid rgba(0,130,200,.1)}
+.art-ext-btn{display:inline-flex;align-items:center;gap:.45rem;padding:.5rem 1.3rem;
+  font-family:var(--fb);font-size:.72rem;font-weight:700;letter-spacing:.11em;
+  text-transform:uppercase;text-decoration:none;border-radius:2px;transition:all .2s;
+  background:rgba(0,160,255,.12);border:1px solid rgba(0,160,255,.28);color:var(--cyan)}
+.art-ext-btn:hover{background:rgba(0,180,255,.22);box-shadow:0 0 20px rgba(0,200,255,.15)}
+
+/* ── CONFIG / CONTROL CENTER DRAWER ── */
+#ctrl-drawer{position:fixed;top:0;right:0;width:420px;height:100vh;
+  background:linear-gradient(160deg,rgba(4,12,26,.99),rgba(2,8,18,1));
+  border-left:1px solid rgba(0,140,220,.13);z-index:300;transform:translateX(100%);
+  transition:transform .36s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;
+  padding:1.4rem 1.7rem;gap:.9rem;overflow-y:auto;scrollbar-width:thin;
+  scrollbar-color:rgba(0,100,180,.12) transparent}
+#ctrl-drawer.open{transform:translateX(0)}
+#ctrl-backdrop{position:fixed;inset:0;background:rgba(2,6,16,.48);z-index:299;
+  opacity:0;pointer-events:none;transition:opacity .28s;backdrop-filter:blur(2px)}
+#ctrl-backdrop.show{opacity:1;pointer-events:all}
+
+#ctrl-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;padding-top:.4rem}
+.ctrl-drawer-eye{font-family:var(--fm);font-size:.54rem;letter-spacing:.26em;color:var(--elec);opacity:.5;text-transform:uppercase;margin-bottom:.28rem}
+.ctrl-drawer-title{font-family:var(--fd);font-size:1.9rem;letter-spacing:.1em;color:var(--white)}
+.ctrl-close{width:30px;height:30px;flex-shrink:0;background:rgba(0,100,180,.07);
+  border:1px solid rgba(0,140,220,.16);border-radius:2px;cursor:pointer;position:relative;transition:all .2s}
+.ctrl-close:hover{background:rgba(0,180,255,.12);border-color:var(--cyan)}
+.ctrl-close span{position:absolute;top:50%;left:50%;width:11px;height:1px;background:var(--white)}
+.ctrl-close span:first-child{transform:translate(-50%,-50%) rotate(45deg)}
+.ctrl-close span:last-child{transform:translate(-50%,-50%) rotate(-45deg)}
+
+/* TAB HEADERS FOR DRAWER */
+.drawer-tabs{display:flex;border-bottom:1px solid rgba(0,130,200,.15);margin-top:.4rem}
+.drawer-tab{flex:1;padding:.6rem 0;text-align:center;font-family:var(--fm);font-size:.65rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);cursor:pointer;
+  transition:all .2s;border-bottom:2px solid transparent}
+.drawer-tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+
+/* TAB CONTENT WRAPPERS */
+.drawer-tab-content{display:none}
+.drawer-tab-content.active{display:flex;flex-direction:column;gap:.9rem}
+
+/* INPUTS & ENGINE SELECTORS */
+.src-add-row{display:flex;flex-direction:column;gap:.4rem}
+.src-input-group{position:relative;width:100%}
+.src-input{background:rgba(6,14,28,.85);border:1px solid rgba(0,120,190,.16);border-radius:2px;
+  padding:.48rem .7rem;font-family:var(--fm);font-size:.6rem;letter-spacing:.04em;
+  color:var(--white);outline:none;transition:border-color .2s;width:100%}
+.src-input::placeholder{color:var(--ghost);opacity:.65}
+.src-input:focus{border-color:var(--cyan)}
+.src-input-eye{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--muted);font-size:.6rem}
+.src-input-eye:hover{color:var(--cyan)}
+
+.engine-select{appearance:none;-webkit-appearance:none;background:rgba(6,14,28,.85) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2300e5ff' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right .75rem center;
+  border:1px solid rgba(0,120,190,.16);border-radius:2px;padding:.48rem .7rem;font-family:var(--fm);
+  font-size:.6rem;letter-spacing:.04em;color:var(--white);outline:none;transition:border-color .2s;width:100%;cursor:pointer}
+.engine-select:focus{border-color:var(--cyan)}
+
+.src-add-btn{padding:.48rem 1rem;background:rgba(0,160,255,.1);border:1px solid rgba(0,160,255,.22);
+  border-radius:2px;font-family:var(--fb);font-size:.7rem;font-weight:700;letter-spacing:.11em;
+  color:var(--elec);cursor:pointer;transition:all .2s;text-align:center}
+.src-add-btn:hover{background:rgba(0,200,255,.18);border-color:var(--cyan)}
+.src-add-hint{font-family:var(--fm);font-size:.5rem;letter-spacing:.06em;color:var(--ghost);line-height:1.5}
+.src-divider{height:1px;background:rgba(0,130,200,.09);margin:.1rem 0}
+.src-list-head{display:flex;align-items:center;gap:.6rem;font-family:var(--fm);
+  font-size:.53rem;letter-spacing:.1em;color:var(--ghost);text-transform:uppercase}
+.src-toggle-all{font-family:var(--fm);font-size:.5rem;letter-spacing:.09em;color:var(--muted);
+  background:rgba(6,14,28,.7);border:1px solid rgba(0,100,170,.13);border-radius:2px;
+  padding:.18rem .5rem;cursor:pointer;transition:all .2s;margin-left:auto}
+.src-toggle-all:hover{border-color:var(--elec);color:var(--elec)}
+
+#srcList{display:flex;flex-direction:column;gap:.3rem;padding-bottom:.4rem;max-height:40vh;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:rgba(0,100,180,.12) transparent}
+.src-item{display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;
+  background:rgba(6,14,28,.7);border:1px solid rgba(0,110,180,.1);border-radius:2px;transition:border-color .2s}
+.src-item:hover{border-color:rgba(0,150,210,.2)}
+.src-item.active{border-color:rgba(0,180,255,.18);background:rgba(0,120,200,.05)}
+.src-toggle{width:30px;height:16px;border-radius:8px;background:rgba(0,100,170,.18);
+  border:1px solid rgba(0,100,170,.22);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.src-toggle::after{content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;
+  border-radius:50%;background:var(--muted);transition:all .2s}
+.src-item.active .src-toggle{background:rgba(0,200,255,.13);border-color:var(--cyan)}
+.src-item.active .src-toggle::after{left:16px;background:var(--cyan)}
+.src-item-info{flex:1;min-width:0}
+.src-item-name{font-family:var(--fb);font-size:.78rem;font-weight:700;letter-spacing:.04em;
+  color:var(--muted);line-height:1;margin-bottom:.15rem}
+.src-item.active .src-item-name{color:var(--white)}
+.src-item-url{font-family:var(--fm);font-size:.5rem;color:var(--ghost);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src-remove{width:18px;height:18px;flex-shrink:0;background:none;
+  border:1px solid rgba(0,100,160,.1);border-radius:2px;color:var(--ghost);
+  font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.src-remove:hover{border-color:rgba(255,80,80,.28);color:#ff5050;background:rgba(255,50,50,.05)}
+
+.src-footer{padding-top:.25rem;border-top:1px solid rgba(0,130,200,.07)}
+.src-apply-btn{width:100%;padding:.65rem;display:flex;align-items:center;justify-content:center;
+  gap:.5rem;font-family:var(--fb);font-size:.76rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--cyan);background:rgba(0,160,255,.09);
+  border:1px solid rgba(0,160,255,.22);border-radius:2px;cursor:pointer;transition:all .2s}
+.src-apply-btn:hover{background:rgba(0,200,255,.16);box-shadow:0 0 20px rgba(0,200,255,.1)}
+
+/* TOAST NOTIFICATION */
+#toast-container{position:fixed;bottom:1.5rem;left:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem}
+.toast{background:rgba(4,12,26,.95);border:1px solid var(--elec);border-radius:3px;padding:.8rem 1.2rem;
+  font-family:var(--fm);font-size:.6rem;letter-spacing:.06em;color:var(--white);box-shadow:0 4px 20px rgba(0,170,255,.25);
+  transform:translateX(-120%);transition:transform .3s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:.7rem}
+.toast.show{transform:translateX(0)}
+.toast.success{border-color:var(--cyan);box-shadow:0 4px 20px rgba(0,229,255,.15)}
+.toast.warn{border-color:var(--hot);box-shadow:0 4px 20px rgba(255,107,53,.15)}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid rgba(0,130,200,.07);padding:1.4rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;max-width:1440px;margin:0 auto}
+.footer-logo{font-family:var(--fd);font-size:1.2rem;letter-spacing:.2em;color:var(--ghost)}
+.footer-copy{font-family:var(--fm);font-size:.52rem;letter-spacing:.09em;color:var(--ghost)}
+
+
+/* ═══════════════════════════════════════════
+   FOOTER BREADCRUMB
+═══════════════════════════════════════════ */
+.footer-breadcrumb {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .65rem 2.5rem;
+    background: linear-gradient(180deg, rgba(2, 8, 16, 0) 0%, rgba(2, 8, 16, .88) 40%, rgba(2, 8, 16, .98) 100%);
+    border-top: 1px solid rgba(240, 192, 64, .12);
+    backdrop-filter: blur(8px);
+    font-family: var(--fm);
+    font-size: .5rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+}
+
+/* Left group */
+.fbc-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+/* Site Map dropdown */
+.fbc-sitemap {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--gold);
+    cursor: pointer;
+    font-weight: 700;
+    transition: color .2s;
+    position: relative;
+    user-select: none;
+}
+.fbc-sitemap:hover {
+    color: var(--cyan);
+}
+.fbc-sitemap .arrow {
+    font-size: .6rem;
+    transition: transform .25s;
+    display: inline-block;
+}
+.fbc-sitemap.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.fbc-sitemap-panel {
+    position: absolute;
+    bottom: 130%;
+    left: 0;
+    min-width: 260px;
+    background: linear-gradient(160deg, rgba(6, 14, 28, .98), rgba(2, 8, 16, .99));
+    border: 1px solid rgba(240, 192, 64, .18);
+    border-radius: 3px;
+    padding: .6rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity .25s, transform .25s;
+    z-index: 30;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+}
+.fbc-sitemap.open .fbc-sitemap-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+.fbc-sitemap-panel a {
+    font-family: var(--fm);
+    font-size: .48rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: .4rem 1rem;
+    transition: color .2s, background .2s, padding-left .2s;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+.fbc-sitemap-panel a:hover {
+    color: var(--gold);
+    background: rgba(240, 192, 64, .05);
+    padding-left: 1.3rem;
+}
+.fbc-sitemap-panel a::before {
+    content: '›';
+    color: rgba(240, 192, 64, .4);
+    font-size: .7rem;
+}
+
+/* Copyright */
+.fbc-copy {
+    color: var(--ghost);
+    font-size: .48rem;
+}
+.fbc-copy strong {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+/* Right group */
+.fbc-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.fbc-link {
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: color .2s, letter-spacing .2s;
+    font-size: .48rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    font-family: inherit;
+    padding: 0;
+}
+.fbc-link:hover {
+    color: var(--gold);
+    letter-spacing: .2em;
+}
+
+/* ═══════════════════════════════════════════
+   COOKIE CONSENT BANNER
+═══════════════════════════════════════════ */
+.consent-banner {
+    position: fixed;
+    inset: 0;
+    z-index: 800;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 1.6rem;
+    background: rgba(2, 8, 16, .55);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+    font-family: var(--fb);
+}
+.consent-banner.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.consent-card {
+    width: min(440px, 92vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(160deg, #040c1a 0%, #020810 100%);
+    border: 1px solid rgba(240, 192, 64, .22);
+    border-radius: 4px;
+    padding: 1.3rem 1.4rem 1.1rem;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .75);
+    position: relative;
+    transform: translateY(24px) scale(.97);
+    transition: transform .4s cubic-bezier(.22, 1, .36, 1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(240, 192, 64, .2) transparent;
+}
+.consent-banner.open .consent-card {
+    transform: translateY(0) scale(1);
+}
+.consent-card::-webkit-scrollbar { width: 3px; }
+.consent-card::-webkit-scrollbar-thumb {
+    background: rgba(240, 192, 64, .25);
+    border-radius: 2px;
+}
+.consent-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--hot), var(--violet));
+    opacity: .65;
+    border-radius: 4px 4px 0 0;
+}
+
+/* Decorative strings */
+.consent-strings {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    display: flex;
+    gap: 3px;
+    opacity: .35;
+    pointer-events: none;
+}
+.consent-strings span {
+    display: block;
+    width: 1px;
+    height: 14px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+}
+.consent-strings span:nth-child(2) { height: 20px; opacity: .8; }
+.consent-strings span:nth-child(3) { height: 12px; opacity: .6; }
+.consent-strings span:nth-child(4) { height: 18px; opacity: .9; }
+.consent-strings span:nth-child(5) { height: 10px; opacity: .5; }
+
+.consent-body { position: relative; z-index: 2; }
+
+.consent-eyebrow {
+    font-family: var(--fm);
+    font-size: .5rem;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    margin-bottom: .35rem;
+}
+.consent-eyebrow b {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.consent-title {
+    font-family: var(--fd);
+    font-size: 1.8rem;
+    letter-spacing: .09em;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: .55rem;
+}
+
+.consent-text {
+    font-size: .82rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(180, 210, 240, .72);
+    margin-bottom: 1rem;
+}
+
+/* Preference rows */
+.consent-prefs {
+    display: none;
+    flex-direction: column;
+    gap: .45rem;
+    margin-bottom: .9rem;
+    animation: consentFade .3s ease both;
+}
+.consent-prefs.open { display: flex; }
+
+@keyframes consentFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pref-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: .65rem .75rem;
+    border: 1px solid rgba(0, 120, 190, .14);
+    border-radius: 3px;
+    background: rgba(6, 14, 28, .55);
+    transition: border-color .2s, background .2s;
+}
+.pref-row:hover {
+    border-color: rgba(240, 192, 64, .28);
+    background: rgba(240, 192, 64, .04);
+}
+.pref-copy { flex: 1; min-width: 0; }
+.pref-name {
+    font-family: var(--fb);
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--white);
+    margin-bottom: .18rem;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+.pref-name .locked {
+    font-family: var(--fm);
+    font-size: .4rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(240, 192, 64, .28);
+    border-radius: 2px;
+    padding: .05rem .32rem;
+    font-weight: 400;
+}
+.pref-desc {
+    font-size: .72rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+/* Switch */
+.switch {
+    flex-shrink: 0;
+    width: 34px;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(0, 100, 180, .14);
+    border: 1px solid rgba(0, 120, 190, .22);
+    position: relative;
+    cursor: pointer;
+    transition: background .25s, border-color .25s;
+    margin-top: .15rem;
+}
+.switch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(180, 210, 240, .45);
+    transition: left .25s cubic-bezier(.22, 1, .36, 1), background .25s;
+}
+.switch.on {
+    background: rgba(240, 192, 64, .18);
+    border-color: rgba(240, 192, 64, .45);
+}
+.switch.on::after {
+    left: calc(100% - 14px);
+    background: var(--gold);
+    box-shadow: 0 0 6px rgba(240, 192, 64, .55);
+}
+.switch.locked {
+    cursor: not-allowed;
+    opacity: .85;
+}
+.switch:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* Save preferences button row */
+.consent-foot {
+    margin-top: .35rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Actions */
+.consent-actions {
+    display: flex;
+    gap: .45rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: .35rem;
+}
+
+.btn {
+    padding: .55rem 1.1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--fb);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    transition: all .22s;
+    border: 1px solid transparent;
+    background: transparent;
+}
+.btn:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+.btn-accept {
+    background: rgba(240, 192, 64, .12);
+    border-color: rgba(240, 192, 64, .35);
+    color: var(--gold);
+}
+.btn-accept:hover {
+    background: rgba(240, 192, 64, .24);
+    box-shadow: 0 0 18px rgba(240, 192, 64, .2);
+}
+.btn-reject {
+    background: transparent;
+    border-color: rgba(0, 120, 190, .22);
+    color: var(--muted);
+}
+.btn-reject:hover { border-color: var(--elec); color: var(--elec); }
+.btn-customize {
+    background: transparent;
+    border-color: rgba(136, 85, 255, .28);
+    color: var(--violet);
+}
+.btn-customize:hover {
+    background: rgba(136, 85, 255, .1);
+    border-color: rgba(136, 85, 255, .5);
+}
+
+/* Toast */
+.consent-toast {
+    position: fixed;
+    bottom: 4.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    z-index: 810;
+    background: linear-gradient(140deg, rgba(240, 192, 64, .12), rgba(4, 10, 22, .98));
+    border: 1px solid rgba(240, 192, 64, .35);
+    color: var(--gold);
+    font-family: var(--fm);
+    font-size: .55rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    padding: .55rem 1.2rem;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+}
+.consent-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .consent-banner {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0;
+    }
+    .consent-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 6px 6px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        max-height: 92vh;
+        padding: 1.2rem 1.1rem 1rem;
+    }
+    .consent-actions {
+        gap: .35rem;
+        justify-content: stretch;
+    }
+    .consent-actions .btn {
+        flex: 1;
+        text-align: center;
+        padding: .55rem .6rem;
+        font-size: .66rem;
+    }
+    .footer-breadcrumb {
+        padding: .55rem 1rem;
+        justify-content: center;
+    }
+}
+ 
+ 
+</style>
+</head>
+<body>
+
+ <!-- TOGGLE + RAIL -->
+    <div class="hmenu">
+<button class="toggle" id="toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span class="peg" data-p="0"></span>
+        <span class="peg" data-p="1"></span>
+        <span class="peg" data-p="2"></span>
+        <span class="peg" data-p="3"></span>
+        <span class="peg" data-p="4"></span>
+    </button>
+
+   <nav class="rail" id="rail">
+        <span class="tag">NAV</span>
+        
+        <a class="row" data-i="0" href="index.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">02</span><span class="label">Home</span></span>
+        </a>
+        <a class="row" data-i="1" href="newssplash.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">03</span><span class="label">News Splash</span></span>
+        </a>
+        <a class="row" data-i="2" href="3hrillcharts.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Music Charts</span></span>
+        </a>
+<a class="row" data-i="3" href="Librarypass.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Library Pass</span></span>
+        </a>
+        <a class="row" data-i="4" href="fanshowcase.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Funs showcase</span></span>
+        </a>
+<a class="row" data-i="5" href="3hrillgigs.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Gigs</span></span>
+        </a>
+<a class="row" data-i="6" href="musicschool.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music School</span></span>
+        </a>
+<a class="row" data-i="7" href="musicstudio.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music Studio</span></span>
+        </a>
+<a class="row" data-i="8" href="3hrillstore.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label"> The Store</span></span>
+        </a>
+<a class="row" data-i="9" href="About3hrillMusic.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Music</span></span>
+        </a>
+    </nav>
+</div>
+
+<div class="ticker-bar">
+  <div class="ticker-label"><span class="pulse"></span>LIVE FEED</div>
+  <div class="ticker-content" id="tickerBar">Loading 3HRILL music feed…</div>
+</div>
+
+<div class="page">
+  <div class="masthead">
+    <div>
+      <div class="masthead-eyebrow" style="display;none">// 3HRILL MUSIC — Global Transmission</div>
+      <div class="masthead-title">News Splash</div>
+    </div>
+    <div class="masthead-image"  ><img src="images/3hrill.png" alt="" style="position:absolute;right:10px;top:50px;height:40%;opacity:36%"> </div>
+  </div>
+
+  <!-- ZONE TABS -->
+  <div class="zone-tabs">
+    <div class="ztab hot-tab active" data-zone="hot" onclick="switchZone('hot')">
+      <span class="ztab-icon">🔥</span>
+      <div>
+        <div>Hot</div>
+        <span class="ztab-sub">Gossip · Glitz · Rumours</span>
+      </div>
+    </div>
+    <div class="ztab warm-tab" data-zone="warm" onclick="switchZone('warm')">
+      <span class="ztab-icon">🌡️</span>
+      <div>
+        <div>Warm</div>
+        <span class="ztab-sub">Business · Family · Lifestyle</span>
+      </div>
+    </div>
+    <div class="ztab cold-tab" data-zone="cold" onclick="switchZone('cold')">
+      <span class="ztab-icon">🧊</span>
+      <div>
+        <div>Cold</div>
+        <span class="ztab-sub">Court · Losses · Struggles</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOT ZONE -->
+  <div class="zone-panel zone-hot active" id="panel-hot">
+    <div class="zone-header">
+      <span class="zone-icon">🔥</span>
+      <div>
+        <div class="zone-title" style="color:var(--hot)">HOT</div>
+      </div>
+      <div class="zone-desc">News Glitz,Glaring Gossip and swirling rumours. Keep Around here on your favourite artist or Band</div>
+    </div>
+    <div class="news-grid" id="grid-hot">
+      <div class="zone-load"><div class="load-ring"></div><div class="load-msg">Scanning hot feeds…</div></div>
+    </div>
+  </div>
+
+  <!-- WARM ZONE -->
+  <div class="zone-panel zone-warm" id="panel-warm">
+    <div class="zone-header">
+      <span class="zone-icon">🌡️</span>
+      <div>
+        <div class="zone-title" style="color:var(--warm)">WARM</div>
+      </div>
+      <div class="zone-desc">The intimate side — business deals, family moments, creative partnerships and the quieter moves artists make behind the scenes.</div>
+    </div>
+    <div class="news-grid" id="grid-warm">
+      <div class="zone-load"><div class="load-ring"></div><div class="load-msg">Loading warm stories…</div></div>
+    </div>
+  </div>
+
+  <!-- COLD ZONE -->
+  <div class="zone-panel zone-cold" id="panel-cold">
+    <div class="zone-header">
+      <span class="zone-icon">🧊</span>
+      <div>
+        <div class="zone-title" style="color:var(--cold)">COLD</div>
+      </div>
+      <div class="zone-desc">The harder headlines — court cases, financial losses, career setbacks and the industry pressures artists face head-on.</div>
+    </div>
+    <div class="news-grid" id="grid-cold">
+      <div class="zone-load"><div class="load-ring"></div><div class="load-msg">Fetching cold reports…</div></div>
+    </div>
+  </div>
+
+  <div class="refresh-row">
+    <div class="last-updated" id="lastUpdated">—</div>
+    <button class="refresh-btn" id="refreshBtn">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      Refresh All
+    </button>
+  </div>
+</div>
+
+<!-- CONTROL CENTER DRAWER -->
+<div id="ctrl-drawer">
+  <div id="ctrl-header">
+    <div>
+      <div class="ctrl-drawer-eye">// Control Center</div>
+      <div class="ctrl-drawer-title">3HRILL CORE</div>
+    </div>
+    <button class="ctrl-close" onclick="toggleCtrlDrawer()"><span></span><span></span></button>
+  </div>
+
+  <!-- Tabs between Sources and Engine Config -->
+  <div class="drawer-tabs">
+    <div class="drawer-tab active" id="tab-sources-btn" onclick="switchDrawerTab('sources')">Sources</div>
+    <div class="drawer-tab" id="tab-engine-btn" onclick="switchDrawerTab('engine')">AI Engines</div>
+  </div>
+
+  <!-- SOURCES TAB PANEL -->
+  <div class="drawer-tab-content active" id="drawer-tab-sources">
+    <div class="src-add-row">
+      <input id="srcNameInput" class="src-input" placeholder="Source name  e.g. Clash Music"/>
+      <input id="srcUrlInput"  class="src-input" placeholder="URL  e.g. https://clashmusic.com"/>
+      <button class="src-add-btn" onclick="addSource()">+ Add Source</button>
+    </div>
+    <div class="src-add-hint">Added sources are parsed during live AI cycles.</div>
+    <div class="src-divider"></div>
+    <div class="src-list-head">
+      <span id="srcActiveCount">— active</span>
+      <button class="src-toggle-all" onclick="toggleAllSources(true)">All On</button>
+      <button class="src-toggle-all" onclick="toggleAllSources(false)">All Off</button>
+    </div>
+    <div id="srcList"></div>
+  </div>
+
+  <!-- AI ENGINES TAB PANEL -->
+  <div class="drawer-tab-content" id="drawer-tab-engine">
+    <div class="src-add-row">
+      <label class="src-add-hint" style="text-transform: uppercase; font-weight: bold; color: var(--elec);">Choose Engine Provider</label>
+      <select id="engineProviderSelect" class="engine-select" onchange="onProviderChange()">
+        <option value="gemini_auto">Auto-Grounded Gemini Core (Zero-Config Search)</option>
+        <option value="mock">Offline Simulator (Instant mock feed)</option>
+        <option value="anthropic">Anthropic (Claude-3.5-Sonnet)</option>
+        <option value="openai">OpenAI (GPT-4o / GPT-4o-Mini)</option>
+        <option value="gemini">Google Gemini (Custom Key API)</option>
+        <option value="groq">Groq Network (Llama 3.3)</option>
+      </select>
+    </div>
+
+    <div class="src-add-row">
+      <label class="src-add-hint" style="text-transform: uppercase; font-weight: bold; color: var(--elec);">Select Model Variant</label>
+      <select id="engineModelSelect" class="engine-select">
+        <!-- Dynamic Models injected here -->
+      </select>
+    </div>
+
+    <!-- API Key inputs for all providers -->
+    <div class="src-divider"></div>
+    <div class="src-add-row" id="apiKeyInputs">
+      <label class="src-add-hint" style="text-transform: uppercase; font-weight: bold; color: var(--muted);">API Configuration Keys</label>
+      
+      <!-- Anthropic -->
+      <div class="key-field-container" data-provider="anthropic" style="display:none">
+        <label class="src-add-hint">Anthropic API Key</label>
+        <div class="src-input-group">
+          <input type="password" id="key-anthropic" class="src-input" placeholder="sk-ant-..."/>
+          <button class="src-input-eye" onclick="togglePasswordVisibility('key-anthropic')">👁️</button>
+        </div>
+      </div>
+
+      <!-- OpenAI -->
+      <div class="key-field-container" data-provider="openai" style="display:none">
+        <label class="src-add-hint">OpenAI API Key</label>
+        <div class="src-input-group">
+          <input type="password" id="key-openai" class="src-input" placeholder="sk-proj-..."/>
+          <button class="src-input-eye" onclick="togglePasswordVisibility('key-openai')">👁️</button>
+        </div>
+      </div>
+
+      <!-- Gemini -->
+      <div class="key-field-container" data-provider="gemini" style="display:none">
+        <label class="src-add-hint">Gemini API Key</label>
+        <div class="src-input-group">
+          <input type="password" id="key-gemini" class="src-input" placeholder="AIzaSy..."/>
+          <button class="src-input-eye" onclick="togglePasswordVisibility('key-gemini')">👁️</button>
+        </div>
+      </div>
+
+      <!-- Groq -->
+      <div class="key-field-container" data-provider="groq" style="display:none">
+        <label class="src-add-hint">Groq API Key</label>
+        <div class="src-input-group">
+          <input type="password" id="key-groq" class="src-input" placeholder="gsk_..."/>
+          <button class="src-input-eye" onclick="togglePasswordVisibility('key-groq')">👁️</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="src-add-btn" onclick="saveEngineConfig()">Save Credentials</button>
+    <div class="src-add-hint" id="engine-hint">Using mock engine. Add API credentials to enable dynamic multi-engine news cycles.</div>
+  </div>
+
+  <div class="src-footer">
+    <button class="src-apply-btn" onclick="applySources()">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <polyline points="23 4 23 10 17 10"/>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+      Apply &amp; Initialize Core
+    </button>
+  </div>
+ 
+</div>
+<div id="ctrl-backdrop" onclick="toggleCtrlDrawer()"></div>
+
+<!-- ARTICLE MODAL -->
+<div id="art-modal">
+  <div id="art-panel">
+    <button class="art-close" onclick="closeArt()"><span></span><span></span></button>
+    <div id="art-zone-tag"></div>
+    <div id="art-eyebrow"></div>
+    <div id="art-headline"></div>
+    <div id="art-byline"></div>
+    <div id="art-body"></div>
+    <div id="art-link-row">
+      <a id="art-src-btn" class="art-ext-btn" target="_blank" rel="noopener">Read Full Article ↗</a>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+  <div class="footer-logo">3HRILL MUSIC</div>
+  
+<!-- ═══════════════════════════════════════════
+     FOOTER BREADCRUMB
+═══════════════════════════════════════════ -->
+<div class="footer-breadcrumb" role="navigation" aria-label="Footer breadcrumb">
+
+    <div class="fbc-left">
+        <!-- Site Map dropdown -->
+        <div class="fbc-sitemap" id="sitemapBtn" onclick="toggleSitemap(event)" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
+            <span>Site Map</span>
+            <span class="arrow">▾</span>
+
+            <div class="fbc-sitemap-panel" id="sitemapPanel" role="menu">
+                <a href="index.html" role="menuitem">Home</a>
+                <a href="news-splash.html" role="menuitem">News</a>
+                <a href="3hrillCharts.html" role="menuitem">Charts</a>
+                <a href="library-pass.html" role="menuitem">Library</a>
+                <a href="Funshowcase.html" role="menuitem">Fun Showcase</a>
+                <a href="3hrillgigs.html" role="menuitem">3hrill Gigs</a>
+                <a href="3hrillschool.html" role="menuitem">3hrill School</a>
+                <a href="3hrillstudio.html" role="menuitem">3hrill Studio</a>
+                <a href="store-fixed.html" role="menuitem">The Store</a>
+                <a href="About3hrillMusic.html" role="menuitem">About 3hrill Music</a>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="fbc-copy">
+            © <strong>2026 3HRILL MUSIC</strong> — All Rights Reserved
+        </div>
+    </div>
+
+    <div class="fbc-right">
+        <!-- Cookie preferences -->
+         <a class="fbc-link" onclick="openconsent-Banner()">Cookie Preferences</a>
+
+
+        <!-- Terms & conditions -->
+        <a class="fbc-link" href="About3hrillMusic.html">Terms &amp; Conditions</a>
+    </div>
+
+</div>
+
+
+
+
+<script>
+(function() {
+    const toggle = document.getElementById('toggle');
+    const rail   = document.getElementById('rail');
+
+    function setOpen(open) {
+        rail.classList.toggle('open', open);
+        toggle.classList.toggle('active', open);
+        toggle.setAttribute('aria-expanded', String(open));
+    }
+
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setOpen(!rail.classList.contains('open'));
+    });
+
+    // click outside closes
+    document.addEventListener('click', function(e) {
+        if (rail.classList.contains('open')
+            && !rail.contains(e.target)
+            && !toggle.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    // Esc closes
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') setOpen(false);
+    });
+
+    // pluck animation on hover — nothing else
+    document.querySelectorAll('.row').forEach(function(row) {
+        const string = row.querySelector('.string');
+        row.addEventListener('mouseenter', function() {
+            string.classList.remove('plucked');
+            void string.offsetWidth;
+            string.classList.add('plucked');
+        });
+        // ❌ removed: row.addEventListener('click', e => e.preventDefault());
+    });
+})();
+const NEWS_SOURCES = [
+  { name:'Billboard',            url:'https://www.billboard.com',                  enabled:true  },
+  { name:'NME',                  url:'https://www.nme.com',                        enabled:true  },
+  { name:'Pitchfork',            url:'https://pitchfork.com',                      enabled:true  },
+  { name:'Rolling Stone',        url:'https://www.rollingstone.com/music',         enabled:true  },
+  { name:'The Guardian Music',   url:'https://www.theguardian.com/music',          enabled:true  },
+  { name:'Consequence',          url:'https://consequence.net',                    enabled:true  },
+  { name:'Variety Music',        url:'https://variety.com/v/music',               enabled:true  },
+  { name:'DJ Mag',               url:'https://djmag.com',                          enabled:true  },
+  { name:'Mixmag',               url:'https://mixmag.net',                         enabled:true  },
+  { name:'Afrobeats Intelligence',url:'https://www.afrobeatsintelligence.com',     enabled:true  },
+  { name:'Pulse Nigeria',        url:'https://www.pulse.ng/entertainment/music',   enabled:true  },
+  { name:'HipHopDX',             url:'https://hiphopdx.com',                       enabled:true  },
+  { name:'Clash Magazine',       url:'https://www.clashmusic.com',                 enabled:true  },
+  { name:'Complex Music',        url:'https://www.complex.com/music',              enabled:true  },
+  { name:'Resident Advisor',     url:'https://ra.co',                              enabled:true  },
+  { name:'XLR8R',                url:'https://xlr8r.com',                          enabled:false },
+  { name:'The Line of Best Fit', url:'https://www.thelineofbestfit.com',           enabled:false },
+  { name:'Rap-Up',               url:'https://www.rap-up.com',                     enabled:false },
+  { name:'Stereogum',            url:'https://www.stereogum.com',                  enabled:false },
+  { name:'The FADER',            url:'https://www.thefader.com',                   enabled:false },
+];
+
+const ENGINES = {
+  gemini_auto: {
+    name: "Gemini Core (Search Grounded)",
+    endpoint: "https://generativelanguage.googleapis.com/v1beta/models/",
+    models: ["gemini-3-flash-preview"]
+  },
+  mock: {
+    name: "Offline Simulator",
+    endpoint: null,
+    models: ["Synthesized Simulator Mode"]
+  },
+  anthropic: {
+    name: "Anthropic",
+    endpoint: "https://api.anthropic.com/v1/messages",
+    models: ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022"]
+  },
+  openai: {
+    name: "OpenAI",
+    endpoint: "https://api.openai.com/v1/chat/completions",
+    models: ["gpt-4o", "gpt-4o-mini"]
+  },
+  gemini: {
+    name: "Google Gemini (Custom Key)",
+    endpoint: "https://generativelanguage.googleapis.com/v1beta/models/",
+    models: ["gemini-1.5-flash", "gemini-1.5-pro"]
+  },
+  groq: {
+    name: "Groq Network",
+    endpoint: "https://api.groq.com/openai/v1/chat/completions",
+    models: ["llama-3.3-70b-versatile", "mixtral-8x7b-32768"]
+  }
+};
+
+const ZONES = {
+  hot: {
+    label: ' HOT',
+    color: '#ff6b35',
+    tagClass: 'hot-r',
+    query: `music artist gossip rumours drama feuds viral moments celebrity scandals breakups hookups shocking reveals 2026`,
+    prompt: `You are a music gossip journalist. Find 8 HOT music news stories — gossip, glitz, rumours, feuds, drama, viral moments, shocking reveals and celebrity scandals involving music artists or bands. Stories should be juicy, buzzy and feel ripped from today's headlines.`
+  },
+  warm: {
+    label: ' WARM',
+    color: '#c084fc',
+    tagClass: 'warm-r',
+    query: `music artist business deals family personal life collaborations creative projects lifestyle interviews 2026`,
+    prompt: `You are a music lifestyle journalist. Find 8 WARM music news stories — business deals, label signings, family milestones, creative collaborations, personal life updates, interviews and behind-the-scenes moments for music artists or bands. Stories should feel intimate and human.`
+  },
+  cold: {
+    label: ' COLD',
+    color: '#38bdf8',
+    tagClass: 'cold-r',
+    query: `music artist lawsuit court case financial loss career struggles industry disputes dropped label cancelled 2026`,
+    prompt: `You are a music industry journalist. Find 8 COLD music news stories — lawsuits, court cases, financial losses, career setbacks, label disputes, tour cancellations, music industry pressures and professional struggles involving music artists or bands. Stories should be factual and serious.`
+  }
+};
+
+const IMAGE_POOL = [
+  'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1598387846148-47e82ee120cc?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=900&q=80&fit=crop',
+  'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=900&q=80&fit=crop',
+];
+
+let currentZone = 'hot';
+let zoneData    = { hot: null, warm: null, cold: null };
+let isLoading   = { hot: false, warm: false, cold: false };
+
+/* Active State Engine Parameters */
+let activeProvider = 'gemini_auto';
+let activeModel = 'gemini-3-flash-preview';
+let apiCredentials = {
+  anthropic: '',
+  openai: '',
+  gemini: '',
+  groq: ''
+};
+
+/* ══════════════════════════════════════
+   DATE / CLOCK / UI HELPER INITIALIZATIONS
+══════════════════════════════════════ */
+(function initDate(){
+  const d = new Date();
+  document.getElementById('mastheadDate').innerHTML =
+    d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase() +
+    '<br><span style="color:var(--ghost)" id="liveClock"></span>';
+  setInterval(()=>{
+    const el = document.getElementById('liveClock');
+    if(el) el.textContent = new Date().toUTCString().slice(17,22) + ' UTC';
+  }, 1000);
+})();
+
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>⚡</span> <span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.classList.add('show'), 50);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+function switchDrawerTab(tab) {
+  document.querySelectorAll('.drawer-tab').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.drawer-tab-content').forEach(cont => cont.classList.remove('active'));
+  
+  document.getElementById(`tab-${tab}-btn`).classList.add('active');
+  document.getElementById(`drawer-tab-${tab}`).classList.add('active');
+}
+
+function togglePasswordVisibility(id) {
+  const input = document.getElementById(id);
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+/* ══════════════════════════════════════
+   ENGINE SELECTION & PERSISTENCE
+══════════════════════════════════════ */
+function onProviderChange() {
+  const provider = document.getElementById('engineProviderSelect').value;
+  const modelSelect = document.getElementById('engineModelSelect');
+  modelSelect.innerHTML = '';
+  
+  ENGINES[provider].models.forEach(model => {
+    const opt = document.createElement('option');
+    opt.value = model;
+    opt.textContent = model;
+    modelSelect.appendChild(opt);
+  });
+
+  // Highlight key requirements
+  document.querySelectorAll('.key-field-container').forEach(el => {
+    if (el.dataset.provider === provider) {
+      el.style.display = 'block';
+      el.style.borderLeft = '2px solid var(--cyan)';
+      el.style.paddingLeft = '5px';
+    } else {
+      el.style.display = 'none';
+    }
+  });
+
+  const hint = document.getElementById('engine-hint');
+  if (provider === 'gemini_auto') {
+    hint.textContent = "Recommended default: Zero-config grounded AI search. Powered directly via Google Gemini with live indexing.";
+    hint.style.color = "var(--cyan)";
+  } else if (provider === 'mock') {
+    hint.textContent = "Mock simulator triggers instant high-fidelity local content arrays without key authorization.";
+    hint.style.color = "var(--gold)";
+  } else {
+    hint.textContent = `Input valid ${ENGINES[provider].name} keys below to coordinate direct custom gateway loops.`;
+    hint.style.color = "var(--muted)";
+  }
+}
+
+function saveEngineConfig() {
+  activeProvider = document.getElementById('engineProviderSelect').value;
+  activeModel = document.getElementById('engineModelSelect').value;
+
+  Object.keys(apiCredentials).forEach(p => {
+    const input = document.getElementById(`key-${p}`);
+    if (input) {
+      apiCredentials[p] = input.value.trim();
+    }
+  });
+
+  localStorage.setItem('3hrill_provider', activeProvider);
+  localStorage.setItem('3hrill_model', activeModel);
+  localStorage.setItem('3hrill_keys', JSON.stringify(apiCredentials));
+
+  showToast(`Active Core Configured: ${ENGINES[activeProvider].name}`);
+  applySources();
+}
+
+function loadSavedConfig() {
+  const savedProvider = localStorage.getItem('3hrill_provider');
+  const savedModel = localStorage.getItem('3hrill_model');
+  const savedKeys = localStorage.getItem('3hrill_keys');
+
+  if (savedKeys) {
+    try {
+      apiCredentials = JSON.parse(savedKeys);
+      Object.keys(apiCredentials).forEach(p => {
+        const input = document.getElementById(`key-${p}`);
+        if (input) input.value = apiCredentials[p];
+      });
+    } catch(e) { console.error("Error retrieving keys", e); }
+  }
+
+  if (savedProvider) {
+    document.getElementById('engineProviderSelect').value = savedProvider;
+    onProviderChange();
+    if (savedModel) {
+      document.getElementById('engineModelSelect').value = savedModel;
+    }
+    activeProvider = savedProvider;
+    activeModel = savedModel || ENGINES[savedProvider].models[0];
+  } else {
+    onProviderChange();
+  }
+}
+
+/* ══════════════════════════════════════
+   JSON REPAIR & PARSE ENGINE
+══════════════════════════════════════ */
+function parseArticles(rawText, zone) {
+  let raw = rawText.replace(/```json[\s\S]*?```|```[\s\S]*?```/gi, s => {
+    return s.replace(/```json|```/gi,'');
+  }).trim();
+
+  const si = raw.indexOf('[');
+  const ei = raw.lastIndexOf(']');
+  if (si === -1 || ei === -1) {
+    console.error(`[3HRILL/${zone}] JSON block extraction boundary lost.`);
+    return null;
+  }
+  raw = raw.slice(si, ei + 1);
+
+  try { return JSON.parse(raw); } catch(e) {}
+
+  const repaired = raw
+    .replace(/:\s*"([\s\S]*?)(?<!\\)"(\s*[,\}])/g, (_, val, tail) => {
+      const fixed = val
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '')
+        .replace(/\t/g, ' ')
+        .replace(/(?<!\\)"/g, "'");
+      return `: "${fixed}"${tail}`;
+    })
+    .replace(/,(\s*[}\]])/g, '$1');
+
+  try { return JSON.parse(repaired); } catch(e) {}
+
+  const objects = [];
+  let depth = 0, start = -1;
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i] === '{') { if (depth === 0) start = i; depth++; }
+    else if (raw[i] === '}') {
+      depth--;
+      if (depth === 0 && start !== -1) {
+        try {
+          const rawObj = raw.slice(start, i + 1)
+            .replace(/\n/g,'\\n').replace(/\r/g,'').replace(/\t/g,' ')
+            .replace(/,(\s*[}\]])/g,'$1');
+          objects.push(JSON.parse(rawObj));
+        } catch(e2) {}
+        start = -1;
+      }
+    }
+  }
+  return objects.length ? objects : null;
+}
+
+/* ══════════════════════════════════════
+   MULTI-ENGINE API DISPATCHERS
+══════════════════════════════════════ */
+async function callEngineAPI(zone, systemPrompt, userPrompt) {
+  const provider = activeProvider;
+  const model = activeModel;
+  const key = apiCredentials[provider];
+
+  if (provider === 'mock') {
+    return generateMockArticles(zone);
+  }
+
+  // Auto-Grounded Gemini Mode (Zero Configuration)
+  if (provider === 'gemini_auto') {
+    const apiKey = ""; // Left empty to leverage the platform secure automated routing proxy
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+    const payload = {
+      contents: [{ parts: [{ text: `${systemPrompt}\n\nUser request:\n${userPrompt}` }] }],
+      tools: [{ "google_search": {} }]
+    };
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Auto-Grounded Proxy Failure [${response.status}]`);
+    }
+
+    const result = await response.json();
+    const candidate = result.candidates?.[0];
+    const text = candidate?.content?.parts?.[0]?.text;
+    if (!text) throw new Error("Empty AI Content response.");
+
+    return parseArticles(text, zone);
+  }
+
+  // Custom User Keys Fallback Routines
+  if (!key) {
+    throw new Error(`Missing authorization key for ${ENGINES[provider].name}. Add key in Control Center.`);
+  }
+
+  const payload = {};
+  let url = ENGINES[provider].endpoint;
+  const headers = { 'Content-Type': 'application/json' };
+
+  if (provider === 'anthropic') {
+    headers['x-api-key'] = key;
+    headers['anthropic-version'] = '2023-06-01';
+    headers['dangerously-allow-html-user-agents'] = 'true';
+    
+    Object.assign(payload, {
+      model: model,
+      max_tokens: 3500,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    });
+  }
+  else if (provider === 'openai') {
+    headers['Authorization'] = `Bearer ${key}`;
+    Object.assign(payload, {
+      model: model,
+      max_tokens: 3500,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: 'system', content: systemPrompt + "\nFormat output as a single JSON array object wrapped inside a key labeled: 'articles'." },
+        { role: 'user', content: userPrompt }
+      ]
+    });
+  }
+  else if (provider === 'groq') {
+    headers['Authorization'] = `Bearer ${key}`;
+    Object.assign(payload, {
+      model: model,
+      max_tokens: 3500,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: 'system', content: systemPrompt + "\nFormat output as a single JSON array object wrapped inside a key labeled: 'articles'." },
+        { role: 'user', content: userPrompt }
+      ]
+    });
+  }
+  else if (provider === 'gemini') {
+    url = `${url}${model}:generateContent?key=${key}`;
+    Object.assign(payload, {
+      contents: [{ parts: [{ text: `${systemPrompt}\n\nUser request:\n${userPrompt}` }] }],
+      generationConfig: {
+        responseMimeType: "application/json",
+        maxOutputTokens: 3500
+      }
+    });
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API Connection Fault [${response.status}]: ${errorText.slice(0, 100)}`);
+  }
+
+  const json = await response.json();
+  let parsedText = '';
+
+  if (provider === 'anthropic') {
+    parsedText = json.content[0].text;
+  } else if (provider === 'openai' || provider === 'groq') {
+    parsedText = json.choices[0].message.content;
+    try {
+      const wrapper = JSON.parse(parsedText);
+      if (wrapper.articles) return wrapper.articles;
+    } catch(e) {}
+  } else if (provider === 'gemini') {
+    parsedText = json.candidates[0].content.parts[0].text;
+  }
+
+  return parseArticles(parsedText, zone);
+}
+
+/* ══════════════════════════════════════
+   SEQUENTIAL DUAL-BATCH STAGING
+══════════════════════════════════════ */
+const BATCH_SIZE = 8;
+const BATCHES = 2; // Trimmed down to reduce loading lag
+const BATCH_GAP_MS = 6000;
+
+async function fetchBatch(zone, batchNum, alreadyFetched, sourceNames, sourceList) {
+  const z = ZONES[zone];
+  const avoidList = alreadyFetched.length
+    ? `\n\nDo NOT reuse these exact headlines:\n${alreadyFetched.map((a)=>`- ${a.headline}`).join('\n')}`
+    : '';
+
+  const systemPrompt = `${z.prompt}
+  Active channels context: ${sourceList}
+  
+  CRITICAL: You must respond in raw JSON format. Return a direct array: [...] without any markdown wrappers or surrounding commentaries.
+  Structure required:
+  - "headline": string, sharp title max 12 words
+  - "kicker": string, 1-2 sentence preview max 30 words
+  - "source": string, choose from: [${sourceNames}]
+  - "timeAgo": string, e.g. "4h ago", "Today", "Yesterday"
+  - "url": string url or "#"
+  - "body": string detail paragraphs (~150 words total)
+  
+  Provide only raw, valid JSON. Do not write \`\`\`json. Only starting with [ and ending with ].${avoidList}`;
+
+  const userPrompt = `Sync ${BATCH_SIZE} news items in the ${zone.toUpperCase()} band. Focused on real music news events of 2026.`;
+
+  return await callEngineAPI(zone, systemPrompt, userPrompt);
+}
+
+async function fetchZone(zone) {
+  if (isLoading[zone]) return;
+  isLoading[zone] = true;
+
+  const grid = document.getElementById('grid-' + zone);
+  grid.innerHTML = `<div class="zone-load"><div class="load-ring"></div><div class="load-msg" id="load-msg-${zone}">Syncing Transmission Core [${ENGINES[activeProvider].name}]...</div></div>`;
+
+  const activeSources = NEWS_SOURCES.filter(s => s.enabled);
+  if (!activeSources.length) {
+    grid.innerHTML = errHTML('No channels enabled. Configure Sources inside the Control Panel.');
+    isLoading[zone] = false;
+    return;
+  }
+
+  const sourceNames = activeSources.map(s => s.name).join(', ');
+  const sourceList  = activeSources.map(s => `${s.name} (${s.url})`).join('\n');
+
+  // Handle Simulator Instant Boot Pathway
+  if (activeProvider === 'mock') {
+    await new Promise(r => setTimeout(r, 600)); // Clean visual scanning feedback
+    const articles = generateMockArticles(zone);
+    zoneData[zone] = articles;
+    renderZone(zone, articles, false);
+    updateTicker();
+    isLoading[zone] = false;
+    document.getElementById('lastUpdated').textContent = `Local Core Simulated: ${new Date().toLocaleTimeString()} (Offline Mode)`;
+    return;
+  }
+
+  let allArticles = [];
+
+  try {
+    for (let b = 0; b < BATCHES; b++) {
+      const msgEl = document.getElementById('load-msg-' + zone);
+      if (msgEl) msgEl.textContent = `Streaming Node Cycle Block ${b+1}/${BATCHES}... (${allArticles.length} tracks aggregated)`;
+
+      const batch = await fetchBatch(zone, b, allArticles, sourceNames, activeSources);
+      if (batch && batch.length) {
+        allArticles = allArticles.concat(batch);
+        zoneData[zone] = allArticles;
+        renderZone(zone, allArticles, b < BATCHES - 1);
+        updateTicker();
+      }
+
+      document.getElementById('lastUpdated').textContent =
+        `Live AI Feed Decoded: ${new Date().toLocaleTimeString()} · Source: ${ENGINES[activeProvider].name}`;
+
+      if (b < BATCHES - 1) {
+        let countdown = BATCH_GAP_MS / 1000;
+        const waitTick = setInterval(() => {
+          countdown--;
+          const el = document.querySelector(`#grid-${zone} .batch-progress`);
+          if (el) el.textContent = `Progressive node refresh in ${countdown}s...`;
+        }, 1000);
+        await new Promise(r => setTimeout(r, BATCH_GAP_MS));
+        clearInterval(waitTick);
+      }
+    }
+  } catch(err) {
+    console.error(`Core processing failure:`, err);
+    if (!allArticles.length) {
+      // Automatic Self-Healing Engine Routing:
+      grid.innerHTML = `<div class="zone-load"><div class="load-ring" style="border-top-color:var(--gold)"></div><div class="load-msg">Gateway Error. Routing backup local feed...</div></div>`;
+      await new Promise(r => setTimeout(r, 1200));
+      const backupArticles = generateMockArticles(zone);
+      zoneData[zone] = backupArticles;
+      renderZone(zone, backupArticles, false);
+      updateTicker();
+      showToast("Proxy limits hit. Activating Local Simulation Core.", "warn");
+    } else {
+      const banner = document.createElement('div');
+      banner.className = 'error-state';
+      banner.innerHTML = `<p style="font-size:.58rem">Terminal Load Halted. Frame captured at ${allArticles.length} records. Status: ${err.message}</p>`;
+      grid.appendChild(banner);
+    }
+  } finally {
+    isLoading[zone] = false;
+  }
+}
+
+function errHTML(msg) {
+  return `<div class="error-state"><h3>TRANSMISSION TIMEOUT</h3><p>${msg}</p></div>`;
+}
+
+/* ══════════════════════════════════════
+   HIGH-FIDELITY SIMULATED MOCK ENGINE
+══════════════════════════════════════ */
+function generateMockArticles(zone) {
+  // Dynamic shuffled content compiler to keep simulation fresh and non-static
+  const pool = {
+    hot: [
+      {
+        headline: "Daft Punk Detected in Secret Soundstage Underneath Berlin Station",
+        kicker: "An unexpected power grid surge in Kreuzberg points to a high-capacity recording session.",
+        body: "Rumours of a Daft Punk re-ignition reached astronomical levels today following localized electric load jumps in a decommissioned Berlin bunker complex.\n\nTechnicians observed shipments containing proprietary synthesizer consoles marked for delivery under strict NDA shielding protocols.\n\nSubsequent audio leaks reported from nearby service tunnels have revealed highly compressed vocoder test patterns echoing through the concrete structure."
+      },
+      {
+        headline: "Billie Eilish and SZA Slate Secret Spatial Audio Crossover Project",
+        kicker: "A cryptic 12-hour spatial frequency test is cataloged on internal engineering channels.",
+        body: "Alternative pioneer Billie Eilish and SZA are reported to have mapped out an collaborative spatial project recorded in custom dome setups.\n\nThe project uses three-dimensional sound projection to craft a highly physical experience for listeners using spatial arrays.\n\nStudio assistants note the tracks deliberately lack structural lyrics, relying instead on heavy vocal layering and synthesized frequencies."
+      },
+      {
+        headline: "Aphex Twin Secretly Deploys Interactive Generative App for Android",
+        kicker: "The software synthesizes modular textures on-the-fly based on local battery temperatures.",
+        body: "Richard D. James has released a minimalist open-source application bypassing standard app distribution channels.\n\nThe tool translates standard processing loads and phone sensory data directly into rich, evolving analog synth loops.\n\nUsers are reporting hidden musical sequences that unlock only when batteries approach critical temperatures."
+      },
+      {
+        headline: "Tyler, The Creator Previews Orchestral Jazz LP Under Private Alias",
+        kicker: "A low-frequency test channel showcases orchestral woodwinds and deep acoustic upright bass.",
+        body: "A cryptic stream titled 'Project Cherry' is taking the internet by storm, featuring intense woodwind orchestrations and raw basslines.\n\nSpectral analysis matches the unique acoustic patterns of Tyler's previous session setups, pointing to a highly anticipated acoustic turn.\n\nInsiders suggest a full catalog drop via private vinyl distribution rings before any digital release."
+      },
+      {
+        headline: "Fred again.. & Skrillex to Run 72-Hour Continuous Rave in Kyoto Shrines",
+        kicker: "Exclusive entry tokens are only obtainable via physically hidden street tags.",
+        body: "Tokyo electronic channels are scrambling following a dynamic coordinates drop by the beloved duo.\n\nThe pop-up rave is confirmed inside a secluded industrial temple outside Kyoto, featuring continuous back-to-back testing setups.\n\nOnly local fans scanning hidden geometric prints around subway tunnels have secured entrance keys."
+      }
+    ],
+    warm: [
+      {
+        headline: "Tems Establishes Pan-African Independent Digital Distribution Center",
+        kicker: "The Lagos hub aims to circumvent standard international label fee systems.",
+        body: "Afrobeats powerhouse Tems has initiated funding for a secure, creator-owned digital distribution framework.\n\nThe facility in Lagos will supply young artists with uncompromised distribution channels and master rights preservation structures.\n\n'It is time we take absolute control of our own frequencies,' Tems remarked during her launch panel."
+      },
+      {
+        headline: "Kendrick Lamar Coordinates Spatial Audio Preservation Vault",
+        kicker: "The archival project safeguards rare, uncompressed field tapes and historical interviews.",
+        body: "Kendrick Lamar has formed a preservation organization focused on digitization of historical street jazz records and local oral records.\n\nThe master tracks are encoded using lossless analog tape architectures to retain maximum spatial definition.\n\nThis collection will be available to public libraries and local creative programs across Los Angeles."
+      },
+      {
+        headline: "Major Vinyl Pressing Plant Re-opens to Alleviate Indie LP Backlogs",
+        kicker: "The newly updated physical facility uses carbon-neutral solar energy arrays.",
+        body: "A decommissioned record plant in northern Europe has been upgraded to help independent artists get physical pressings printed.\n\nThe project is backed by a coalition of indie labels to offset long backlogs and dynamic global cost margins.\n\nThe facility utilizes clean solar energy to eliminate the high carbon footprint traditionally associated with PVC production."
+      }
+    ],
+    cold: [
+      {
+        headline: "Monopolistic Ticket Platform Face Major Antitrust Restructuring Lawsuit",
+        kicker: "The class-action lawsuit targets exclusive stadium contracts and hidden booking fees.",
+        body: "The Department of Justice has formally initiated antitrust proceedings aiming to dissect standard dynamic ticket ticketing platforms.\n\nLitigants allege the booking conglomerates restrict independent ticketing and suppress competition via exclusive venue contracts.\n\nLegal experts suggest a ruling could break up long-standing monopolies and fundamentally restructure touring systems."
+      },
+      {
+        headline: "Severe Transit and Shipping Logistics Force Independent Tour Cancellations",
+        kicker: "Mid-tier metal bands warn that global diesel surcharges are suffocating operations.",
+        body: "A rising number of mid-tier touring packages have canceled European dates citing unsustainable freight and travel cost spikes.\n\nArtists report logistics budgets have ballooned over 150%, translating typical break-even tours into catastrophic financial losses.\n\nIndustry bodies are calling for immediate venue subsidy systems to preserve global tour networks."
+      },
+      {
+        headline: "Historic London Nightclub Threatened by Luxury Condo Noise Complains",
+        kicker: "Gentrification pressures risk silencing a legendary multi-generational underground hub.",
+        body: "A legendary electronic basement hub in East London has been served with sudden decibel ceiling regulations from new property developers.\n\nClub management is rallying support from local council members, arguing that historical cultural venues should possess protected grandfather rights.\n\n'Our cities are becoming beautifully decorated ghost towns,' one promoter commented during a community meeting."
+      }
+    ]
+  };
+
+  const results = pool[zone] || [];
+  const activeSources = NEWS_SOURCES.filter(s => s.enabled);
+  
+  // Randomize mock attributes each time they are compiled to simulate live updates
+  const shuffled = [...results].sort(() => 0.5 - Math.random());
+  
+  return shuffled.map((item, index) => {
+    const randomSrc = activeSources[index % activeSources.length] || { name: '3HRILL CORE', url: '#' };
+    return {
+      headline: item.headline,
+      kicker: item.kicker,
+      source: randomSrc.name,
+      timeAgo: `${index + 1}h ago`,
+      url: randomSrc.url,
+      body: item.body
+    };
+  });
+}
+
+/* ══════════════════════════════════════
+   DOM CARD & GRID COMPILER
+══════════════════════════════════════ */
+function imgFor(idx){ return IMAGE_POOL[idx % IMAGE_POOL.length] }
+
+function makeCard(a, type, idx, zone) {
+  const z = ZONES[zone];
+  const card = document.createElement('div');
+  card.className = `ncard ${type}`;
+
+  const ribbon = `<div class="ncard-ribbon ${z.tagClass}">${zone.toUpperCase()}</div>`;
+  const meta   = `
+    <div class="ncard-meta">
+      <span class="ncard-source">${a.source||'3HRILL'}</span>
+      <div class="ncard-dot"></div>
+      <span>${a.timeAgo||'Recently'}</span>
+    </div>`;
+
+  if (type === 'hero') {
+    card.innerHTML = `
+      <div class="ncard-img" style="background-image:url(${imgFor(idx)})">${ribbon}</div>
+      <div class="ncard-body">
+        ${meta}
+        <div class="ncard-hed">${a.headline||'Untitled'}</div>
+        <div class="ncard-kicker">${a.kicker||''}</div>
+        <div class="ncard-read">Read story</div>
+      </div>`;
+  } else if (type === 'feature') {
+    card.innerHTML = `
+      <div class="ncard-img" style="background-image:url(${imgFor(idx)});height:130px">${ribbon}</div>
+      <div class="ncard-body">
+        ${meta}
+        <div class="ncard-hed">${a.headline||'Untitled'}</div>
+        <div class="ncard-kicker">${a.kicker||''}</div>
+        <div class="ncard-read">Read story</div>
+      </div>`;
+  } else {
+    card.innerHTML = `
+      <div class="ncard-body">
+        ${meta}
+        <div class="ncard-hed">${a.headline||'Untitled'}</div>
+        <div class="ncard-kicker" style="font-size:.76rem">${(a.kicker||'').slice(0,95)}…</div>
+        <div class="ncard-read">Read story</div>
+      </div>`;
+  }
+
+  card.addEventListener('click', () => openArt(a, zone));
+  return card;
+}
+
+function renderZone(zone, articles, moreComing = false) {
+  const grid = document.getElementById('grid-' + zone);
+  const existingCount = grid.querySelectorAll('.ncard').length;
+  grid.innerHTML = '';
+
+  const blockSize = 8;
+  const blocks = Math.ceil(articles.length / blockSize);
+
+  for (let bl = 0; bl < blocks; bl++) {
+    const offset = bl * blockSize;
+    const slice  = articles.slice(offset, offset + blockSize);
+
+    if (bl > 0) {
+      const div = document.createElement('div');
+      div.className = 'batch-divider';
+      div.innerHTML = `
+        <div class="batch-divider-line"></div>
+        <div class="batch-divider-label">More ${zone} stories</div>
+        <div class="batch-divider-line"></div>`;
+      grid.appendChild(div);
+    }
+
+    if (slice[0]) grid.appendChild(makeCard(slice[0], bl === 0 ? 'hero' : 'feature', offset, zone));
+    if (slice[1]) grid.appendChild(makeCard(slice[1], 'feature', offset+1, zone));
+
+    const side = document.createElement('div');
+    side.className = 'side-stack';
+    [2,3,4].forEach(i => { if(slice[i]) side.appendChild(makeCard(slice[i],'mini',offset+i,zone)); });
+    if (side.children.length) grid.appendChild(side);
+
+    [5,6,7].forEach(i => { if(slice[i]) grid.appendChild(makeCard(slice[i],'std',offset+i,zone)); });
+  }
+
+  if (moreComing) {
+    const prog = document.createElement('div');
+    prog.style.cssText = 'grid-column:1/-1;text-align:center;padding:.6rem';
+    prog.innerHTML = `<span class="batch-progress">Syncing progressive nodes...</span>`;
+    grid.appendChild(prog);
+  }
+
+  const allCards = grid.querySelectorAll('.ncard');
+  allCards.forEach((c, i) => {
+    if (i < existingCount) return;
+    c.style.opacity='0'; c.style.transform='translateY(14px)';
+    setTimeout(()=>{
+      c.style.transition='opacity .42s ease,transform .42s ease,border-color .24s,box-shadow .24s';
+      c.style.opacity='1'; c.style.transform='translateY(0)';
+    }, 40 + (i - existingCount) * 35);
+  });
+}
+
+/* ══════════════════════════════════════
+   LIVE TICKER SCROLL HANDLER
+══════════════════════════════════════ */
+function updateTicker() {
+  const all = [...(zoneData.hot||[]), ...(zoneData.warm||[]), ...(zoneData.cold||[])];
+  const headlines = all.map(a => a.headline||'').filter(Boolean);
+  if (!headlines.length) return;
+  document.getElementById('tickerBar').innerHTML =
+    headlines.map(h => `${h} <span style="color:var(--elec);margin:0 1.2rem">✦</span>`).join('  ');
+}
+
+/* ══════════════════════════════════════
+   MODAL DISPLAY ENGINE & DRAWERS
+══════════════════════════════════════ */
+function switchZone(zone) {
+  currentZone = zone;
+  document.querySelectorAll('.ztab').forEach(t => t.classList.toggle('active', t.dataset.zone === zone));
+  document.querySelectorAll('.zone-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + zone));
+  if (!zoneData[zone] && !isLoading[zone]) fetchZone(zone);
+}
+
+function openArt(a, zone) {
+  const z = ZONES[zone];
+  const tag = document.getElementById('art-zone-tag');
+  tag.textContent = z.label;
+  tag.style.cssText = `background:${z.color}22;border:1px solid ${z.color}44;color:${z.color};`;
+
+  document.getElementById('art-eyebrow').textContent =
+    (a.source||'3HRILL') + '  ·  ' + (a.timeAgo||'Recently');
+  document.getElementById('art-headline').textContent = a.headline||'';
+  document.getElementById('art-byline').innerHTML =
+    `<span>${a.source||'3HRILL Music'}</span><span>·</span><span>${a.timeAgo||'Recently'}</span>`;
+  document.getElementById('art-body').innerHTML =
+    (a.body||'No content available.').split('\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('');
+  const btn = document.getElementById('art-src-btn');
+  btn.href = (a.url && a.url!=='#') ? a.url : '#';
+  btn.style.display = (a.url && a.url!=='#') ? 'inline-flex' : 'none';
+
+  document.getElementById('art-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+  document._artEsc = e => { if(e.key==='Escape') closeArt(); };
+  document.addEventListener('keydown', document._artEsc);
+  document.getElementById('art-modal').onclick = e => {
+    if(e.target===document.getElementById('art-modal')) closeArt();
+  };
+}
+
+function closeArt() {
+  document.getElementById('art-modal').classList.remove('open');
+  document.body.style.overflow='';
+  document.removeEventListener('keydown', document._artEsc);
+}
+
+let ctrlOpen = false;
+function toggleCtrlDrawer(){
+  ctrlOpen = !ctrlOpen;
+  document.getElementById('ctrl-drawer').classList.toggle('open', ctrlOpen);
+  document.getElementById('ctrl-backdrop').classList.toggle('show', ctrlOpen);
+  document.getElementById('ctrlBtn').classList.toggle('open', ctrlOpen);
+}
+
+/* ══════════════════════════════════════
+   NEWS SOURCES DRAWER INTERACTION
+══════════════════════════════════════ */
+function renderSrcList(){
+  const list = document.getElementById('srcList');
+  list.innerHTML='';
+  NEWS_SOURCES.forEach((s,i)=>{
+    const item=document.createElement('div');
+    item.className='src-item'+(s.enabled?' active':'');
+    item.innerHTML=`
+      <div class="src-toggle" data-idx="${i}"></div>
+      <div class="src-item-info">
+        <div class="src-item-name">${s.name}</div>
+        <div class="src-item-url">${s.url}</div>
+      </div>
+      <button class="src-remove" data-idx="${i}">✕</button>`;
+    
+    item.querySelector('.src-toggle').addEventListener('click',()=>{
+      NEWS_SOURCES[i].enabled=!NEWS_SOURCES[i].enabled; renderSrcList(); updateSourceBadge();
+    });
+    item.querySelector('.src-remove').addEventListener('click',()=>{
+      NEWS_SOURCES.splice(i,1); renderSrcList(); updateSourceBadge();
+    });
+    list.appendChild(item);
+  });
+  document.getElementById('srcActiveCount').textContent =
+    NEWS_SOURCES.filter(s=>s.enabled).length + ' active channels';
+  updateSourceBadge();
+}
+
+function updateSourceBadge(){
+  document.getElementById('sourceCount').textContent = NEWS_SOURCES.filter(s=>s.enabled).length;
+}
+
+function addSource(){
+  const name=document.getElementById('srcNameInput').value.trim();
+  const url=document.getElementById('srcUrlInput').value.trim();
+  if(!name||!url){
+    document.getElementById('srcNameInput').style.borderColor='rgba(255,80,80,.5)';
+    setTimeout(()=>document.getElementById('srcNameInput').style.borderColor='',1200);
+    return;
+  }
+  NEWS_SOURCES.push({name, url:url.startsWith('http')?url:'https://'+url, enabled:true});
+  document.getElementById('srcNameInput').value='';
+  document.getElementById('srcUrlInput').value='';
+  renderSrcList();
+  showToast(`Added channel: ${name}`);
+}
+
+function toggleAllSources(state){
+  NEWS_SOURCES.forEach(s=>s.enabled=state);
+  renderSrcList();
+}
+
+function applySources(){
+  toggleCtrlDrawer();
+  zoneData={hot:null,warm:null,cold:null};
+  fetchZone('hot');
+  setTimeout(()=>fetchZone('warm'), 2000);
+  setTimeout(()=>fetchZone('cold'), 4000);
+}
+
+document.getElementById('refreshBtn').addEventListener('click', () => {
+  zoneData = { hot:null, warm:null, cold:null };
+  fetchZone('hot');
+  setTimeout(() => fetchZone('warm'), 2000);
+  setTimeout(() => fetchZone('cold'), 4000);
+});
+
+/* ══════════════════════════════════════
+   BOOT ENGINE
+══════════════════════════════════════ */
+renderSrcList();
+updateSourceBadge();
+loadSavedConfig();
+
+// Stagger starts to respect initial API traffic spacing
+fetchZone('hot');
+setTimeout(() => fetchZone('warm'), 2000);
+setTimeout(() => fetchZone('cold'), 4000);
+/* ═══════════════════════════════════════════
+   SITE MAP DROPDOWN
+═══════════════════════════════════════════ */
+function toggleSitemap(e) {
+    if (e) e.stopPropagation();
+    const btn = document.getElementById('sitemapBtn');
+    const isOpen = btn.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(isOpen));
+}
+
+// Close sitemap when clicking outside
+document.addEventListener('click', e => {
+    const btn = document.getElementById('sitemapBtn');
+    if (btn && !btn.contains(e.target)) {
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+    }
+});
+
+// Keyboard: toggle sitemap with Enter / Space
+document.getElementById('sitemapBtn').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleSitemap(e);
+    }
+});
+
+/* ═══════════════════════════════════════════
+   COOKIE CONSENT CONTROLLER
+═══════════════════════════════════════════ */
+(function () {
+    const STORAGE_KEY = '3hrill_cookie_consent_v1';
+
+    const banner = document.getElementById('consentBanner');
+    const prefsEl = document.getElementById('consentPrefs');
+    const openPrefsBtn = document.getElementById('openPrefs');
+    const savePrefsBtn = document.getElementById('savePrefs');
+    const acceptAllBtn = document.getElementById('acceptAll');
+    const rejectAllBtn = document.getElementById('rejectAll');
+    cookieLink.addEventListener('click', openBanner);
+
+    if (!banner) return;
+
+    const switches = banner.querySelectorAll('.switch[data-cat]');
+
+    /* ── Read / write consent state ── */
+    function readConsent() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (err) { return null; }
+    }
+
+    function writeConsent(state) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                essential: true,
+                analytics: !!state.analytics,
+                personalization: !!state.personalization,
+                timestamp: new Date().toISOString()
+            }));
+        } catch (err) { /* storage may be blocked — ignore */ }
+    }
+
+    /* ── Apply saved state to switches ── */
+    function applyState(state) {
+        switches.forEach(sw => {
+            const cat = sw.dataset.cat;
+            if (cat === 'essential') return;
+            const isOn = !!state[cat];
+            sw.classList.toggle('on', isOn);
+            sw.setAttribute('aria-checked', String(isOn));
+        });
+    }
+
+    /* ── Read current switch state ── */
+    function readSwitches() {
+        const out = { essential: true, analytics: false, personalization: false };
+        switches.forEach(sw => {
+            const cat = sw.dataset.cat;
+            if (cat === 'essential') return;
+            out[cat] = sw.classList.contains('on');
+        });
+        return out;
+    }
+
+    /* ── Toggle a switch ── */
+    function toggleSwitch(sw) {
+        if (sw.classList.contains('locked')) return;
+        const next = !sw.classList.contains('on');
+        sw.classList.toggle('on', next);
+        sw.setAttribute('aria-checked', String(next));
+    }
+
+    /* ── Open / close ── */
+    function openBanner() {
+        const saved = readConsent();
+        if (saved) applyState(saved);
+        banner.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeBanner() {
+        banner.classList.remove('open');
+        document.body.style.overflow = '';
+        prefsEl.classList.remove('open');
+        openPrefsBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Toast ── */
+    function toast(msg) {
+        const el = document.createElement('div');
+        el.className = 'consent-toast';
+        el.textContent = msg;
+        document.body.appendChild(el);
+        requestAnimationFrame(() => el.classList.add('show'));
+        setTimeout(() => {
+            el.classList.remove('show');
+            setTimeout(() => el.remove(), 400);
+        }, 2200);
+    }
+
+    /* ── Switch interactions ── */
+    switches.forEach(sw => {
+        sw.addEventListener('click', () => toggleSwitch(sw));
+        sw.addEventListener('keydown', e => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleSwitch(sw);
+            }
+        });
+    });
+
+    /* ── Customize toggle ── */
+    openPrefsBtn.addEventListener('click', () => {
+        const isOpen = prefsEl.classList.toggle('open');
+        openPrefsBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    /* ── Save preferences ── */
+    savePrefsBtn.addEventListener('click', () => {
+        const state = readSwitches();
+        writeConsent(state);
+        toast('✓ Preferences saved');
+        closeBanner();
+    });
+
+    /* ── Accept all ── */
+    acceptAllBtn.addEventListener('click', () => {
+        const state = { essential: true, analytics: true, personalization: true };
+        applyState(state);
+        writeConsent(state);
+        toast('✓ All cookies accepted');
+        closeBanner();
+    });
+
+    /* ── Reject all ── */
+    rejectAllBtn.addEventListener('click', () => {
+        const state = { essential: true, analytics: false, personalization: false };
+        applyState(state);
+        writeConsent(state);
+        toast('✓ Only essential cookies active');
+        closeBanner();
+    });
+
+    /* ── Escape closes ── */
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && banner.classList.contains('open')) {
+            closeBanner();
+        }
+    });
+
+    /* ── Backdrop click closes ── */
+    banner.addEventListener('click', e => {
+        if (e.target === banner) closeBanner();
+    });
+
+    /* ── Wire the breadcrumb "Cookie Preferences" link ── */
+    cookieLink.addEventListener('click', openBanner);
+
+    /* ── Expose globally (in case other scripts need it) ── */
+    window.openCookieConsent = openBanner;
+    window.closeCookieConsent = closeBanner;
+
+    /* ── Auto-open on first visit (only if no choice saved) ── */
+    document.addEventListener('DOMContentLoaded', () => {
+        const saved = readConsent();
+        if (!saved) {
+            setTimeout(openBanner, 1000);
+        }
+    });
+
+    /* ── If DOM already loaded, run immediately ── */
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        const saved = readConsent();
+        if (!saved) {
+            setTimeout(openBanner, 1000);
+        }
+    }
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════
+     COOKIE CONSENT BANNER
+═══════════════════════════════════════════ -->
+<div class="consent-banner" id="consentBanner" role="dialog" aria-modal="true" aria-label="Cookie consent">
+    <div class="consent-card">
+        <div class="consent-strings" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="consent-body">
+            <p class="consent-eyebrow">3hrill · <b>privacy</b></p>
+            <h2 class="consent-title">Cookies, Too</h2>
+            <p class="consent-text">
+                3hrill Music uses cookies to keep the site running and understand how the
+                stage gets used. Allow cookies, or pick exactly what you're comfortable with.
+            </p>
+
+            <div class="consent-prefs" id="consentPrefs">
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Essential <span class="locked">always on</span></p>
+                        <p class="pref-desc">Required for the site to load and function — navigation, layout, and security. These can't be switched off.</p>
+                    </div>
+                    <div class="switch on locked" data-cat="essential" role="switch" aria-checked="true" aria-label="Essential cookies (always on)" tabindex="-1"></div>
+                </div>
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Analytics</p>
+                        <p class="pref-desc">Helps us see which pages and sets get the most love, so we know what to build next.</p>
+                    </div>
+                    <div class="switch" data-cat="analytics" role="switch" aria-checked="false" aria-label="Analytics cookies" tabindex="0"></div>
+                </div>
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Personalization</p>
+                        <p class="pref-desc">Remembers things like your favorite genres and recent picks to tailor recommendations.</p>
+                    </div>
+                    <div class="switch" data-cat="personalization" role="switch" aria-checked="false" aria-label="Personalization cookies" tabindex="0"></div>
+                </div>
+                <div class="consent-foot">
+                    <button type="button" class="btn btn-accept" id="savePrefs">Save Preferences</button>
+                </div>
+            </div>
+
+            <div class="consent-actions">
+                <button type="button" class="btn btn-accept" id="acceptAll">Accept All</button>
+                <button type="button" class="btn btn-reject" id="rejectAll">Reject All</button>
+                <button type="button" class="btn btn-customize" id="openPrefs" aria-expanded="false">Customize</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>3hrill Music · 3D Stage</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2352738295172176" crossorigin="anonymous">
+    </script>
+
+    <style>
+        :root {
+            --ink: #0a0716;
+            --panel: #f4f3fa;
+            --text: #f4f3fa;
+            --muted: #f4f5f7;
+            --hot: #f4f5f7;
+            --teal: #f4f5f7;
+            --amber: #ffffff;
+            --violet: rgb(255, 255, 255);
+            --gap: clamp(8px, 1.6vw, 18px);
+            --spine: clamp(48px, 5vw, 164px);
+            --ease-pop: cubic-bezier(.28,-0.03,0,.99);
+            --ease-smooth: cubic-bezier(.28,-0.03,0,.99);
+            --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+            /* consent banner tokens */
+            --navy-950: #05040c;
+            --navy-900: #0d0a1f;
+            --navy-800: #161233;
+            --cyan-400: #3fe0ff;
+            --cyan-300: #7ce9ff;
+            --steel: #b9b6cf;
+            --steel-dim: #6c6890;
+            --brass: #f2c879;
+        }
+
+        /* ============================================= */
+        /*  3D ENTRANCE KEYFRAMES                        */
+        /* ============================================= */
+        @keyframes rise3D {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px) rotateX(8deg) scale(0.92);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0) scale(1);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100vh;
+        }
+
+        body {
+            background: radial-gradient(circle at 30% 20%, #1b1530, #0a0716 80%);
+            font-family: "Space Grotesk", Arial, sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1300px;
+            padding: clamp(16px, 4vw, 48px);
+            display: flex;
+            flex-direction: column;
+background-image:url('images/waterblue.jpg');
+background-size:cover;
+background-position:70%;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: center;
+            perspective: 1500px;
+        }
+  /* ================= CONSENT BANNER ================= */
+  .consent-banner{
+    position:fixed;
+    inset:0;
+    z-index:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(3,4,10,.72);
+    backdrop-filter:blur(3px);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  .consent-banner.show{ opacity:1; pointer-events:auto; }
+
+  .consent-card{
+    width:100%;
+    max-width:520px;
+    max-height:90vh;
+    background:var(--navy-900);
+    border:1px solid #1d2a45;
+    border-top:2px solid var(--cyan-400);
+    border-radius:10px;
+    box-shadow:0 30px 70px rgba(0,0,0,.6);
+    overflow-y:auto;
+    overflow-x:hidden;
+backdrop-filter:blur(6px);
+    transform:scale(.94) translateY(10px);
+    transition:transform .35s cubic-bezier(.2,1,.3,1);
+
+  }
+
+  .consent-banner.show .consent-card{ transform:scale(1) translateY(0); }
+
+
+  .consent-strings{
+    display:flex;
+    gap:5px;
+    padding:14px 20px 0;
+  }
+  .consent-strings span{ height:14px; border-radius:1px; background:var(--steel-dim); }
+  .consent-strings span:nth-child(1){ width:2.4px; background:var(--brass); }
+  .consent-strings span:nth-child(2){ width:2px; }
+  .consent-strings span:nth-child(3){ width:1.6px; }
+  .consent-strings span:nth-child(4){ width:1.2px; }
+  .consent-strings span:nth-child(5){ width:.9px; }
+
+  .consent-body{ padding:12px 24px 20px; }
+
+  .consent-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+display:none;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--steel-dim);
+  }
+  .consent-eyebrow b{ color:var(--cyan-400); font-weight:600; }
+
+  .consent-title{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:56px;
+    letter-spacing:.02em;
+    color:#fff;
+    margin-top:6px;
+  }
+
+  .consent-text{
+    margin-top:8px;
+    font-size:15.5px;
+    line-height:1.5;
+    color:var(--steel);
+    max-width:560px;
+  }
+  .consent-text a{ color:var(--cyan-300); text-decoration:underline; }
+
+  .consent-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:18px;
+  }
+
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:11px 18px;
+    border-radius:5px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:background .2s ease, border-color .2s ease, color .2s ease, transform .12s ease;
+  }
+  .btn:active{ transform:scale(.97); }
+
+  .btn-accept{ background:var(--cyan-400); color:var(--navy-950); }
+  .btn-accept:hover{ background:var(--cyan-300); }
+
+  .btn-reject{ background:transparent; border-color:var(--steel-dim); color:var(--steel); }
+  .btn-reject:hover{ border-color:var(--steel); color:#fff; }
+
+  .btn-customize{ background:transparent; color:var(--brass); border-color:transparent; padding-left:4px; padding-right:4px; text-decoration:underline; }
+  .btn-customize:hover{ color:#f2dcae; }
+
+  /* ---------- customize panel ---------- */
+  .consent-prefs{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .4s ease;
+    border-top:1px solid transparent;
+  }
+  .consent-prefs.open{ max-height:520px; border-top-color:#1a2540; }
+
+  .pref-row{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:18px;
+    padding:16px 24px;
+    border-bottom:1px solid #141c30;
+  }
+  .pref-row:last-of-type{ border-bottom:none; }
+
+  .pref-copy .pref-name{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .pref-copy .pref-name .locked{
+    font-size:9px;
+    font-weight:500;
+    color:var(--steel-dim);
+    letter-spacing:.08em;
+    text-transform:none;
+  }
+  .pref-copy .pref-desc{ margin-top:5px; font-size:14px; color:var(--steel-dim); max-width:340px; line-height:1.45; }
+
+  .switch{
+    position:relative;
+    flex:none;
+    width:44px;
+    height:24px;
+    border-radius:12px;
+    background:var(--navy-800);
+    border:1px solid var(--steel-dim);
+    cursor:pointer;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .switch::after{
+    content:'';
+    position:absolute;
+    top:2px; left:2px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--steel);
+    transition:transform .22s cubic-bezier(.2,1,.3,1), background .2s ease;
+  }
+  .switch.on{ background:rgba(63,224,255,.18); border-color:var(--cyan-400); }
+  .switch.on::after{ transform:translateX(20px); background:var(--cyan-400); box-shadow:0 0 8px rgba(63,224,255,.6); }
+  .switch.locked{ opacity:.55; cursor:not-allowed; }
+  .switch.locked::after{ background:var(--brass); }
+
+  .consent-foot{
+    display:flex;
+    justify-content:flex-end;
+    padding:14px 24px 20px;
+  }
+
+  @media (max-width:480px){
+    .consent-actions{ flex-direction:column; }
+    .btn{ text-align:center; }
+  }
+        .stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+
+        .stage input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ============================================= */
+        /*  MIRROR ROW – vertical stretch (height)      */
+        /* ============================================= */
+        .mirror-row {
+            display: flex;
+            width: 100%;
+            gap: var(--gap);
+            margin-bottom: clamp(14px, 2.4vw, 28px);
+            align-items: flex-start;
+            /* <-- anchor at top, stretch DOWN */
+            transform-style: preserve-3d;
+        }
+
+        .mirror-card {
+            position: relative;
+             flex:1 1 0;       
+            /* share width equally, NO horizontal expansion */
+            display:grid;
+            align-items: flex-end;
+            overflow: hidden;
+            border-radius: 16px;
+            cursor: pointer;
+            background: #2a2737;
+            margin-top:-30px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.8);
+            padding: 12px 16px;
+            opacity: 0;
+            transform: translateY(-20px) rotateX(4deg) scale(0.95);
+            animation: rise3D 0.9s var(--ease-pop) forwards;
+            will-change: height, transform, box-shadow;
+            transition: height 6s var(--ease-smooth),
+                
+                box-shadow 0.6s var(--ease-out);
+            
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .mirror-card:nth-of-type(1) {
+            
+            height: 70px;
+            animation-delay: 0.10s;
+        }
+        .mirror-card:nth-of-type(2) {
+            
+            height: 86px;
+            animation-delay: 0.25s;
+        }
+        .mirror-card:nth-of-type(3) {
+            
+            height: 78px;
+            animation-delay: 0.40s;
+        }
+        .mirror-card:nth-of-type(4) {
+           
+            height: 94px;
+            animation-delay: 0.55s;
+        }
+
+        .mirror-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 4px;
+            background: var(--accent);
+            filter: drop-shadow(0 0 8px var(--accent));
+            transition: height 0.4s ease, filter 0.4s ease;
+        }
+
+        .mirror-card .mtitle {
+            font-family: "Bebas Neue", sans-serif;
+            letter-spacing: 0.06em;
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+            color: #fff;
+            white-space: nowrap;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* desktop hover tilt – 3D reactive */
+        .mirror-card:hover {
+            transform: rotateY(-4deg) rotateX(2deg) translateZ(20px);
+            box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.9), 0 0 30px -8px var(--accent);
+        }
+
+        /* active state – height expands DOWNWARD + 3D lift */
+        #c1:checked~.mirror-row .mirror-card:nth-of-type(1),
+        #c2:checked~.mirror-row .mirror-card:nth-of-type(2),
+        #c3:checked~.mirror-row .mirror-card:nth-of-type(3),
+        #c4:checked~.mirror-row .mirror-card:nth-of-type(4) {
+            height: 150px;
+            transform: rotateY(2deg) rotateX(1deg) translateZ(40px);
+            box-shadow: 0 24px 48px -18px rgba(0, 0, 0, 0.95),
+                0 0 60px -12px var(--accent);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        #c1:checked~.mirror-row .mirror-card:nth-of-type(1)::before,
+        #c2:checked~.mirror-row .mirror-card:nth-of-type(2)::before,
+        #c3:checked~.mirror-row .mirror-card:nth-of-type(3)::before,
+        #c4:checked~.mirror-row .mirror-card:nth-of-type(4)::before {
+            height: 8px;
+            filter: drop-shadow(0 0 20px var(--accent));
+        }
+
+        /* ============================================= */
+        /*  TICKET RACK – width expansion (drawer)      */
+        /* ============================================= */
+        .rack {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            width: 100vw;
+margin-bottom:-10%;
+            gap: var(--gap);
+            height: 620px;
+            transform-style: preserve-3d;
+        }
+
+        .ticket {
+            position: relative;
+           display:flex;
+           align-items: flex-start;
+            /* NO flex-grow */
+            width: var(--spine);
+            height: var(--h);
+            margin:3%;
+            border-radius: 18px 18px 0 0;
+            overflow: hidden;
+            cursor: pointer;
+            background: rgba(18, 16, 30, 0.85);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: none;
+            box-shadow: 0px 10px 30px -5px rgba(0,0,0,0.8);
+            transition: width 6s var(--ease-pop),
+                height 6s var(--ease-smooth),
+               
+                box-shadow 7s var(--ease-out),
+                border-color 5s ease;
+           
+        }
+
+        .ticket:nth-of-type(1) {
+            --h: 200px;
+            --h-open: 580px;
+            --accent: #a855f7;
+        }
+        .ticket:nth-of-type(2) {
+            --h: 280px;
+            --h-open: 480px;
+            --accent: #60a5fa;
+        }
+        .ticket:nth-of-type(3) {
+            --h: 160px;
+            --h-open: 520px;
+            --accent: #f59e0b;
+        }
+        .ticket:nth-of-type(4) {
+            --h: 320px;
+            --h-open: 600px;
+            --accent: #ec4899;
+        }
+
+        .ticket:hover {
+            
+            box-shadow: 0 -12px 40px -16px rgba(0, 0, 0, 0.9), 0 0 40px -12px var(--accent);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1),
+        #c2:checked~.rack .ticket:nth-of-type(2),
+        #c3:checked~.rack .ticket:nth-of-type(3),
+        #c4:checked~.rack .ticket:nth-of-type(4) {
+            width: 60%;
+            height: var(--h-open);
+            
+            box-shadow: 0 -28px 60px -20px rgba(0, 0, 0, 0.95),
+                0 0 70px -14px var(--accent);
+            
+        }
+
+        /* ---------- ticket internals ---------- */
+        .ticket-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+backdrop-filter: blur(48px);
+            opacity: 0.2;
+            transform: scale(1.1);
+            transition: transform 1.2s var(--ease-smooth),
+                opacity 1s var(--ease-smooth);
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .ticket-bg,
+        #c2:checked~.rack .ticket:nth-of-type(2) .ticket-bg,
+        #c3:checked~.rack .ticket:nth-of-type(3) .ticket-bg,
+        #c4:checked~.rack .ticket:nth-of-type(4) .ticket-bg {
+            opacity: 0.65;
+            transform: scale(1);
+        }
+
+        .scrim {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: linear-gradient(0deg, rgba(10, 7, 22, 0.92) 30%, rgba(10, 7, 22, 0.2) 100%);
+            transition: opacity 0.8s ease;
+        }
+
+        .spine {
+            position: relative;
+            z-index: 2;
+            flex: 0 0 var(--spine);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+
+            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            transition: flex 3.7s var(--ease-smooth),
+                opacity 3.6s var(--ease-smooth),
+                transform 3.6s var(--ease-smooth);
+            min-width: 60px;
+        }
+
+        .ticket-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 12px var(--accent));
+        }
+
+        .spine-text {
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            font-family: "Bebas Neue", sans-serif;
+            letter-spacing: 0.18em;
+            font-size: clamp(1rem, 1.4vw, 1.3rem);
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .spine,
+        #c2:checked~.rack .ticket:nth-of-type(2) .spine,
+        #c3:checked~.rack .ticket:nth-of-type(3) .spine,
+        #c4:checked~.rack .ticket:nth-of-type(4) .spine {
+            flex: 0 0 0;
+            opacity: 0;
+            transform: translateX(-40px) scale(0.8);
+            pointer-events: none;
+transition:2s all ease;
+        }
+
+        .perf {
+            position: relative;
+            z-index: 2;
+            flex: 0 0 2px;
+            background-image: repeating-linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0.15) 0 6px,
+                    transparent 6px 14px);
+            margin: 16px 0;
+            transition: opacity 0.5s ease, flex 0.6s ease, margin 0.6s ease;
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .perf,
+        #c2:checked~.rack .ticket:nth-of-type(2) .perf,
+        #c3:checked~.rack .ticket:nth-of-type(3) .perf,
+        #c4:checked~.rack .ticket:nth-of-type(4) .perf {
+            opacity: 0;
+            flex: 0 0 0;
+            margin: 0;
+        }
+
+        .body {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 28px clamp(20px, 4vw, 44px);
+            min-width: 0;
+            opacity: 0;
+            transform: translateX(20px) rotateY(5deg);
+            transition: opacity 0.5s var(--ease-smooth) 0.1s,
+                transform 0.6s var(--ease-pop) 0.1s;
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .body,
+        #c2:checked~.rack .ticket:nth-of-type(2) .body,
+        #c3:checked~.rack .ticket:nth-of-type(3) .body,
+        #c4:checked~.rack .ticket:nth-of-type(4) .body {
+            opacity: 1;
+            transform: translateX(0) rotateY(0);
+        }
+
+        .body .eyebrow,
+        .body h2,
+        .body .desc,
+        .body .nav,
+        .body .stub {
+            opacity: 0;
+            transform: translateY(24px) scale(0.96);
+            transition:  3.5s var(--ease-pop),
+                transform 0.6s var(--ease-pop);
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .body .eyebrow,
+        #c2:checked~.rack .ticket:nth-of-type(2) .body .eyebrow,
+        #c3:checked~.rack .ticket:nth-of-type(3) .body .eyebrow,
+        #c4:checked~.rack .ticket:nth-of-type(4) .body .eyebrow {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition-delay: 0.15s;
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .body h2,
+        #c2:checked~.rack .ticket:nth-of-type(2) .body h2,
+        #c3:checked~.rack .ticket:nth-of-type(3) .body h2,
+        #c4:checked~.rack .ticket:nth-of-type(4) .body h2 {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition-delay: 0.30s;
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .body .desc,
+        #c2:checked~.rack .ticket:nth-of-type(2) .body .desc,
+        #c3:checked~.rack .ticket:nth-of-type(3) .body .desc,
+        #c4:checked~.rack .ticket:nth-of-type(4) .body .desc {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition-delay: 0.45s;
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .body .nav,
+        #c2:checked~.rack .ticket:nth-of-type(2) .body .nav,
+        #c3:checked~.rack .ticket:nth-of-type(3) .body .nav,
+        #c4:checked~.rack .ticket:nth-of-type(4) .body .nav {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition-delay: 0.60s;
+        }
+
+        #c1:checked~.rack .ticket:nth-of-type(1) .body .stub,
+        #c2:checked~.rack .ticket:nth-of-type(2) .body .stub,
+        #c3:checked~.rack .ticket:nth-of-type(3) .body .stub,
+        #c4:checked~.rack .ticket:nth-of-type(4) .body .stub {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition-delay: 0.75s;
+        }
+
+        /* ---------- body typography ---------- */
+        .body .eyebrow {
+            font-family: "Bebas Neue", sans-serif;
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            line-height: 1;
+            letter-spacing: 0.06em;
+            background: linear-gradient(135deg, var(--accent), #fff 70%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 2px;
+            marging-left:12px;
+        }
+
+        .body h2 {
+            font-family: "Bebas Neue", sans-serif;
+            font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+            letter-spacing: 0.04em;
+padding-top:50px;
+            color: rgba(255, 255, 255, 0.95);
+          
+            white-space: nowrap;
+        }
+
+        .body .desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: clamp(0.8rem, 1vw, 0.95rem);
+            max-width: 44ch;
+
+            line-height: 1.6;
+            margin-bottom: 120px;
+        }
+
+        .body .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+           
+        }
+
+        .body .nav a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: clamp(0.75rem, 0.9vw, 0.85rem);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 4px 0;
+            border-bottom: 1px solid transparent;
+            transition: color 0.25s ease, border-color 0.25s ease, transform 0.3s ease;
+        }
+
+        .body .nav a:hover {
+            color: #fff;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .body .stub {
+            margin-top: auto;
+            padding-top: 12px;
+            font-size: 0.6rem;
+
+            letter-spacing: 0.2em;
+            color: rgba(255, 255, 255, 0.25);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .footer {
+            width: 100%;
+
+            text-align: center;
+margin-top:85px;
+            padding: 40px 0 12px;
+            color: rgba(255, 255, 255, 0.12);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+        }
+
+        .footer-link-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            font: inherit;
+            font-size: inherit;
+            letter-spacing: inherit;
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        .footer-link-btn:hover { color: var(--cyan-400); }
+
+        /* ============================================= */
+        /*  RESPONSIVE – vertical stack, height anims   */
+        /* ============================================= */
+        @media (max-width: 780px) {
+            .mirror-row {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+
+            .mirror-card {
+                flex: 0 0 auto !important;
+                width: 100% !important;
+                height: 48px;
+                border-radius: 40px;
+                transition: height 0.7s var(--ease-pop),
+                    box-shadow 0.6s ease,
+                    transform 0.5s ease;
+                transform: none !important;
+            }
+
+            .mirror-card:hover {
+                transform: none !important;
+            }
+
+            #c1:checked~.mirror-row .mirror-card:nth-of-type(1),
+            #c2:checked~.mirror-row .mirror-card:nth-of-type(2),
+            #c3:checked~.mirror-row .mirror-card:nth-of-type(3),
+            #c4:checked~.mirror-row .mirror-card:nth-of-type(4) {
+                width: 100% !important;
+                height: 100px;
+                transform: none !important;
+                box-shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.6);
+            }
+
+            .rack {
+                flex-direction: column;
+                align-items: stretch;
+                height: auto;
+                max-height: 80vh;
+                overflow-y: auto;
+                gap: 12px;
+            }
+
+            .ticket {
+                flex-direction: column;
+                flex: 0 0 auto;
+                width: 100% !important;
+                height: 70px;
+                border-radius: 16px;
+                transition: height 0.7s var(--ease-pop),
+                    box-shadow 0.6s ease,
+                    transform 0.5s ease;
+                transform: none !important;
+            }
+
+            .ticket:hover {
+                transform: none !important;
+            }
+
+            #c1:checked~.rack .ticket:nth-of-type(1),
+            #c2:checked~.rack .ticket:nth-of-type(2),
+            #c3:checked~.rack .ticket:nth-of-type(3),
+            #c4:checked~.rack .ticket:nth-of-type(4) {
+                width: 100% !important;
+                height: 380px;
+                transform: none !important;
+                box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.9);
+            }
+
+            .spine {
+                flex: 0 0 52px;
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 14px;
+                padding: 0 18px;
+                background: rgba(0, 0, 0, 0.2);
+            }
+
+            .spine-text {
+                writing-mode: horizontal-tb;
+                transform: none;
+            }
+
+            .perf {
+                flex: 0 0 1px;
+                margin: 0 16px;
+                background-image: repeating-linear-gradient(to right,
+                        rgba(255, 255, 255, 0.15) 0 6px,
+                        transparent 6px 14px);
+            }
+
+            .body {
+                padding: 18px 20px 22px;
+            }
+            .body h2 {
+                white-space: normal;
+            }
+            .body .desc {
+                max-width: 100%;
+            }
+            .body .eyebrow {
+                font-size: clamp(2.4rem, 10vw, 4rem) !important;
+            }
+
+            #c1:checked~.rack .ticket:nth-of-type(1) .spine,
+            #c2:checked~.rack .ticket:nth-of-type(2) .spine,
+            #c3:checked~.rack .ticket:nth-of-type(3) .spine,
+            #c4:checked~.rack .ticket:nth-of-type(4) .spine {
+                flex: 0 0 0;
+                opacity: 0;
+                transform: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+            .body,
+            .body .eyebrow,
+            .body h2,
+            .body .desc,
+            .body .nav,
+            .body .stub {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .spine {
+                opacity: 1 !important;
+                transform: none !important;
+                flex: 0 0 var(--spine) !important;
+            }
+            .ticket-bg {
+                opacity: 0.5 !important;
+                transform: scale(1) !important;
+            }
+            .mirror-card,
+            .ticket {
+                height: auto !important;
+                width: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+
+
+
+        <div class="stage">
+            <input type="radio" name="slide" id="c1" checked />
+            <input type="radio" name="slide" id="c2" />
+            <input type="radio" name="slide" id="c3" />
+            <input type="radio" name="slide" id="c4" />
+
+            <div class="mirror-row">
+                <label for="c1" class="mirror-card"><span class="mtitle">3hrill</span></label>
+                <label for="c2" class="mirror-card"><span class="mtitle">Music</span></label>
+                <label for="c3" class="mirror-card"><span class="mtitle">Welcomes</span></label>
+                <label for="c4" class="mirror-card"><span class="mtitle">You</span></label>
+            </div>
+
+            <div class="rack">
+
+                <label for="c1" class="ticket">
+                    <img class="ticket-bg" src="Images/3hrillmusic.jpg" alt="" onerror="this.remove()" />
+
+                    <span class="scrim"></span>
+                    <span class="spine">
+                        <img alt="" class="ticket-icon" src="images/3hrill.png" style="height:28px;width:auto;" />
+                        <span class="spine-text">3hrill</span>
+                    </span>
+                    <span class="perf"></span>
+                    <span class="body">
+                        <span class="eyebrow">3hrill</span>
+                        <h2>The Main Stage</h2>
+                        <p class="desc" style="margin-top:40px">Where every set starts — the pulse of the site, the news, the noise.</p>
+                        <nav class="nav" style="position:absolute;bottom:-20%">
+                            <a href="index.html">Home</a>
+                            <a href="Newssplash.html">News Splash</a>
+                        </nav>
+                        <span class="stub" style="position:absolute;top:130%">Admit One · 3hrill Music</span>
+                    </span>
+                </label>
+
+                <label for="c2" class="ticket">
+                    <img class="ticket-bg" src="images/music.jpg" alt="" onerror="this.remove()" />
+                    <span class="scrim"></span>
+                    <span class="spine">
+                        <img alt="" class="ticket-icon" src="images/3hrill.png" style="height:28px;width:auto;" />
+                        <span class="spine-text">Music</span>
+                    </span>
+                    <span class="perf"></span>
+                    <span class="body">
+                        <span class="eyebrow">Music</span>
+                        <h2>The Sound System</h2>
+                        <p class="desc" style="margin-top:40px">Charts climbing, a Library Pass through, and a showcase for the wildcards.</p>
+                        <nav class="nav" style="position:absolute;bottom:1%">
+                            <a href="index.html">Home</a>
+                            <a href="Musiccharts.html">Music Charts</a>
+                            <a href="Librarypass.html">Library Pass</a>
+                            <a href="funshowcase.html">Fun Showcase</a>
+                        </nav>
+                        <span class="stub" style="position:absolute;top:105%">Admit One · 3hrill Music</span>
+                    </span>
+                </label>
+
+                <label for="c3" class="ticket">
+                    <img class="ticket-bg" src="Images/welcomes.jpg" alt="" onerror="this.remove()" />
+                    <span class="scrim"></span>
+                    <span class="spine">
+                        <img alt="" class="ticket-icon" src="images/3hrill.png" style="height:28px;width:auto;" />
+                        <span class="spine-text">Welcomes</span>
+                    </span>
+                    <span class="perf"></span>
+                    <span class="body">
+                        <span class="eyebrow">Welcome's</span>
+                        <h2>The Backstage</h2>
+                        <p class="desc" style="margin-top:40px">This is where 3hrill gets made — Gigs booked, lessons taught, tracks built.</p>
+                        <nav class="nav" style="position:absolute;bottom:-8%">
+                            <a href="index.html">Home</a>
+                            <a href="3hrillgigs.html">3hrill Gigs</a>
+                            <a href="musicschool.html">Music School</a>
+                            <a href="musicstudio.html">Music Studio</a>
+                        </nav>
+                        <span class="stub" style="position:absolute;top:115%">Admit One · 3hrill Music</span>
+                    </span>
+                </label>
+
+                <label for="c4" class="ticket">
+                    <img class="ticket-bg" src="Images/youu.jpg" alt="" onerror="this.remove()" />
+                    <span class="scrim"></span>
+                    <span class="spine">
+                        <img alt="" class="ticket-icon" src="images/3hrill.png" style="height:28px;width:auto;" />
+                        <span class="spine-text">You</span>
+                    </span>
+                    <span class="perf"></span>
+                    <span class="body">
+                        <span class="eyebrow">You</span>
+                        <h2>Merch &amp; Mail</h2>
+                        <p class="desc" style="margin-top:40px">Either you — grab something for the road, or just saying hi.</p>
+                        <nav class="nav" style="position:absolute;bottom:-20%">
+                            <a href="index.html">Home</a>
+                            <a href="Thestore.html">The Store</a>
+                            <a href="About3hrillmusic.html">3hrill Music Contacts</a>
+                        </nav>
+                        <span class="stub" style="position:absolute;top:130%">Admit One · 3hrill Music</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 3hrill Music. All rights reserved. |||||||||||||||
+                <button type="button" id="cookiePrefsBtn" class="footer-link-btn">Cookie Preferences</button> |||||||||||||||
+                <a href="About3hrillmusic.html" class="footer-link-btn">Terms and Conditions</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ================= COOKIE CONSENT ================= -->
+    <div class="consent-banner" id="consentBanner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+        <div class="consent-card">
+            <div class="consent-strings" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="consent-body">
+                <p class="consent-eyebrow">3hrill · <b>privacy</b></p>
+                <h2 class="consent-title">Cookies, Too</h2>
+                <p class="consent-text">
+                    3hrill Music uses cookies to keep the site running and understand how the
+                    stage gets used. Allow cookies, or pick exactly what you're comfortable with.
+                </p>
+
+                <div class="consent-prefs" id="consentPrefs">
+                    <div class="pref-row">
+                        <div class="pref-copy">
+                            <p class="pref-name">Essential <span class="locked">always on</span></p>
+                            <p class="pref-desc">Required for the site to load and function — navigation, layout, and security. These can't be switched off.</p>
+                        </div>
+                        <div class="switch on locked" data-cat="essential" aria-checked="true" aria-label="Essential cookies (always on)"></div>
+                    </div>
+                    <div class="pref-row">
+                        <div class="pref-copy">
+                            <p class="pref-name">Analytics</p>
+                            <p class="pref-desc">Helps us see which pages and sets get the most love, so we know what to build next.</p>
+                        </div>
+                        <div class="switch" data-cat="analytics" tabindex="0" aria-label="Analytics cookies"></div>
+                    </div>
+                    <div class="pref-row">
+                        <div class="pref-copy">
+                            <p class="pref-name">Personalization</p>
+                            <p class="pref-desc">Remembers things like your favorite genres and recent picks to tailor recommendations.</p>
+                        </div>
+                        <div class="switch" data-cat="personalization" tabindex="0" aria-label="Personalization cookies"></div>
+                    </div>
+                    <div class="consent-foot">
+                        <button type="button" class="btn btn-accept" id="savePrefs">Save Preferences</button>
+                    </div>
+                </div>
+
+                <div class="consent-actions">
+                    <button type="button" class="btn btn-accept" id="acceptAll">Accept All</button>
+                    <button type="button" class="btn btn-reject" id="rejectAll">Reject All</button>
+                    <button type="button" class="btn btn-customize" id="openPrefs" aria-expanded="false">Customize</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- =============== /COOKIE CONSENT =============== -->
+
+
+
+<script>
+(function(){
+  const STORAGE_KEY = '3hrill_consent_v1';
+
+  const banner   = document.getElementById('consentBanner');
+  const prefsEl  = document.getElementById('consentPrefs');
+  const openBtn  = document.getElementById('openPrefs');
+  const acceptAllBtn = document.getElementById('acceptAll');
+  const rejectAllBtn = document.getElementById('rejectAll');
+  const saveBtn  = document.getElementById('savePrefs');
+  const cookiePrefsBtn = document.getElementById('cookiePrefsBtn');
+  const switches = document.querySelectorAll('.switch[data-cat]:not(.locked)');
+
+  function readConsent(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); }
+    catch(e){ return null; }
+  }
+
+  function writeConsent(categories){
+    const record = {
+      essential: true,
+      analytics: !!categories.analytics,
+      personalization: !!categories.personalization,
+      timestamp: new Date().toISOString()
+    };
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+    } catch(e) {
+      console.warn('[3HRILL consent] could not write to localStorage', e);
+    }
+    applyConsent(record);
+    return record;
+  }
+
+  // Hook real scripts here — only load analytics/personalization once granted.
+  function applyConsent(record){
+    if(record.analytics){
+      // e.g. loadAnalyticsScript();
+      console.log('[3HRILL consent] analytics enabled');
+    }
+    if(record.personalization){
+      // e.g. enablePersonalizedRecs();
+      console.log('[3HRILL consent] personalization enabled');
+    }
+  }
+
+  function showBanner(){ banner.classList.add('show'); }
+  function hideBanner(){ banner.classList.remove('show'); }
+
+  function setSwitch(el, on){
+    if(!el) return;
+    el.classList.toggle('on', on);
+    el.setAttribute('aria-checked', on);
+  }
+
+  function togglePrefsPanel(open){
+    prefsEl.classList.toggle('open', open);
+    openBtn.setAttribute('aria-expanded', open);
+  }
+
+  openBtn.addEventListener('click', () => {
+    togglePrefsPanel(!prefsEl.classList.contains('open'));
+  });
+
+  switches.forEach(sw => {
+    sw.setAttribute('role','switch');
+    sw.setAttribute('aria-checked','false');
+    sw.addEventListener('click', () => setSwitch(sw, !sw.classList.contains('on')));
+    sw.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setSwitch(sw, !sw.classList.contains('on')); }
+    });
+  });
+
+  acceptAllBtn.addEventListener('click', () => {
+    switches.forEach(sw => setSwitch(sw, true));
+    writeConsent({ analytics:true, personalization:true });
+    hideBanner();
+  });
+
+  rejectAllBtn.addEventListener('click', () => {
+    switches.forEach(sw => setSwitch(sw, false));
+    writeConsent({ analytics:false, personalization:false });
+    hideBanner();
+  });
+
+  saveBtn.addEventListener('click', () => {
+    const categories = {};
+    switches.forEach(sw => { categories[sw.dataset.cat] = sw.classList.contains('on'); });
+    writeConsent(categories);
+    hideBanner();
+  });
+
+  if(cookiePrefsBtn){
+    cookiePrefsBtn.addEventListener('click', () => {
+      const existing = readConsent();
+      if(existing){
+        setSwitch(document.querySelector('[data-cat="analytics"]'), existing.analytics);
+        setSwitch(document.querySelector('[data-cat="personalization"]'), existing.personalization);
+      }
+      showBanner();
+    });
+  }
+
+  // ---- init ----
+  const existing = readConsent();
+  if(existing){
+    applyConsent(existing);
+    setSwitch(document.querySelector('[data-cat="analytics"]'), existing.analytics);
+    setSwitch(document.querySelector('[data-cat="personalization"]'), existing.personalization);
+  } else {
+    setTimeout(showBanner, 500);
+  }
+})();
+</script>
+</body>
+</html>

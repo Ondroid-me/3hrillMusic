@@ -1,0 +1,4893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3HRILL FAN SHOWCASE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,700&family=JetBrains+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+        :root {
+            --void: #020810;
+            --deep: #040c1a;
+            --elec: #00aaff;
+            --cyan: #9693f871;
+            --hot: #ff6b35;
+            --gold: #fbfbc8d6;
+            --green: #0a333cf6;
+            --violet: #8855ff;
+            --pink: #fbc8f8d6;
+            --white: #e8f4ff;
+            --muted: #3a6080;
+            --ghost: #152535;
+            --steel: #9fb0c4;
+            --fd: 'Bebas Neue', sans-serif;
+            --fb: 'Barlow Condensed', sans-serif;
+            --fm: 'JetBrains Mono', monospace;
+            --fp: 'Playfair Display', serif;
+        }
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--void);
+            color: var(--white);
+            font-family: var(--fb)
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 68, 136, .005) 3px, rgba(255, 68, 136, .005) 4px)
+        }
+
+        /* ═══ NAV ═══ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            height: 58px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            background: linear-gradient(180deg, rgba(2, 8, 16, .98), rgba(2, 8, 16, .72));
+            border-bottom: 1px solid rgba(255, 68, 136, .1);
+            backdrop-filter: blur(16px)
+        }
+        .nav-logo {
+            font-family: var(--fd);
+            font-size: 1.7rem;
+            letter-spacing: .22em;
+            text-decoration: none;
+display:none;
+            background: linear-gradient(110deg, #00e5ff, #0088ff 55%, #0044cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 14px rgba(0, 180, 255, .45))
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+display:none;
+            list-style: none
+        }
+        .nav-links a {
+            font-family: var(--fb);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+display:none;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color .2s
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+display:none;
+            color: var(--pink)
+        }
+        .nav-right {
+            display: flex;
+display:none;
+            align-items: center;
+            gap: 1.2rem
+        }
+        .nav-badge {
+            font-family: var(--fm);
+            font-size: .56rem;
+            letter-spacing: .2em;
+            color: var(--pink);
+display:none;
+            background: rgba(255, 68, 136, .07);
+            border: 1px solid rgba(255, 68, 136, .22);
+            border-radius: 2px;
+            padding: .28rem .75rem
+        }
+        .nav-clock {
+            font-family: var(--fm);
+            font-size: .52rem;
+            letter-spacing: .08em;
+            color: var(--ghost);
+            line-height: 1.8;
+            text-align: right
+        }
+.logo{
+position:absolute;right:10px;top:7px;width:18px;height:36%;z-index:954;
+}
+  
+  /* ── WRAPPER ── */
+.hmenu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 0;                /* don't let it push anything */
+    height: 0;
+    z-index: 999;
+}
+
+/* ── TOGGLE ── */
+.toggle {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;           /* above the rail */
+    transition: transform .15s ease, background .3s ease, box-shadow .3s ease;
+}
+.toggle:hover  { background: rgba(12,17,32,.96); }
+.toggle:active { transform: scale(.92); }
+
+.toggle .peg {
+    width: 1px;
+    height: 20px;
+    border-radius: 2px;
+    background: var(--steel);
+    transition: background .3s ease, height .3s ease, width .3s ease;
+}
+.toggle .peg[data-p="0"] { width: 2.8px; height: 24px; background: #e7c98f; }
+.toggle .peg[data-p="1"] { width: 2.4px; height: 22px; background: #8fcbff; }
+.toggle .peg[data-p="2"] { width: 2px;   height: 20px; background: #b8a5ff; }
+.toggle .peg[data-p="3"] { width: 1.6px; height: 18px; background: #7dd8c0; }
+.toggle .peg[data-p="4"] { width: 1.2px; height: 15px; background: #ff9a9a; }
+
+/* ── RAIL ── */
+.rail {
+    position: absolute;
+    top: 20px;
+    left: -344px;
+    width: 95px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 17px;       /* leave room for the toggle */
+    background: linear-gradient(to left, rgba(12,17,32,.95), rgba(12,17,32,0));
+    border-left: 1px solid rgba(63,224,255,.12);
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform .55s cubic-bezier(.22,1,.36,1),
+                opacity .35s ease,
+                visibility .35s ease;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+.rail.open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* ── ROW (the <a>) ── */
+.row {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    /* nothing else — no top/right offsets, those broke hit-testing */
+}
+
+/* the thin visual line */
+.string {
+    height: 2px;
+    width: 130px;
+    border-radius: 3px;
+    background: #e7c98f;
+    pointer-events: none;    /* clicks go to the <a> */
+    transition: height .3s ease, background .3s ease, filter .3s ease, box-shadow .3s ease;
+}
+.row:hover .string {
+    height: 48%;
+    background: #3fe0ff;
+    filter: drop-shadow(0 0 12px rgba(63,224,255,.7));
+    box-shadow: 0 0 20px rgba(63,224,255,.2);
+}
+
+/* ── FLYOUT ── */
+.flyout {
+    position: absolute;
+    right: calc(100% + 14px);
+    top: 50%;
+    transform: translate(10px, -50%);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 18px;
+    background: rgba(12,17,32,.95);
+    border: 1px solid rgba(63,224,255,.12);
+    border-right: 2px solid #3d4a63;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;    /* hidden by default */
+    transition: opacity .3s ease,
+                transform .3s cubic-bezier(.2,1,.3,1),
+                border-color .25s ease;
+    backdrop-filter: blur(8px);
+}
+
+/* show flyout when hovering EITHER the row OR the flyout itself */
+.row:hover .flyout,
+.flyout:hover {
+    opacity: 1;
+    transform: translate(0, -50%);
+    pointer-events: auto;    /* now clickable */
+    border-right-color: #3fe0ff;
+}
+
+        /* ═══ SLIDES ═══ */
+        #slides {
+            height: 100vh;
+            overflow-y: scroll;
+            background-size: cover;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            padding-top: 8px
+backdrop-filter:blur(16px);
+        }
+        #slides::-webkit-scrollbar {
+            display: none
+        }
+        .slide {
+            height: calc(100vh - 0px);
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden
+        }
+        .mesh {
+            position: absolute;
+            opacity: 1;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 65% 60% at 8% 30%, rgba(30, 6, 50, .55) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 50% at 95% 8%, rgba(4, 18, 55, .38) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 50% 100%, rgba(2, 8, 30, .55) 0%, transparent 65%)
+        }
+
+        /* HERO SLIDE — Static Left + Carousel Right */
+        #slide-intro {
+            background: var(--void);
+            display: flex;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .intro-left-static {
+            flex: 0 0 50%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: opacity 800ms, transform 800ms;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 3rem;
+            transform: translate3d(0, -1.5rem, 0);
+            z-index: 1;
+        }
+.intro-left-static.is-visible {
+opacity:1;
+transform:translate3d(0,0,0);
+}
+        .intro-left-static .bg-blur {
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1200&q=85&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: blur(14px) brightness(0.4) saturate(0.8);
+            transform: scale(1.1);
+            transition: background-image 0.8s ease;
+        }
+        .intro-left-static .bg-blur::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(2, 8, 16, 0.75) 0%, rgba(20, 4, 30, 0.5) 100%);
+        }
+        .intro-left-static .content {
+            position: relative;
+            z-index: 2;
+            max-width: 520px;
+            width: 100%;
+            animation: fadeSlideUp 0.8s ease forwards;
+        }
+        .intro-left-static .intro-eyebrow {
+            font-family: var(--fm);
+            font-size: .56rem;
+            letter-spacing: .32em;
+            color: var(--pink);
+            opacity: .7;
+display:none;
+            text-transform: uppercase;
+            margin-bottom: .5rem;
+        }
+        .intro-left-static h1 {
+            font-family: var(--fd);
+            font-size: clamp(5.8rem, 6.5vw, 4.8rem);
+            letter-spacing: .1em;
+            line-height: .86;
+            margin-bottom: .75rem;
+        }
+        .intro-left-static h1 em {
+            font-style: normal;
+margin-top:20px;
+
+            -webkit-text-stroke: 1px rgba(255, 68, 136, .4);
+            color: transparent;
+        }
+        .intro-left-static .intro-body {
+            font-size: .88rem;
+            font-weight: 400;
+            line-height: 1.65;
+            color: rgba(150, 200, 245, .6);
+            margin-bottom: .65rem;
+        }
+        .intro-left-static .intro-body strong {
+            color: var(--white);
+        }
+        .intro-left-static .intro-body em {
+            font-style: italic;
+            color: rgba(255, 160, 200, .72);
+        }
+        .intro-left-static .pull-quote {
+            border-left: 2px solid rgba(255, 68, 136, .3);
+            padding: .55rem 1rem;
+            margin: .55rem 0 .9rem;
+            background: rgba(255, 68, 136, .04);
+        }
+        .intro-left-static .pull-quote p {
+            font-family: var(--fp);
+            font-size: .88rem;
+            font-style: italic;
+            color: rgba(255, 180, 210, .62);
+            line-height: 1.52;
+        }
+        .intro-left-static .pull-quote cite {
+            display: block;
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .14em;
+            color: var(--ghost);
+            margin-top: .3rem;
+            text-transform: uppercase;
+        }
+        .intro-left-static .mods {
+            display: flex;
+            flex-direction: column;
+            gap: .38rem;
+            margin-top: .4rem;
+        }
+        .intro-left-static .mp {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            padding: .48rem .82rem;
+            border: 1px solid rgba(0, 130, 200, .14);
+            border-radius: 2px;
+            background: rgba(6, 14, 28, .55);
+            transition: all .25s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-left-static .mp::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            opacity: 0;
+            transition: opacity .25s;
+        }
+        .intro-left-static .mp:hover {
+            border-color: rgba(255, 68, 136, .22);
+            background: rgba(255, 68, 136, .04);
+        }
+        .intro-left-static .mp:hover::after {
+            opacity: 1;
+        }
+        .intro-left-static .mp.pk::after {
+            background: var(--pink);
+        }
+        .intro-left-static .mp.gd::after {
+            background: var(--gold);
+        }
+        .intro-left-static .mp.cv::after {
+            background: var(--cyan);
+        }
+        .intro-left-static .mp-num {
+            font-family: var(--fd);
+            font-size: 1.3rem;
+            color: var(--ghost);
+            letter-spacing: .04em;
+            flex-shrink: 0;
+            width: 24px;
+        }
+        .intro-left-static .mp:hover .mp-num {
+            color: var(--white);
+        }
+        .intro-left-static .mp-name {
+            font-family: var(--fb);
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: .04em;
+            color: var(--white);
+        }
+        .intro-left-static .mp-sub {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .08em;
+            color: var(--muted);
+            margin-top: .05rem;
+        }
+        .intro-left-static .mp-go {
+            margin-left: auto;
+            font-family: var(--fm);
+            font-size: .58rem;
+            color: var(--ghost);
+        }
+        .intro-left-static .mp:hover .mp-go {
+            color: var(--pink);
+        }
+
+        @keyframes fadeSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .intro-right-carousel {
+            flex: 0 0 50%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background: var(--deep);
+        }
+        .hero-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+        .hero-slide {
+            min-width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding: 2rem;
+            align-content: center;
+        }
+        .hero-slide .card {
+            background: rgba(8, 18, 36, 0.8);
+            border: 1px solid rgba(0, 110, 180, 0.15);
+            border-radius: 6px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .hero-slide .card:hover {
+            border-color: rgba(255, 68, 136, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(80, 0, 60, 0.15);
+        }
+        .hero-slide .card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .hero-slide .card .name {
+            font-family: var(--fb);
+            font-size: 1rem;
+            color: var(--white);
+            line-height: 1.2;
+        }
+        .hero-slide .card .desc {
+            font-family: var(--fm);
+            font-size: 0.6rem;
+            color: var(--muted);
+            margin-top: 0.2rem;
+        }
+        .hero-slide .card .badge {
+            font-family: var(--fm);
+            font-size: 0.45rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 68, 136, 0.15);
+            color: rgba(255, 68, 136, 0.5);
+            border-radius: 2px;
+            padding: 0.08rem 0.4rem;
+            margin-top: 0.3rem;
+        }
+
+        .carousel-controls {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10;
+            background: rgba(2, 8, 16, 0.7);
+            backdrop-filter: blur(8px);
+            padding: .4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 140, 220, .12);
+        }
+        .carousel-controls button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 140, 220, .2);
+            background: rgba(6, 14, 28, .7);
+            color: var(--muted);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all .25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel-controls button:hover {
+            border-color: var(--pink);
+            color: var(--pink);
+            background: rgba(255, 68, 136, .08);
+        }
+        .carousel-dots {
+            display: flex;
+            gap: .4rem;
+        }
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0, 110, 180, .2);
+            border: none;
+            cursor: pointer;
+            transition: all .3s;
+            padding: 0;
+        }
+        .carousel-dot.active {
+            background: var(--pink);
+            width: 24px;
+            border-radius: 4px;
+        }
+        .carousel-dot:hover {
+            background: rgba(255, 68, 136, .4);
+        }
+
+        /* ─── SECTION SHELL ─── */
+        .s-body {
+            display: flex;
+            flex-direction: column;
+            background-position: 80%;
+            padding: 1.5rem 3.2rem .9rem;
+            overflow: hidden;
+            height: 100%
+        }
+        .s-eye {
+            font-family: var(--fm);
+            font-size: .58rem;
+            letter-spacing: .3em;
+display:none;
+            text-transform: uppercase;
+            opacity: .55;
+            margin-bottom: .28rem
+        }
+        .s-head {
+            font-family: var(--fd);
+            font-size: clamp(5rem, 3.8vw, 3.2rem);
+            letter-spacing: .07em;
+            line-height: .9;
+            margin-top: 2rem;
+translat3d:-50%;
+     transition: all ease 7s ;
+
+        }
+
+        .slide-bottom {
+            margin-top: auto;
+            padding-top: .6rem;
+            border-top: 1px solid rgba(255, 68, 136, .06);
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            flex-shrink: 0
+        }
+        .bottom-nav-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: .5rem
+        }
+        .bottom-nav-left {
+            display: flex;
+            align-items: center;
+            gap: .6rem
+        }
+        .overview-btn {
+            font-family: var(--fm);
+            font-size: .52rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--ghost);
+            border: 1px solid rgba(255, 68, 136, .14);
+            border-radius: 2px;
+            padding: .2rem .7rem;
+            cursor: pointer;
+            transition: all .2s;
+            background: transparent
+        }
+        .overview-btn:hover {
+            color: var(--pink);
+            border-color: rgba(255, 68, 136, .3)
+        }
+
+        .sub-tabs {
+            display: flex;
+            gap: .35rem;
+            flex-wrap: wrap
+        }
+        .stab {
+            padding: .35rem .9rem;
+            border-radius: 2px;
+            cursor: pointer;
+            font-family: var(--fb);
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: .11em;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 120, 190, .15);
+            color: var(--muted);
+            background: rgba(6, 14, 28, .5);
+            transition: all .22s;
+            position: relative
+        }
+        .stab.active {
+            color: var(--white);
+            border-color: rgba(255, 68, 136, .18);
+            background: rgba(255, 68, 136, .04)
+        }
+        .stab:hover:not(.active) {
+            border-color: var(--pink);
+            color: var(--pink)
+        }
+
+        .sub-panel {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+            animation: pIn .35s ease both;
+            min-height: 0
+        }
+        .sub-panel.active {
+            display: grid
+        }
+        @keyframes pIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+        .scol {
+            display: flex;
+            flex-direction: column;
+            gap: .55rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 68, 136, .08) transparent;
+            padding-right: 2px
+        }
+        .scol::-webkit-scrollbar {
+            width: 2px
+        }
+        .scol::-webkit-scrollbar-thumb {
+            background: rgba(255, 68, 136, .1)
+        }
+
+        .blk {
+            background: linear-gradient(140deg, rgba(10, 4, 20, .95), rgba(4, 6, 18, .98));
+            border: 1px solid rgba(0, 110, 180, .1);
+            border-radius: 3px;
+            padding: .82rem 1rem;
+            transition: all .25s;
+            position: relative;
+            overflow: hidden;
+            cursor: default
+        }
+        .blk::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            opacity: 0;
+            transition: opacity .25s
+        }
+        .blk:hover {
+            transform: translateX(3px)
+        }
+        .blk.pk {
+            border-color: rgba(255, 68, 136, .1)
+        }
+        .blk.pk::after {
+            background: var(--pink)
+        }
+        .blk.pk:hover {
+            border-color: rgba(255, 68, 136, .24)
+        }
+        .blk.pk:hover::after {
+            opacity: .8
+        }
+        .blk.gold {
+            border-color: rgba(240, 192, 64, .1)
+        }
+        .blk.gold::after {
+            background: var(--gold)
+        }
+        .blk.gold:hover {
+            border-color: rgba(240, 192, 64, .24)
+        }
+        .blk.gold:hover::after {
+            opacity: .8
+        }
+        .blk.cyan {
+            border-color: rgba(0, 229, 255, .1)
+        }
+        .blk.cyan::after {
+            background: var(--cyan)
+        }
+        .blk.cyan:hover {
+            border-color: rgba(0, 229, 255, .22)
+        }
+        .blk.cyan:hover::after {
+            opacity: .8
+        }
+        .blk.violet {
+            border-color: rgba(136, 85, 255, .1)
+        }
+        .blk.violet::after {
+            background: var(--violet)
+        }
+        .blk.violet:hover {
+            border-color: rgba(136, 85, 255, .22)
+        }
+        .blk.violet:hover::after {
+            opacity: .8
+        }
+        .blk.green {
+            border-color: rgba(0, 229, 160, .1)
+        }
+        .blk.green::after {
+            background: var(--green)
+        }
+        .blk.green:hover {
+            border-color: rgba(0, 229, 160, .22)
+        }
+        .blk.green:hover::after {
+            opacity: .8
+        }
+        .blk.hot {
+            border-color: rgba(255, 107, 53, .1)
+        }
+        .blk.hot::after {
+            background: var(--hot)
+        }
+        .blk.hot:hover {
+            border-color: rgba(255, 107, 53, .22)
+        }
+        .blk.hot:hover::after {
+            opacity: .8
+        }
+        .b-eye {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            margin-bottom: .18rem;
+            opacity: .5
+        }
+        .b-title {
+            font-family: var(--fb);
+            font-size: .9rem;
+            font-weight: 700;
+            letter-spacing: .04em;
+            color: var(--white);
+            margin-bottom: .18rem
+        }
+        .b-body {
+            font-family: var(--fb);
+            font-size: .76rem;
+            font-weight: 400;
+            color: var(--muted);
+            line-height: 1.56
+        }
+        .b-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .2rem;
+            margin-top: .35rem
+        }
+        .b-tag {
+            font-family: var(--fm);
+            font-size: .43rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 130, 200, .13);
+            color: var(--ghost);
+            border-radius: 2px;
+            padding: .06rem .3rem
+        }
+        .b-tag.pk {
+            border-color: rgba(255, 68, 136, .18);
+            color: rgba(255, 68, 136, .5)
+        }
+        .b-tag.gd {
+            border-color: rgba(240, 192, 64, .18);
+            color: rgba(240, 192, 64, .5)
+        }
+        .b-tag.cv {
+            border-color: rgba(0, 229, 255, .14);
+            color: rgba(0, 229, 255, .5)
+        }
+        .b-tag.gr {
+            border-color: rgba(0, 229, 160, .14);
+            color: rgba(0, 229, 160, .5)
+        }
+
+        .hcard {
+            border-radius: 3px;
+            display: block;
+            position: relative;
+            padding: .88rem 1.1rem;
+            margin-bottom: .48rem
+        }
+        .hcard-eye {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            margin-bottom: .26rem;
+            opacity: .65
+        }
+        .hcard-name {
+            font-family: var(--fd);
+            font-size: 1.45rem;
+            letter-spacing: .08em;
+            line-height: .95;
+            margin-bottom: .32rem
+        }
+        .hcard-desc {
+            font-family: var(--fb);
+            font-size: .75rem;
+            font-weight: 400;
+            color: rgba(150, 200, 245, .5);
+            line-height: 1.55
+        }
+        .hcard.pk {
+            background: linear-gradient(140deg, rgba(255, 68, 136, .06), rgba(4, 6, 18, .97));
+            border: 1px solid rgba(255, 68, 136, .18)
+        }
+        .hcard.gold {
+            background: linear-gradient(140deg, rgba(240, 192, 64, .06), rgba(4, 6, 18, .97));
+            border: 1px solid rgba(240, 192, 64, .16)
+        }
+        .hcard.cyan {
+            background: linear-gradient(140deg, rgba(0, 229, 255, .04), rgba(4, 6, 18, .97));
+            border: 1px solid rgba(0, 229, 255, .13)
+        }
+        .hcard.violet {
+            background: linear-gradient(140deg, rgba(136, 85, 255, .06), rgba(4, 6, 18, .97));
+            border: 1px solid rgba(136, 85, 255, .17)
+        }
+        .hcard.green {
+            background: linear-gradient(140deg, rgba(0, 229, 160, .05), rgba(4, 6, 18, .97));
+            border: 1px solid rgba(0, 229, 160, .15)
+        }
+
+        /* ─── FAN STRIP (stats) ─── */
+        .fan-strip {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: .5rem 0;
+            flex-wrap: wrap;
+        }
+        .fs-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .fs-val {
+            font-family: var(--fd);
+            font-size: 1.4rem;
+            letter-spacing: .04em;
+            line-height: 1;
+        }
+        .fs-lbl {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: .1rem;
+        }
+        .fan-strip .fs-divider {
+            width: 1px;
+            background: rgba(255, 68, 136, .1);
+            align-self: stretch;
+        }
+
+        /* ─── MERCH ─── */
+        .prod-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+            gap: 1.65rem;
+            background-position: 60%;
+            overflow-y: auto;
+            align-content: start;
+            padding-bottom: 2px
+        }
+        .prod-grid::-webkit-scrollbar {
+            width: 2px
+        }
+        .prod-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 68, 136, .1)
+        }
+        .prod-card {
+            background: linear-gradient(150deg, rgba(14, 4, 24, .97), rgba(4, 6, 18, .99));
+            border: 1px solid rgba(255, 68, 136, .12);
+            border-radius: 3px;
+            overflow: hidden;
+
+            cursor: pointer;
+            transition: all .28s;
+            position: relative
+        }
+        .prod-card:hover {
+            border-color: rgba(255, 68, 136, .3);
+            transform: translateY(-3px);
+            box-shadow: 0 14px 38px rgba(80, 0, 60, .22)
+        }
+        .prod-img {
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            position: relative;
+            overflow: hidden
+        }
+        .prod-img::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 55%, rgba(4, 6, 18, .85))
+        }
+        .prod-badge {
+            position: absolute;
+            top: .45rem;
+            right: .45rem;
+            z-index: 2;
+            font-family: var(--fm);
+            font-size: .43rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            border-radius: 2px;
+            padding: .14rem .45rem
+        }
+        .prod-badge.new {
+            background: rgba(255, 68, 136, .18);
+            border: 1px solid rgba(255, 68, 136, .3);
+            color: var(--pink)
+        }
+        .prod-badge.ltd {
+            background: rgba(240, 192, 64, .12);
+            border: 1px solid rgba(240, 192, 64, .25);
+            color: var(--gold)
+        }
+        .prod-badge.sale {
+            background: rgba(0, 229, 160, .1);
+            border: 1px solid rgba(0, 229, 160, .22);
+            color: var(--green)
+        }
+        .prod-badge.sold {
+            background: rgba(60, 20, 60, .4);
+            border: 1px solid rgba(255, 68, 136, .12);
+            color: rgba(255, 68, 136, .35)
+        }
+        .prod-info {
+            padding: .65rem .82rem .78rem
+        }
+        .prod-artist {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: rgba(255, 68, 136, .5);
+            margin-bottom: .14rem
+        }
+        .prod-name {
+            font-family: var(--fb);
+            font-size: .92rem;
+            font-weight: 700;
+            letter-spacing: .04em;
+            color: var(--white);
+            margin-bottom: .14rem
+        }
+        .prod-type {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: .45rem
+        }
+        .prod-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+        .prod-price {
+            font-family: var(--fd);
+            font-size: 1.25rem;
+            letter-spacing: .05em;
+            color: var(--white);
+            line-height: 1
+        }
+        .prod-price span {
+            font-family: var(--fm);
+            font-size: .5rem;
+            letter-spacing: .08em;
+            color: var(--muted);
+            margin-right: .2rem
+        }
+        .prod-btn {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 68, 136, .28);
+            color: var(--pink);
+            background: rgba(255, 68, 136, .08);
+            border-radius: 2px;
+            padding: .26rem .62rem;
+            cursor: pointer;
+            transition: all .22s
+        }
+        .prod-btn:hover {
+            background: rgba(255, 68, 136, .18);
+            box-shadow: 0 0 12px rgba(255, 68, 136, .15)
+        }
+        .prod-btn.disabled {
+            border-color: rgba(255, 68, 136, .1);
+            color: rgba(255, 68, 136, .25);
+            background: transparent;
+            cursor: default
+        }
+        .merch-side {
+            display: flex;
+            flex-direction: column;
+            gap: .55rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 68, 136, .08) transparent
+        }
+        .merch-side::-webkit-scrollbar {
+            width: 2px
+        }
+        .merch-side::-webkit-scrollbar-thumb {
+            background: rgba(255, 68, 136, .1)
+        }
+        .cart-card {
+            background: linear-gradient(140deg, rgba(12, 4, 22, .96), rgba(4, 6, 18, .98));
+            border: 1px solid rgba(255, 68, 136, .14);
+            border-radius: 3px;
+            padding: .88rem 1rem
+        }
+        .cart-label {
+            font-family: var(--fm);
+            font-size: .5rem;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: rgba(255, 68, 136, .35);
+            margin-bottom: .55rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+        .cart-label span {
+            color: rgba(255, 68, 136, .55);
+            font-size: .56rem
+        }
+        .cart-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .3rem 0;
+            border-bottom: 1px solid rgba(255, 68, 136, .05)
+        }
+        .cr-name {
+            font-family: var(--fb);
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--white)
+        }
+        .cr-price {
+            font-family: var(--fd);
+            font-size: 1rem;
+            letter-spacing: .04em;
+            color: var(--pink)
+        }
+        .cr-remove {
+            font-family: var(--fm);
+            font-size: .5rem;
+            color: var(--ghost);
+            cursor: pointer;
+            border: none;
+            background: none;
+            margin-left: .4rem;
+            transition: color .2s
+        }
+        .cr-remove:hover {
+            color: var(--pink)
+        }
+        .cart-total {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding-top: .45rem;
+            margin-top: .1rem
+        }
+        .ct-lbl {
+            font-family: var(--fm);
+            font-size: .5rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+        .ct-val {
+            font-family: var(--fd);
+            font-size: 1.6rem;
+            letter-spacing: .06em;
+            color: var(--pink)
+        }
+        .checkout-btn {
+            width: 100%;
+            margin-top: .55rem;
+            padding: .55rem;
+            border-radius: 2px;
+            cursor: pointer;
+            font-family: var(--fb);
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            background: rgba(255, 68, 136, .12);
+            border: 1px solid rgba(255, 68, 136, .3);
+            color: var(--pink);
+            transition: all .25s
+        }
+        .checkout-btn:hover {
+            background: rgba(255, 68, 136, .22);
+            box-shadow: 0 0 24px rgba(255, 68, 136, .18)
+        }
+        .ship-card {
+            background: linear-gradient(140deg, rgba(12, 4, 22, .96), rgba(4, 6, 18, .98));
+            border: 1px solid rgba(240, 192, 64, .12);
+            border-radius: 3px;
+            padding: .82rem 1rem
+        }
+        .ship-label {
+            font-family: var(--fm);
+            font-size: .48rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: rgba(240, 192, 64, .35);
+            margin-bottom: .45rem
+        }
+        .ship-row {
+            display: flex;
+            align-items: flex-start;
+            gap: .55rem;
+            margin-bottom: .32rem
+        }
+        .ship-icon {
+            font-size: .9rem;
+            flex-shrink: 0;
+            margin-top: 1px
+        }
+        .ship-text {
+            font-family: var(--fb);
+            font-size: .74rem;
+            font-weight: 400;
+            color: var(--muted);
+            line-height: 1.5
+        }
+        .ship-text strong {
+            color: rgba(240, 192, 64, .65);
+            font-weight: 700
+        }
+        .size-row {
+            display: flex;
+            gap: .28rem;
+            flex-wrap: wrap;
+            margin-top: .35rem
+        }
+        .size-btn {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .08em;
+            border: 1px solid rgba(255, 68, 136, .14);
+            color: var(--ghost);
+            border-radius: 2px;
+            padding: .22rem .48rem;
+            cursor: pointer;
+            transition: all .2s
+        }
+        .size-btn:hover,
+        .size-btn.sel {
+            border-color: var(--pink);
+            color: var(--pink);
+            background: rgba(255, 68, 136, .07)
+        }
+        .size-btn.out {
+            border-color: rgba(255, 68, 136, .05);
+            color: rgba(100, 100, 100, .3);
+            text-decoration: line-through;
+            cursor: default
+        }
+        .merch-search-wrap {
+            display: flex;
+            gap: .5rem;
+            align-items: center;
+            margin-bottom: .6rem;
+            flex-wrap: wrap
+        }
+        .merch-search-input {
+            flex: 1;
+            min-width: 180px;
+            background: rgba(4, 6, 20, .85);
+            border: 1px solid rgba(255, 68, 136, .14);
+            border-radius: 2px;
+            padding: .4rem .7rem;
+            font-family: var(--fm);
+            font-size: .6rem;
+            letter-spacing: .05em;
+            color: var(--white);
+            outline: none;
+            transition: border-color .2s
+        }
+        .merch-search-input::placeholder {
+            color: var(--ghost);
+            opacity: .7
+        }
+        .merch-search-input:focus {
+            border-color: var(--pink)
+        }
+        .merch-search-clear {
+            font-family: var(--fm);
+            font-size: .5rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--ghost);
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: .2rem .4rem;
+            transition: color .2s
+        }
+        .merch-search-clear:hover {
+            color: var(--pink)
+        }
+        .search-count {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .08em;
+            color: var(--ghost);
+            margin-left: .2rem
+        }
+
+        /* ─── GIVEAWAYS ─── */
+        .give-card {
+            background: linear-gradient(150deg, rgba(14, 4, 24, .97), rgba(4, 6, 18, .99));
+            border: 1px solid rgba(240, 192, 64, .12);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all .28s;
+            position: relative
+        }
+        .give-card:hover {
+            border-color: rgba(240, 192, 64, .28);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(50, 30, 0, .2)
+        }
+        .give-card.active-giveaway {
+            border-color: rgba(0, 229, 160, .18)
+        }
+        .give-card.active-giveaway:hover {
+            border-color: rgba(0, 229, 160, .32)
+        }
+        .give-card.upcoming {
+            border-color: rgba(136, 85, 255, .14)
+        }
+        .give-card.upcoming:hover {
+            border-color: rgba(136, 85, 255, .28)
+        }
+        .give-card.ended {
+            opacity: .5
+        }
+        .give-top {
+            padding: 1.1rem 1.2rem .7rem;
+            position: relative
+        }
+        .give-status {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            border-radius: 2px;
+            padding: .14rem .48rem;
+            display: inline-block;
+            margin-bottom: .38rem
+        }
+        .give-status.live {
+            background: rgba(0, 229, 160, .1);
+            border: 1px solid rgba(0, 229, 160, .22);
+            color: var(--green)
+        }
+        .give-status.soon {
+            background: rgba(136, 85, 255, .08);
+            border: 1px solid rgba(136, 85, 255, .2);
+            color: var(--violet)
+        }
+        .give-status.ended {
+            background: rgba(60, 20, 40, .3);
+            border: 1px solid rgba(255, 68, 136, .1);
+            color: rgba(255, 68, 136, .3)
+        }
+        .give-title {
+            font-family: var(--fd);
+            font-size: 1.55rem;
+            letter-spacing: .07em;
+            line-height: .95;
+            color: var(--white);
+            margin-bottom: .3rem
+        }
+        .give-artist {
+            font-family: var(--fm);
+            font-size: .5rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+        .give-prize {
+            font-family: var(--fb);
+            font-size: .8rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-top: .38rem
+        }
+        .give-prize em {
+            font-style: normal;
+            font-size: .76rem;
+            font-weight: 400;
+            color: var(--muted)
+        }
+        .give-bottom {
+            border-top: 1px solid rgba(255, 68, 136, .06);
+            padding: .65rem 1.2rem .85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .7rem
+        }
+        .give-countdown {
+            display: flex;
+            gap: .35rem;
+            align-items: center
+        }
+        .gc-block {
+            text-align: center
+        }
+        .gc-num {
+            font-family: var(--fd);
+            font-size: 1.5rem;
+            letter-spacing: .04em;
+            line-height: 1
+        }
+        .gc-sep {
+            font-family: var(--fd);
+            font-size: 1rem;
+            color: var(--ghost);
+            opacity: .4;
+            margin-bottom: 4px
+        }
+        .gc-lbl {
+            font-family: var(--fm);
+            font-size: .38rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--ghost)
+        }
+        .give-enter-btn {
+            font-family: var(--fb);
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            border-radius: 2px;
+            padding: .45rem .9rem;
+            cursor: pointer;
+            transition: all .25s;
+            white-space: nowrap;
+            flex-shrink: 0
+        }
+        .give-enter-btn.green {
+            background: rgba(0, 229, 160, .1);
+            border: 1px solid rgba(0, 229, 160, .28);
+            color: var(--green)
+        }
+        .give-enter-btn.green:hover {
+            background: rgba(0, 229, 160, .2);
+            box-shadow: 0 0 18px rgba(0, 229, 160, .15)
+        }
+        .give-enter-btn.violet {
+            background: rgba(136, 85, 255, .1);
+            border: 1px solid rgba(136, 85, 255, .25);
+            color: var(--violet)
+        }
+        .give-enter-btn.violet:hover {
+            background: rgba(136, 85, 255, .2)
+        }
+        .give-enter-btn.dis {
+            background: transparent;
+            border: 1px solid rgba(255, 68, 136, .1);
+            color: rgba(255, 68, 136, .25);
+            cursor: default
+        }
+        .give-entries {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--ghost)
+        }
+        .give-prog-wrap {
+            padding: 0 1.2rem .7rem
+        }
+        .give-prog-label {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--ghost);
+            margin-bottom: .25rem
+        }
+        .give-prog-track {
+            height: 3px;
+            background: rgba(0, 229, 160, .08);
+            border-radius: 2px;
+            overflow: hidden
+        }
+        .give-prog-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, rgba(0, 229, 160, .4), var(--green));
+            transition: width 1.6s cubic-bezier(.22, 1, .36, 1)
+        }
+        .entry-card {
+            background: linear-gradient(140deg, rgba(12, 4, 22, .96), rgba(4, 6, 18, .98));
+            border: 1px solid rgba(0, 229, 160, .12);
+            border-radius: 3px;
+            padding: .9rem 1.05rem
+        }
+        .entry-label {
+            font-family: var(--fm);
+            font-size: .5rem;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: rgba(0, 229, 160, .35);
+            margin-bottom: .55rem
+        }
+        .entry-input {
+            background: rgba(4, 6, 20, .85);
+            border: 1px solid rgba(0, 229, 160, .14);
+            border-radius: 2px;
+            padding: .42rem .7rem;
+            font-family: var(--fm);
+            font-size: .6rem;
+            letter-spacing: .05em;
+            color: var(--white);
+            outline: none;
+            transition: border-color .2s;
+            width: 100%;
+            margin-bottom: .32rem
+        }
+        .entry-input::placeholder {
+            color: var(--ghost);
+            opacity: .7
+        }
+        .entry-input:focus {
+            border-color: var(--green)
+        }
+        .entry-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .3rem;
+            margin-bottom: .32rem
+        }
+        .entry-method {
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            padding: .38rem .55rem;
+            border: 1px solid rgba(0, 229, 160, .1);
+            border-radius: 2px;
+            background: rgba(0, 229, 160, .03);
+            cursor: pointer;
+            transition: all .2s;
+            margin-bottom: .25rem
+        }
+        .entry-method:hover {
+            border-color: rgba(0, 229, 160, .22);
+            background: rgba(0, 229, 160, .06)
+        }
+        .entry-method input[type=checkbox] {
+            accent-color: var(--green);
+            width: 11px;
+            height: 11px;
+            flex-shrink: 0
+        }
+        .em-label {
+            font-family: var(--fb);
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--white);
+            flex: 1
+        }
+        .em-bonus {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: rgba(0, 229, 160, .5);
+            border: 1px solid rgba(0, 229, 160, .14);
+            border-radius: 2px;
+            padding: .06rem .3rem
+        }
+        .entry-submit {
+            width: 100%;
+            margin-top: .4rem;
+            padding: .52rem;
+            border-radius: 2px;
+            cursor: pointer;
+            font-family: var(--fb);
+            font-size: .8rem;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            background: rgba(0, 229, 160, .1);
+            border: 1px solid rgba(0, 229, 160, .28);
+            color: var(--green);
+            transition: all .25s
+        }
+        .entry-submit:hover {
+            background: rgba(0, 229, 160, .2);
+            box-shadow: 0 0 20px rgba(0, 229, 160, .14)
+        }
+        .tnc-text {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .06em;
+            color: var(--ghost);
+            line-height: 1.55;
+            margin-top: .38rem
+        }
+        .tnc-text a {
+            color: rgba(0, 229, 160, .45);
+            text-decoration: none
+        }
+        .winner-row {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: .35rem .55rem;
+            border: 1px solid rgba(240, 192, 64, .07);
+            border-radius: 2px;
+            background: rgba(240, 192, 64, .02);
+            margin-bottom: .22rem
+        }
+        .wr-place {
+            font-family: var(--fd);
+            font-size: 1rem;
+            letter-spacing: .04em;
+            color: var(--gold);
+            width: 22px;
+            flex-shrink: 0
+        }
+        .wr-name {
+            font-family: var(--fb);
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--white);
+            flex: 1
+        }
+        .wr-prize {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+        .wr-loc {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .07em;
+            color: var(--ghost)
+        }
+
+        /* ─── ANNOUNCEMENTS ─── */
+        .ann-card {
+            background: linear-gradient(150deg, rgba(14, 4, 24, .97), rgba(4, 6, 18, .99));
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all .28s;
+            position: relative
+        }
+        .ann-card:hover {
+            transform: translateY(-2px)
+        }
+        .ann-card.tour {
+            border: 1px solid rgba(0, 229, 255, .14)
+        }
+        .ann-card.tour:hover {
+            border-color: rgba(0, 229, 255, .3);
+            box-shadow: 0 12px 36px rgba(0, 60, 120, .2)
+        }
+        .ann-card.release {
+            border: 1px solid rgba(255, 68, 136, .14)
+        }
+        .ann-card.release:hover {
+            border-color: rgba(255, 68, 136, .3);
+            box-shadow: 0 12px 36px rgba(80, 0, 60, .2)
+        }
+        .ann-card.collab {
+            border: 1px solid rgba(136, 85, 255, .14)
+        }
+        .ann-card.collab:hover {
+            border-color: rgba(136, 85, 255, .3);
+            box-shadow: 0 12px 36px rgba(40, 0, 80, .2)
+        }
+        .ann-card.general {
+            border: 1px solid rgba(240, 192, 64, .12)
+        }
+        .ann-card.general:hover {
+            border-color: rgba(240, 192, 64, .26);
+            box-shadow: 0 12px 36px rgba(50, 30, 0, .18)
+        }
+        .ann-card.alert-ann {
+            border: 1px solid rgba(255, 107, 53, .14)
+        }
+        .ann-card.alert-ann:hover {
+            border-color: rgba(255, 107, 53, .28);
+            box-shadow: 0 12px 36px rgba(80, 30, 0, .18)
+        }
+        .ann-card-top {
+            padding: 1rem 1.15rem .6rem;
+            position: relative
+        }
+        .ann-type-strip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px
+        }
+        .ann-type-strip.tour {
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, .5), transparent)
+        }
+        .ann-type-strip.release {
+            background: linear-gradient(90deg, transparent, rgba(255, 68, 136, .5), transparent)
+        }
+        .ann-type-strip.collab {
+            background: linear-gradient(90deg, transparent, rgba(136, 85, 255, .5), transparent)
+        }
+        .ann-type-strip.general {
+            background: linear-gradient(90deg, transparent, rgba(240, 192, 64, .4), transparent)
+        }
+        .ann-type-strip.alert-ann {
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, .4), transparent)
+        }
+        .ann-meta {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            margin-bottom: .35rem
+        }
+        .ann-type-pill {
+            font-family: var(--fm);
+            font-size: .43rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            border: 1px solid;
+            border-radius: 2px;
+            padding: .12rem .42rem
+        }
+        .ann-type-pill.tour {
+            border-color: rgba(0, 229, 255, .22);
+            color: var(--cyan)
+        }
+        .ann-type-pill.release {
+            border-color: rgba(255, 68, 136, .22);
+            color: var(--pink)
+        }
+        .ann-type-pill.collab {
+            border-color: rgba(136, 85, 255, .22);
+            color: var(--violet)
+        }
+        .ann-type-pill.general {
+            border-color: rgba(240, 192, 64, .2);
+            color: var(--gold)
+        }
+        .ann-type-pill.alert-ann {
+            border-color: rgba(255, 107, 53, .2);
+            color: var(--hot)
+        }
+        .ann-date {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .1em;
+            color: var(--ghost)
+        }
+        .ann-urgent {
+            font-family: var(--fm);
+            font-size: .42rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            background: rgba(255, 107, 53, .1);
+            border: 1px solid rgba(255, 107, 53, .2);
+            color: var(--hot);
+            border-radius: 2px;
+            padding: .1rem .36rem;
+            animation: urgentPulse 1.8s ease infinite
+        }
+        @keyframes urgentPulse {
+            0%,
+            100% {
+                opacity: 1
+            }
+            50% {
+                opacity: .45
+            }
+        }
+        .ann-headline {
+            font-family: var(--fd);
+            font-size: 1.3rem;
+            letter-spacing: .06em;
+            line-height: .95;
+            color: var(--white);
+            margin-bottom: .3rem
+        }
+        .ann-artist-row {
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            margin-bottom: .35rem
+        }
+        .ann-artist-tag {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 68, 136, .14);
+            color: rgba(255, 68, 136, .5);
+            border-radius: 2px;
+            padding: .09rem .35rem
+        }
+        .ann-body {
+            font-family: var(--fb);
+            font-size: .76rem;
+            font-weight: 400;
+            color: var(--muted);
+            line-height: 1.55
+        }
+        .ann-card-bottom {
+            border-top: 1px solid rgba(255, 68, 136, .05);
+            padding: .55rem 1.15rem .7rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+        .ann-read-more {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--ghost);
+            cursor: pointer;
+            transition: color .2s
+        }
+        .ann-read-more:hover {
+            color: var(--pink)
+        }
+        .ann-react-row {
+            display: flex;
+            gap: .3rem
+        }
+        .ann-react {
+            font-family: var(--fm);
+            font-size: .44rem;
+            letter-spacing: .08em;
+            border: 1px solid rgba(255, 68, 136, .1);
+            color: var(--ghost);
+            border-radius: 2px;
+            padding: .1rem .38rem;
+            cursor: pointer;
+            transition: all .2s
+        }
+        .ann-react:hover {
+            border-color: var(--pink);
+            color: var(--pink)
+        }
+        .nl-card {
+            background: linear-gradient(140deg, rgba(255, 68, 136, .06), rgba(4, 6, 18, .97));
+            border: 1px solid rgba(255, 68, 136, .16);
+            border-radius: 3px;
+            padding: .9rem 1.05rem
+        }
+        .nl-label {
+            font-family: var(--fm);
+            font-size: .5rem;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: rgba(255, 68, 136, .38);
+            margin-bottom: .45rem
+        }
+        .nl-input {
+            background: rgba(4, 6, 20, .85);
+            border: 1px solid rgba(255, 68, 136, .16);
+            border-radius: 2px;
+            padding: .4rem .7rem;
+            font-family: var(--fm);
+            font-size: .6rem;
+            letter-spacing: .05em;
+            color: var(--white);
+            outline: none;
+            transition: border-color .2s;
+            width: 100%;
+            margin-bottom: .28rem
+        }
+        .nl-input::placeholder {
+            color: var(--ghost);
+            opacity: .7
+        }
+        .nl-input:focus {
+            border-color: var(--pink)
+        }
+        .nl-btn {
+            width: 100%;
+            padding: .48rem;
+            border-radius: 2px;
+            cursor: pointer;
+            font-family: var(--fb);
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            background: rgba(255, 68, 136, .1);
+            border: 1px solid rgba(255, 68, 136, .28);
+            color: var(--pink);
+            transition: all .25s
+        }
+        .nl-btn:hover {
+            background: rgba(255, 68, 136, .2);
+            box-shadow: 0 0 18px rgba(255, 68, 136, .15)
+        }
+        .nl-perks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .22rem;
+            margin-top: .38rem
+        }
+        .nl-perk {
+            font-family: var(--fm);
+            font-size: .43rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 68, 136, .14);
+            color: rgba(255, 68, 136, .45);
+            border-radius: 2px;
+            padding: .08rem .32rem
+        }
+
+        /* ─── TAB EMPTY STATE ─── */
+        .tab-empty {
+            flex: 1;
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            scrollbar-width: none;
+            min-height: 0;
+            padding: .5rem 0
+        }
+        .tab-empty::-webkit-scrollbar {
+            display: none
+        }
+        .tab-empty-inner {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto
+        }
+        .tab-empty-eyebrow {
+            font-family: var(--fm);
+            font-size: .56rem;
+            display:none;
+            letter-spacing: .3em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: .4rem
+        }
+        .tab-empty-heading {
+            font-family: var(--fd);
+            font-size: clamp(3.4rem, 2.6vw, 1.9rem);
+            letter-spacing: .05em;
+            line-height: 1;
+padding-left:1px;
+            text-align: center;
+            color: var(--white);
+            margin-bottom: 7.55rem
+        }
+        .tab-empty-body {
+            font-family: var(--fb);
+            font-size: .8rem;
+            font-weight: 400;
+            line-height: 1.6;
+            color: rgba(150, 200, 245, .55);
+            text-align: center;
+            max-width: 540px;
+            margin: 0 auto 1rem
+        }
+        .close-tab-btn {
+            color: rgba(255, 68, 136, .55);
+            border-color: rgba(255, 68, 136, .22)
+        }
+        .close-tab-btn:hover {
+            color: var(--pink);
+            border-color: var(--pink)
+        }
+
+        .back-pill {
+           position: sticky;
+            top: 1rem;
+            left: 3rem;
+            border:0px;
+            z-index: 10;
+            font-family: var(--fm);
+            font-size: 1.55rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: white;
+            cursor: pointer;
+            display: flex;
+BACKGROUND:none;
+            align-items: center;
+            gap: .4rem;
+            
+        }
+        .back-pill:hover {
+           color: var(--cyan);
+letter-spacing:13px;
+transition: 1.3s;
+        }
+        .back-pill .arr-up {
+            display: inline-block;
+            width: 10px;
+            display:none;
+            height: 10px;
+            border-top: 1px solid currentColor;
+            border-left: 1px solid currentColor;
+            transform: rotate(45deg);
+            opacity: .5
+        }
+
+          /* scroll indicator */
+     .scroll-ind{
+  position:absolute;
+bottom:1.6rem;
+left:50%;
+transform:translateX(-50%);
+  display:flex;
+flex-direction:column;
+align-items:center;
+gap:.4rem;
+  font-family:var(--fm);
+font-size:1.55rem;
+letter-spacing:.22em;
+  color:var(--ghost);
+text-transform:uppercase;
+cursor:pointer;z-index:5;
+  animation:indBounce 2.5s ease infinite;
+}
+.scroll-ind .caret{
+width:26px;
+height:26px;
+border-right:1px solid rgba(0,160,255,.25);
+border-bottom:1px solid rgba(0,160,255,.25);
+transform:rotate(45deg)}
+@keyframes indBounce{
+0%,100%{
+transform:translateX(-50%) 
+translateY(0)}
+50%
+{transform:translateX(-50%) translateY(6px)}}
+
+        /* ─── MODAL ─── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(2, 4, 10, .78);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .modal-overlay.open {
+            display: flex;
+            animation: fadeIn .25s ease both
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+            to {
+                opacity: 1
+            }
+        }
+        .modal-box {
+            width: min(760px, 100%);
+            max-height: 88vh;
+            overflow-y: auto;
+            background: linear-gradient(150deg, rgba(14, 4, 24, .99), rgba(4, 6, 18, .99));
+            border: 1px solid rgba(255, 68, 136, .22);
+            border-radius: 6px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            position: relative;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+            animation: modalUp .3s cubic-bezier(.22, 1, .36, 1) both
+        }
+        @keyframes modalUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(.98)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+        }
+        .modal-close {
+            position: absolute;
+            top: .7rem;
+            right: .8rem;
+            z-index: 3;
+            font-family: var(--fm);
+            font-size: .9rem;
+            color: var(--ghost);
+            background: rgba(0, 0, 0, .3);
+            border: 1px solid rgba(255, 68, 136, .16);
+            border-radius: 2px;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+            transition: all .2s
+        }
+        .modal-close:hover {
+            color: var(--pink);
+            border-color: var(--pink)
+        }
+        .modal-img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid rgba(255, 68, 136, .08)
+        }
+        .modal-img::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(4, 6, 18, .6))
+        }
+        .modal-body {
+            padding: 1.4rem 1.6rem 1.6rem;
+            display: flex;
+            flex-direction: column
+        }
+        .modal-artist {
+            font-family: var(--fm);
+            font-size: .5rem;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: rgba(255, 68, 136, .55);
+            margin-bottom: .3rem
+        }
+        .modal-name {
+            font-family: var(--fd);
+            font-size: 1.9rem;
+            letter-spacing: .06em;
+            line-height: .95;
+            color: var(--white);
+            margin-bottom: .3rem
+        }
+        .modal-type {
+            font-family: var(--fm);
+            font-size: .48rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: .6rem
+        }
+        .modal-price {
+            font-family: var(--fd);
+            font-size: 2rem;
+            letter-spacing: .05em;
+            color: var(--pink);
+            margin-bottom: .7rem
+        }
+        .modal-price span {
+            font-family: var(--fm);
+            font-size: .55rem;
+            color: var(--muted);
+            margin-right: .25rem
+        }
+        .modal-desc {
+            font-family: var(--fb);
+            font-size: .82rem;
+            font-weight: 400;
+            color: rgba(150, 200, 245, .65);
+            line-height: 1.6;
+            margin-bottom: .7rem
+        }
+        .modal-section-lbl {
+            font-family: var(--fm);
+            font-size: .46rem;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: rgba(255, 68, 136, .4);
+            margin-bottom: .3rem
+        }
+        .modal-qty-row {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin: .7rem 0
+        }
+        .modal-qty-ctrl {
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 68, 136, .18);
+            border-radius: 2px;
+            overflow: hidden
+        }
+        .modal-qty-btn {
+            font-family: var(--fm);
+            font-size: .8rem;
+            color: var(--pink);
+            background: rgba(255, 68, 136, .06);
+            border: none;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            transition: background .2s
+        }
+        .modal-qty-btn:hover {
+            background: rgba(255, 68, 136, .16)
+        }
+        .modal-qty-val {
+            font-family: var(--fb);
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--white);
+            width: 32px;
+            text-align: center
+        }
+        .modal-btn-row {
+            display: flex;
+            gap: .55rem;
+            margin-top: auto;
+            padding-top: .8rem
+        }
+        .modal-btn {
+            flex: 1;
+            padding: .62rem;
+            border-radius: 2px;
+            cursor: pointer;
+            font-family: var(--fb);
+            font-size: .8rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            transition: all .25s;
+            border: 1px solid
+        }
+        .modal-btn.add {
+            background: rgba(255, 68, 136, .08);
+            border-color: rgba(255, 68, 136, .3);
+            color: var(--pink)
+        }
+        .modal-btn.add:hover {
+            background: rgba(255, 68, 136, .18);
+            box-shadow: 0 0 18px rgba(255, 68, 136, .15)
+        }
+        .modal-btn.buy {
+            background: var(--pink);
+            border-color: var(--pink);
+            color: #12030a
+        }
+        .modal-btn.buy:hover {
+            box-shadow: 0 0 22px rgba(255, 68, 136, .4);
+            filter: brightness(1.08)
+        }
+        .modal-btn.disabled {
+            opacity: .35;
+            cursor: default;
+            pointer-events: none
+        }
+        .modal-toast {
+            position: fixed;
+            bottom: 1.6rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            z-index: 600;
+            background: rgba(0, 229, 160, .12);
+            border: 1px solid rgba(0, 229, 160, .35);
+            color: var(--green);
+            font-family: var(--fb);
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: .04em;
+            padding: .6rem 1.2rem;
+            border-radius: 3px;
+            opacity: 0;
+            transition: all .3s ease;
+            pointer-events: none
+        }
+        .modal-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0)
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media(max-width:1200px) {
+            #slide-intro {
+                flex-direction: column;
+            }
+            .intro-left-static,
+            .intro-right-carousel {
+                flex: 0 0 50%;
+                width: 100%;
+                min-height: 50vh;
+            }
+            .intro-left-static {
+                padding: 2rem 2rem;
+                min-height: 40vh;
+            }
+            .intro-right-carousel {
+                min-height: 50vh;
+            }
+            .intro-left-static h1 {
+                font-size: clamp(2.2rem, 6vw, 3.5rem);
+            }
+            .hero-slide {
+                grid-template-columns: 1fr 1fr;
+                gap: .8rem;
+                padding: 1.5rem;
+            }
+            .s-body {
+                padding: 1rem 1.2rem .6rem;
+            }
+            .sub-panel.active {
+                grid-template-columns: 1fr !important;
+            }
+            .prod-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .bottom-nav-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: .3rem;
+            }
+            .bottom-nav-left {
+                flex-wrap: wrap;
+            }
+            .modal-box {
+                grid-template-columns: 1fr;
+                max-height: 92vh;
+            }
+            .modal-img {
+                height: 160px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 68, 136, .08);
+            }
+            .carousel-controls {
+                bottom: 1rem;
+                padding: .3rem .8rem;
+                gap: .6rem;
+            }
+            .carousel-controls button {
+                width: 28px;
+                height: 28px;
+                font-size: .9rem;
+            }
+            .carousel-dot {
+                width: 6px;
+                height: 6px;
+            }
+            .carousel-dot.active {
+                width: 18px;
+            }
+        }
+        @media(max-width:768px) {
+            #slide-intro {
+                flex-direction: column;
+            }
+            .intro-left-static,
+            .intro-right-carousel {
+                flex: 0 0 50%;
+                min-height: 45vh;
+            }
+            .intro-left-static {
+                padding: 1.5rem;
+            }
+            .intro-left-static h1 {
+                font-size: clamp(1.8rem, 5vw, 2.8rem);
+            }
+            .hero-slide {
+                grid-template-columns: 1fr 1fr;
+                gap: .5rem;
+                padding: 1rem;
+            }
+            .hero-slide .card {
+                padding: 1rem .6rem;
+            }
+            .hero-slide .card .icon {
+                font-size: 1.8rem;
+            }
+            .hero-slide .card .name {
+                font-size: .75rem;
+            }
+            .prod-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+            .s-body {
+                padding: .8rem 1rem .4rem;
+            }
+            .s-head {
+                font-size: clamp(1.8rem, 5vw, 2.2rem);
+            }
+            .bottom-nav-left {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .sub-tabs {
+                justify-content: center;
+            }
+            .modal-box {
+                grid-template-columns: 1fr;
+            }
+            .modal-img {
+                height: 140px;
+            }
+            .modal-body {
+                padding: 1rem 1.2rem 1.2rem;
+            }
+            .modal-name {
+                font-size: 1.5rem;
+            }
+            .modal-price {
+                font-size: 1.6rem;
+            }
+            .modal-btn-row {
+                flex-direction: column;
+            }
+            .modal-btn {
+                padding: .5rem;
+            }
+            .entry-row {
+                grid-template-columns: 1fr;
+            }
+            .give-bottom {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .give-enter-btn {
+                width: 100%;
+                text-align: center;
+            }
+            .carousel-controls {
+                bottom: .6rem;
+                padding: .2rem .6rem;
+                gap: .4rem;
+            }
+            .carousel-controls button {
+                width: 24px;
+                height: 24px;
+                font-size: .7rem;
+            }
+            .carousel-dot {
+                width: 5px;
+                height: 5px;
+            }
+            .carousel-dot.active {
+                width: 14px;
+            }
+            .toggle {
+                top: 14px;
+                right: 14px;
+                width: 44px;
+                height: 44px;
+            }
+            .toggle .peg {
+                height: 16px;
+            }
+            .toggle .peg[data-p="0"] {
+                height: 18px;
+            }
+            .toggle .peg[data-p="2"] {
+                height: 16px;
+            }
+            .toggle .peg[data-p="4"] {
+                height: 12px;
+            }
+            .rail {
+                width: 46px;
+            }
+            .flyout .label {
+                font-size: 20px;
+            }
+            .flyout {
+                padding: 6px 12px;
+                gap: 8px;
+            }
+        }
+        @media(max-width:480px) {
+            #slide-intro {
+                flex-direction: column;
+            }
+            .intro-left-static,
+            .intro-right-carousel {
+                flex: 0 0 50%;
+                min-height: 40vh;
+            }
+            .intro-left-static {
+                padding: 1rem;
+            }
+            .intro-left-static h1 {
+                font-size: 1.8rem;
+            }
+            .intro-left-static .intro-body {
+                font-size: .75rem;
+            }
+            .intro-left-static .pull-quote p {
+                font-size: .75rem;
+            }
+            .intro-left-static .mp {
+                padding: .3rem .5rem;
+            }
+            .intro-left-static .mp-name {
+                font-size: .7rem;
+            }
+            .intro-left-static .mp-sub {
+                font-size: .4rem;
+            }
+            .intro-left-static .mp-num {
+                font-size: 1rem;
+                width: 18px;
+            }
+            .hero-slide {
+                grid-template-columns: 1fr 1fr;
+                gap: .3rem;
+                padding: .6rem;
+            }
+            .hero-slide .card {
+                padding: .6rem .4rem;
+            }
+            .hero-slide .card .icon {
+                font-size: 1.4rem;
+            }
+            .hero-slide .card .name {
+                font-size: .6rem;
+            }
+            .hero-slide .card .desc {
+                font-size: .45rem;
+            }
+            .hero-slide .card .badge {
+                font-size: .35rem;
+                padding: .04rem .25rem;
+            }
+            .prod-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .s-body {
+                padding: .5rem .6rem .3rem;
+            }
+            .s-head {
+                font-size: 1.6rem;
+            }
+            .fan-strip {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: .8rem;
+            }
+            .fs-item {
+                flex: 0 0 45%;
+            }
+            .bottom-nav-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .sub-tabs {
+                justify-content: center;
+                gap: .2rem;
+            }
+            .stab {
+                font-size: .55rem;
+                padding: .2rem .6rem;
+            }
+            .modal-box {
+                max-height: 95vh;
+            }
+            .modal-img {
+                height: 100px;
+                font-size: 3rem;
+            }
+            .modal-body {
+                padding: .8rem .9rem .9rem;
+            }
+            .modal-name {
+                font-size: 1.3rem;
+            }
+            .modal-price {
+                font-size: 1.4rem;
+            }
+            .modal-desc {
+                font-size: .7rem;
+            }
+            .modal-btn-row {
+                flex-direction: column;
+            }
+            .modal-btn {
+                padding: .4rem;
+                font-size: .7rem;
+            }
+            .size-btn {
+                font-size: .4rem;
+                padding: .15rem .3rem;
+            }
+            .give-bottom {
+                flex-direction: column;
+            }
+            .give-countdown {
+                justify-content: center;
+            }
+            .carousel-controls {
+                bottom: .4rem;
+                padding: .15rem .4rem;
+                gap: .3rem;
+            }
+            .carousel-controls button {
+                width: 20px;
+                height: 20px;
+                font-size: .6rem;
+            }
+            .carousel-dot {
+                width: 4px;
+                height: 4px;
+            }
+            .carousel-dot.active {
+                width: 12px;
+            }
+            .toggle {
+                top: 10px;
+                right: 10px;
+                width: 38px;
+                height: 38px;
+                gap: 3px;
+            }
+            .toggle .peg {
+                height: 12px;
+            }
+            .toggle .peg[data-p="0"] {
+                height: 14px;
+                width: 2px;
+            }
+            .toggle .peg[data-p="2"] {
+                height: 12px;
+            }
+            .toggle .peg[data-p="4"] {
+                height: 8px;
+            }
+            .rail {
+                width: 38px;
+            }
+            .flyout .label {
+                font-size: 16px;
+            }
+            .flyout {
+                padding: 4px 10px;
+                gap: 6px;
+                right: calc(100% + 10px);
+            }
+            .flyout .num {
+                font-size: 9px;
+            }
+            .row:hover .flyout {
+                transform: translate(-4px, -50%);
+            }
+        }
+
+/* ── FOOTER BREADCRUMB (last slide) ── */
+.footer-breadcrumb {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .55rem 3.2rem;
+    background: linear-gradient(180deg, rgba(2, 8, 16, 0) 0%, rgba(2, 8, 16, .88) 40%, rgba(2, 8, 16, .98) 100%);
+    border-top: 1px solid rgba(240, 192, 64, .12);
+    backdrop-filter: blur(8px);
+    font-family: var(--fm);
+    font-size: .5rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+}
+
+/* Left group — sitemap + copyright */
+.fbc-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.fbc-sitemap {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--gold);
+    cursor: pointer;
+    font-weight: 700;
+    transition: color .2s;
+    position: relative;
+}
+.fbc-sitemap:hover {
+    color: var(--cyan);
+}
+.fbc-sitemap .arrow {
+    font-size: .6rem;
+    transition: transform .25s;
+    display: inline-block;
+}
+.fbc-sitemap.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.fbc-sitemap-panel {
+    position: absolute;
+    bottom: 130%;
+    left: 0;
+    min-width: 260px;
+    background: linear-gradient(160deg, rgba(6, 14, 28, .98), rgba(2, 8, 16, .99));
+    border: 1px solid rgba(240, 192, 64, .18);
+    border-radius: 3px;
+    padding: .6rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity .25s, transform .25s;
+    z-index: 30;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+}
+.fbc-sitemap.open .fbc-sitemap-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+.fbc-sitemap-panel a {
+    font-family: var(--fm);
+    font-size: .48rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: .4rem 1rem;
+    transition: color .2s, background .2s, padding-left .2s;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+.fbc-sitemap-panel a:hover {
+    color: var(--gold);
+    background: rgba(240, 192, 64, .05);
+    padding-left: 1.3rem;
+}
+.fbc-sitemap-panel a::before {
+    content: '›';
+    color: rgba(240, 192, 64, .4);
+    font-size: .7rem;
+}
+
+/* Copyright */
+.fbc-copy {
+    color: var(--ghost);
+    font-size: .48rem;
+}
+.fbc-copy strong {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+/* Right group — cookie + terms */
+.fbc-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.fbc-link {
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: color .2s, letter-spacing .2s;
+    font-size: .48rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+.fbc-link:hover {
+    color: var(--gold);
+    letter-spacing: .2em;
+}
+
+/* ═══════════════════════════════════════════
+   COOKIE CONSENT
+═══════════════════════════════════════════ */
+.consent-banner {
+    position: fixed;
+    inset: 0;
+    z-index: 800;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 1.6rem;
+    background: rgba(2, 8, 16, .55);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+    font-family: var(--fb);
+}
+.consent-banner.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.consent-card {
+    width: min(440px, 92vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(160deg, #040c1a 0%, #020810 100%);
+    border: 1px solid rgba(240, 192, 64, .22);
+    border-radius: 4px;
+    padding: 1.3rem 1.4rem 1.1rem;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .75);
+    position: relative;
+    transform: translateY(24px) scale(.97);
+    transition: transform .4s cubic-bezier(.22, 1, .36, 1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(240, 192, 64, .2) transparent;
+}
+.consent-banner.open .consent-card {
+    transform: translateY(0) scale(1);
+}
+.consent-card::-webkit-scrollbar { width: 3px; }
+.consent-card::-webkit-scrollbar-thumb {
+    background: rgba(240, 192, 64, .25);
+    border-radius: 2px;
+}
+.consent-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--hot), var(--violet));
+    opacity: .65;
+    border-radius: 4px 4px 0 0;
+}
+
+/* decorative vertical strings */
+.consent-strings {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    display: flex;
+    gap: 3px;
+    opacity: .35;
+    pointer-events: none;
+}
+.consent-strings span {
+    display: block;
+    width: 1px;
+    height: 14px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+}
+.consent-strings span:nth-child(2) { height: 20px; opacity: .8; }
+.consent-strings span:nth-child(3) { height: 12px; opacity: .6; }
+.consent-strings span:nth-child(4) { height: 18px; opacity: .9; }
+.consent-strings span:nth-child(5) { height: 10px; opacity: .5; }
+
+.consent-body { position: relative; z-index: 2; }
+
+.consent-eyebrow {
+    font-family: var(--fm);
+    font-size: .5rem;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    margin-bottom: .35rem;
+}
+.consent-eyebrow b {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.consent-title {
+    font-family: var(--fd);
+    font-size: 1.8rem;
+    letter-spacing: .09em;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: .55rem;
+}
+
+.consent-text {
+    font-size: .82rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(180, 210, 240, .72);
+    margin-bottom: 1rem;
+}
+
+/* Preference rows */
+.consent-prefs {
+    display: none;
+    flex-direction: column;
+    gap: .45rem;
+    margin-bottom: .9rem;
+    animation: consentFade .3s ease both;
+}
+.consent-prefs.open { display: flex; }
+
+@keyframes consentFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pref-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: .65rem .75rem;
+    border: 1px solid rgba(0, 120, 190, .14);
+    border-radius: 3px;
+    background: rgba(6, 14, 28, .55);
+    transition: border-color .2s, background .2s;
+}
+.pref-row:hover {
+    border-color: rgba(240, 192, 64, .28);
+    background: rgba(240, 192, 64, .04);
+}
+.pref-copy { flex: 1; min-width: 0; }
+.pref-name {
+    font-family: var(--fb);
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--white);
+    margin-bottom: .18rem;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+.pref-name .locked {
+    font-family: var(--fm);
+    font-size: .4rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(240, 192, 64, .28);
+    border-radius: 2px;
+    padding: .05rem .32rem;
+    font-weight: 400;
+}
+.pref-desc {
+    font-size: .72rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+/* Switch */
+.switch {
+    flex-shrink: 0;
+    width: 34px;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(0, 100, 180, .14);
+    border: 1px solid rgba(0, 120, 190, .22);
+    position: relative;
+    cursor: pointer;
+    transition: background .25s, border-color .25s;
+    margin-top: .15rem;
+}
+.switch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(180, 210, 240, .45);
+    transition: left .25s cubic-bezier(.22, 1, .36, 1), background .25s;
+}
+.switch.on {
+    background: rgba(240, 192, 64, .18);
+    border-color: rgba(240, 192, 64, .45);
+}
+.switch.on::after {
+    left: calc(100% - 14px);
+    background: var(--gold);
+    box-shadow: 0 0 6px rgba(240, 192, 64, .55);
+}
+.switch.locked {
+    cursor: not-allowed;
+    opacity: .85;
+}
+.switch:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* Preference footer button */
+.consent-foot {
+    margin-top: .35rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Actions */
+.consent-actions {
+    display: flex;
+    gap: .45rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: .35rem;
+}
+
+.btn {
+    padding: .55rem 1.1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--fb);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    transition: all .22s;
+    border: 1px solid transparent;
+    background: transparent;
+}
+.btn:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+.btn-accept {
+    background: rgba(240, 192, 64, .12);
+    border-color: rgba(240, 192, 64, .35);
+    color: var(--gold);
+}
+.btn-accept:hover {
+    background: rgba(240, 192, 64, .24);
+    box-shadow: 0 0 18px rgba(240, 192, 64, .2);
+}
+.btn-reject {
+    background: transparent;
+    border-color: rgba(0, 120, 190, .22);
+    color: var(--muted);
+}
+.btn-reject:hover { border-color: var(--elec); color: var(--elec); }
+.btn-customize {
+    background: transparent;
+    border-color: rgba(136, 85, 255, .28);
+    color: var(--violet);
+}
+.btn-customize:hover {
+    background: rgba(136, 85, 255, .1);
+    border-color: rgba(136, 85, 255, .5);
+}
+
+/* Toast */
+.consent-toast {
+    position: fixed;
+    bottom: 4.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    z-index: 810;
+    background: linear-gradient(140deg, rgba(240, 192, 64, .12), rgba(4, 10, 22, .98));
+    border: 1px solid rgba(240, 192, 64, .35);
+    color: var(--gold);
+    font-family: var(--fm);
+    font-size: .55rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    padding: .55rem 1.2rem;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+}
+.consent-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .consent-banner {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0;
+    }
+    .consent-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 6px 6px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        max-height: 92vh;
+        padding: 1.2rem 1.1rem 1rem;
+    }
+    .consent-actions {
+        gap: .35rem;
+        justify-content: stretch;
+    }
+    .consent-actions .btn {
+        flex: 1;
+        text-align: center;
+        padding: .55rem .6rem;
+        font-size: .66rem;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="nav-logo">3HRILL</a>
+        <ul class="nav-links">
+            <li><a href="#">Gigs</a></li>
+            <li><a href="#">News</a></li>
+            <li><a href="#">Library</a></li>
+            <li><a href="#">Store</a></li>
+            <li><a href="#" class="active">Fans</a></li>
+        </ul>
+        <div class="nav-right">
+            <div class="nav-badge">// Fan Showcase</div>
+            <div class="nav-clock" id="navClock">3HRILL<br>—</div>
+        </div>
+    </nav>
+<div class="logo" ><img src="images/3hrill.png" alt=""
+style="position:absolute;right:65px;top:25px;height:10%;opacity:36%"></div>
+    <!-- TOGGLE + RAIL -->
+    <div class="hmenu">
+<button class="toggle" id="toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span class="peg" data-p="0"></span>
+        <span class="peg" data-p="1"></span>
+        <span class="peg" data-p="2"></span>
+        <span class="peg" data-p="3"></span>
+        <span class="peg" data-p="4"></span>
+    </button>
+
+    <nav class="rail" id="rail">
+        <span class="tag">NAV</span>
+        
+        <a class="row" data-i="0" href="index.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">02</span><span class="label">Home</span></span>
+        </a>
+        <a class="row" data-i="1" href="newssplash.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">03</span><span class="label">News Splash</span></span>
+        </a>
+        <a class="row" data-i="2" href="3hrillcharts.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Music Charts</span></span>
+        </a>
+<a class="row" data-i="3" href="Librarypass.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Library Pass</span></span>
+        </a>
+        <a class="row" data-i="4" href="fanshowcase.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Funs showcase</span></span>
+        </a>
+<a class="row" data-i="5" href="3hrillgigs.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Gigs</span></span>
+        </a>
+<a class="row" data-i="6" href="musicschool.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music School</span></span>
+        </a>
+<a class="row" data-i="7" href="musicstudio.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music Studio</span></span>
+        </a>
+<a class="row" data-i="8" href="3hrillstore.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label"> The Store</span></span>
+        </a>
+<a class="row" data-i="9" href="About3hrillMusic.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Music</span></span>
+        </a>
+    </nav>
+</div>
+    <div id="slides">
+
+        <!-- HERO CAROUSEL -->
+        <section class="slide" id="slide-intro">
+            <div class="intro-left-static">
+                <div class="bg-blur" id="heroBlurBg"></div>
+                <div class="content">
+                    <div class="intro-eyebrow">// 3HRILL Fan Showcase</div>
+                    <h1>FOR THE<br><em>FANS,</em><br>BY THE<br>MUSIC</h1>
+                    <p class="intro-body">This is where <strong>3HRILL artists connect with the people who make it all matter</strong> — their fans. Everything here exists because of you: the merch you wear, the giveaways you enter, the announcements you hear first.</p>
+                    <p class="intro-body">Music does not end at the studio door. It lives in a <em>community</em> — in the conversations, the collections, the moments shared between an artist and the person who knows every word. The Fan Showcase is that space.</p>
+                    <div class="pull-quote">
+                        <p>"Without the fans, the music is just noise in an empty room."</p>
+                        <cite>— 3HRILL Artist Collective</cite>
+                    </div>
+                    <div class="mods" style="margin-top:auto">
+                        <div class="mp pk" onclick="goSlide(1)" tabindex="0" role="button" aria-label="Go to Merchandise section">
+                            <div class="mp-num">01</div>
+                            <div><div class="mp-name">Merchandise</div><div class="mp-sub">Artist Drops · Apparel · Vinyl · Limited Editions</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                        <div class="mp gd" onclick="goSlide(2)" tabindex="0" role="button" aria-label="Go to Giveaways section">
+                            <div class="mp-num">02</div>
+                            <div><div class="mp-name">Giveaways</div><div class="mp-sub">Live · Upcoming · Enter to Win · Past Winners</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                        <div class="mp cv" onclick="goSlide(3)" tabindex="0" role="button" aria-label="Go to Announcements section">
+                            <div class="mp-num">03</div>
+                            <div><div class="mp-name">Announcements</div><div class="mp-sub">Tour Dates · New Releases · Collabs · News</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="intro-right-carousel">
+                <div class="hero-track" id="heroTrack"></div>
+                <div class="carousel-controls">
+                    <button class="hero-prev" id="heroPrev" aria-label="Previous">‹</button>
+                    <div class="carousel-dots" id="heroDots"></div>
+                    <button class="hero-next" id="heroNext" aria-label="Next">›</button>
+                </div>
+            </div>
+ <div class="scroll-ind" onclick="goSlide(1)"><span>Merch</span><div class="caret"></div></div>
+        </section>
+
+        <!-- MERCH -->
+        <section class="slide s-body" id="slide-merch">
+            <div class="mesh"></div>
+            <button class="back-pill" onclick="goSlide(0)" aria-label="Return to overview"><span class="arr-up"></span> Overview</button>
+            <div class="s-eye" style="color:var(--pink)">// 01 — Merchandise</div>
+            <h2 class="s-head">ARTIST <span style="color:var(--pink)">MERCH DROPS</span></h2>
+
+            <div class="merch-search-wrap">
+                <input class="merch-search-input" id="merchSearchInput" type="text" placeholder="Search for artists or merch…" oninput="debouncedFilterMerch(this.value)" aria-label="Search merchandise" />
+                <button class="merch-search-clear" onclick="clearMerchSearch()" aria-label="Clear search">✕ Clear</button>
+                <span class="search-count" id="merchSearchCount" aria-live="polite"></span>
+            </div>
+
+            <div class="tab-empty" id="empty-merch">
+                <div class="tab-empty-inner">
+                    <div class="tab-empty-eyebrow" style="color:rgba(255,68,136,.55)">// Merch Overview</div>
+                    <div class="tab-empty-heading">Everything An Artist Drops, In One Place</div>
+                    <p class="tab-empty-body">From tour hoodies to vinyl pressings to signed art prints — the 3HRILL store spans all four artists on the roster. Every drop ships worldwide, and Fan Club members get 24-hour early access. Pick a category below to start browsing, or use the search bar above to find anything by artist or item name.</p>
+                    <div class="mods" style="display:none">
+                        <div class="mp pk" onclick="switchTab('merch','merch-apparel')" tabindex="0" role="button" aria-label="Browse apparel">
+                            <div class="mp-num">01</div>
+                            <div><div class="mp-name">Apparel</div><div class="mp-sub">Hoodies · Tees · Caps · Zip Hoodies</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                        <div class="mp cv" onclick="switchTab('merch','merch-music')" tabindex="0" role="button" aria-label="Browse music and vinyl">
+                            <div class="mp-num">02</div>
+                            <div><div class="mp-name">Music &amp; Vinyl</div><div class="mp-sub">LPs · 12" Singles · CDs</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                        <div class="mp gd" onclick="switchTab('merch','merch-collectibles')" tabindex="0" role="button" aria-label="Browse collectibles">
+                            <div class="mp-num">03</div>
+                            <div><div class="mp-name">Collectibles</div><div class="mp-sub">Pins · Art Prints · Bundles</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                    </div>
+                    <div class="fan-strip" style="margin-top:1rem;justify-content:center">
+                        <div class="fs-item"><div class="fs-val" style="color:var(--pink)">12</div><div class="fs-lbl">Items in Store</div></div>
+                        <div class="fs-divider"></div>
+                        <div class="fs-item"><div class="fs-val" style="color:var(--gold)">4</div><div class="fs-lbl">Artists Selling</div></div>
+                        <div class="fs-divider"></div>
+                        <div class="fs-item"><div class="fs-val" style="color:var(--cyan)">3</div><div class="fs-lbl">Categories</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-panel" id="panel-merch-all" style="grid-template-columns:1fr 320px;gap:1.4rem;align-items:start;overflow:auto;scrollbar-width:none"></div>
+            <div class="sub-panel" id="panel-merch-apparel" style="grid-template-columns:1fr 320px;gap:1.4rem;align-items:start;overflow:auto;scrollbar-width:none"></div>
+            <div class="sub-panel" id="panel-merch-music" style="grid-template-columns:1fr 320px;gap:1.4rem;align-items:start;overflow:auto;scrollbar-width:none"></div>
+            <div class="sub-panel" id="panel-merch-collectibles" style="grid-template-columns:1fr 320px;gap:1.4rem;align-items:start;overflow:auto;scrollbar-width:none"></div>
+
+            <div class="slide-bottom">
+                <div class="bottom-nav-row">
+                    <div class="bottom-nav-left">
+                        <button class="overview-btn" onclick="goSlide(0)" aria-label="Return to overview">↑ Overview</button>
+                        <button class="overview-btn close-tab-btn" id="closeTab-merch" onclick="closeTabs('merch')" style="display:none" aria-label="Close current tab">✕ Close Tab</button>
+                    </div>
+                    <div class="sub-tabs" id="merchTabs">
+                        <button class="stab" data-panel="merch-all" onclick="switchTab('merch','merch-all')" aria-label="All items">All Items</button>
+                        <button class="stab" data-panel="merch-apparel" onclick="switchTab('merch','merch-apparel')" aria-label="Apparel">Apparel</button>
+                        <button class="stab" data-panel="merch-music" onclick="switchTab('merch','merch-music')" aria-label="Music & Vinyl">Music &amp; Vinyl</button>
+                        <button class="stab" data-panel="merch-collectibles" onclick="switchTab('merch','merch-collectibles')" aria-label="Collectibles">Collectibles</button>
+                    </div>
+                </div>
+            </div>
+<div class="scroll-ind" onclick="goSlide(2)"><span>GIVEAWAYS</span><div class="caret"></div></div>
+        </section>
+
+        <!-- GIVEAWAYS -->
+        <section class="slide s-body" id="slide-giveaways">
+            <div class="mesh"></div>
+            <button class="back-pill" onclick="goSlide(0)" aria-label="Return to overview"><span class="arr-up"></span> Merch</button>
+            <div class="s-eye" style="color:var(--gold)">// 02 — Giveaways</div>
+            <h2 class="s-head">WIN FROM <span style="color:var(--gold)">THE ARTISTS</span></h2>
+
+            <div class="tab-empty" id="empty-giveaways">
+                <div class="tab-empty-inner">
+                    <div class="tab-empty-eyebrow" style="color:rgba(240,192,64,.6)">// Giveaways Overview</div>
+                    <div class="tab-empty-heading">Win Prizes Straight From The Artists</div>
+                    <p class="tab-empty-body">Free to enter, no purchase required. Every giveaway is drawn at random from verified entries, with bonus entries for genuine fan engagement — following, streaming, sharing. Pick a tab below to see what's live, what's opening soon, or who's already won.</p>
+                    <div class="mods" style="display:none">
+                        <div class="mp gd" onclick="switchTab('giveaways','giveaways-live')" tabindex="0" role="button" aria-label="Live giveaways">
+                            <div class="mp-num">01</div>
+                            <div><div class="mp-name">Live Now</div><div class="mp-sub">2 giveaways open for entry</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                        <div class="mp cv" onclick="switchTab('giveaways','giveaways-upcoming')" tabindex="0" role="button" aria-label="Upcoming giveaways">
+                            <div class="mp-num">02</div>
+                            <div><div class="mp-name">Upcoming</div><div class="mp-sub">4 giveaways opening soon</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                        <div class="mp pk" onclick="switchTab('giveaways','giveaways-winners')" tabindex="0" role="button" aria-label="Past winners">
+                            <div class="mp-num">03</div>
+                            <div><div class="mp-name">Past Winners</div><div class="mp-sub">Hall of past giveaway winners</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                    </div>
+                    <div class="fan-strip" style="margin-top:1rem;justify-content:center">
+                        <div class="fs-item"><div class="fs-val" style="color:var(--green)">2</div><div class="fs-lbl">Live Now</div></div>
+                        <div class="fs-divider"></div>
+                        <div class="fs-item"><div class="fs-val" style="color:var(--violet)">4</div><div class="fs-lbl">Upcoming</div></div>
+                        <div class="fs-divider"></div>
+                        <div class="fs-item"><div class="fs-val" style="color:var(--gold)">8</div><div class="fs-lbl">Past Winners</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-panel" id="panel-giveaways-live" style="grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start"></div>
+            <div class="sub-panel" id="panel-giveaways-upcoming" style="grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start"></div>
+            <div class="sub-panel" id="panel-giveaways-winners" style="grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start"></div>
+
+            <div class="slide-bottom">
+                <div class="bottom-nav-row">
+                    <div class="bottom-nav-left">
+                        <button class="overview-btn" onclick="goSlide(0)" aria-label="Return to overview">↑ Overview</button>
+                        <button class="overview-btn close-tab-btn" id="closeTab-giveaways" onclick="closeTabs('giveaways')" style="display:none" aria-label="Close current tab">✕ Close Tab</button>
+                    </div>
+                    <div class="sub-tabs" id="giveawaysTabs">
+                        <button class="stab" data-panel="giveaways-live" onclick="switchTab('giveaways','giveaways-live')" aria-label="Live now">Live Now</button>
+                        <button class="stab" data-panel="giveaways-upcoming" onclick="switchTab('giveaways','giveaways-upcoming')" aria-label="Upcoming">Upcoming</button>
+                        <button class="stab" data-panel="giveaways-winners" onclick="switchTab('giveaways','giveaways-winners')" aria-label="Past winners">Past Winners</button>
+                    </div>
+                </div>
+            </div>
+<div class="scroll-ind" onclick="goSlide(3)"><span>ANNOUNCEMENTS</span><div class="caret"></div></div>
+        </section>
+
+        <!-- ANNOUNCEMENTS -->
+        <section class="slide s-body" id="slide-announcements">
+            <div class="mesh"></div>
+            <button class="back-pill" onclick="goSlide(0)" aria-label="Return to overview"><span class="arr-up"></span> Giveaways</button>
+            <div class="s-eye" style="color:var(--cyan)">// 03 — Announcements</div>
+            <h2 class="s-head">WHAT'S <span style="color:var(--cyan)">HAPPENING</span></h2>
+
+            <div class="tab-empty" id="empty-announcements">
+                <div class="tab-empty-inner">
+                    <div class="tab-empty-eyebrow" style="color:rgba(0,229,255,.55)">// Announcements Overview</div>
+                    <div class="tab-empty-heading">Hear It From The Artists First</div>
+                    <p class="tab-empty-body">Tour confirmations, new singles, surprise collaborations, and fan club news — all in one feed, straight from the 3HRILL roster. Pick a tab below to catch up on what you've missed.</p>
+                    <div class="mods" style="display:none">
+                        <div class="mp cv" onclick="switchTab('announcements','announcements-tour')" tabindex="0" role="button" aria-label="Tour & events">
+                            <div class="mp-num">01</div>
+                            <div><div class="mp-name">Tour &amp; Events</div><div class="mp-sub">Dates, cities, and pre-sale info</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                        <div class="mp pk" onclick="switchTab('announcements','announcements-releases')" tabindex="0" role="button" aria-label="New releases">
+                            <div class="mp-num">02</div>
+                            <div><div class="mp-name">New Releases</div><div class="mp-sub">Singles, EPs, and albums</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                        <div class="mp gd" onclick="switchTab('announcements','announcements-community')" tabindex="0" role="button" aria-label="Community">
+                            <div class="mp-num">03</div>
+                            <div><div class="mp-name">Community</div><div class="mp-sub">Collabs, fan club &amp; giveaway news</div></div>
+                            <div class="mp-go">→</div>
+                        </div>
+                    </div>
+                    <div class="fan-strip" style="margin-top:1rem;justify-content:center">
+                        <div class="fs-item"><div class="fs-val" style="color:var(--cyan)">2</div><div class="fs-lbl">Tour &amp; Events</div></div>
+                        <div class="fs-divider"></div>
+                        <div class="fs-item"><div class="fs-val" style="color:var(--pink)">2</div><div class="fs-lbl">New Releases</div></div>
+                        <div class="fs-divider"></div>
+                        <div class="fs-item"><div class="fs-val" style="color:var(--gold)">4</div><div class="fs-lbl">Community</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-panel" id="panel-announcements-tour" style="grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start;overflow:auto;scrollbar-width:none"></div>
+            <div class="sub-panel" id="panel-announcements-releases" style="grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start"></div>
+            <div class="sub-panel" id="panel-announcements-community" style="grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start"></div>
+
+            <div class="slide-bottom">
+                <div class="bottom-nav-row">
+                    <div class="bottom-nav-left">
+                        <button class="overview-btn" onclick="goSlide(0)" aria-label="Return to overview">↑ Overview</button>
+                        <button class="overview-btn close-tab-btn" id="closeTab-announcements" onclick="closeTabs('announcements')" style="display:none" aria-label="Close current tab">✕ Close Tab</button>
+                    </div>
+                    <div class="sub-tabs" id="announcementsTabs">
+                        <button class="stab" data-panel="announcements-tour" onclick="switchTab('announcements','announcements-tour')" aria-label="Tour & events">Tour &amp; Events</button>
+                        <button class="stab" data-panel="announcements-releases" onclick="switchTab('announcements','announcements-releases')" aria-label="New releases">New Releases</button>
+                        <button class="stab" data-panel="announcements-community" onclick="switchTab('announcements','announcements-community')" aria-label="Community">Community</button>
+                    </div>
+                </div>
+            </div>
+
+
+        <<!-- ─── FOOTER BREADCRUMB ─── -->
+<div class="footer-breadcrumb">
+
+    <div class="fbc-left">
+        <!-- Site Map dropdown -->
+        <div class="fbc-sitemap" id="sitemapBtn" onclick="toggleSitemap(event)">
+            <span>Site Map</span>
+            <span class="arrow">▾</span>
+
+            <div class="fbc-sitemap-panel" id="sitemapPanel">
+                <a href="index.html">Home</a>
+                <a href="news-splash.html">News</a>
+                <a href="3hrillCharts.html">Charts</a>
+                <a href="library-pass.html">Library</a>
+                <a href="Funshowcase.html">Fun Showcase</a>
+                <a href="3hrillgigs.html">3hrill Gigs</a>
+                <a href="3hrillschool.html">3hrill School</a>
+                <a href="3hrillstudio.html">3hrill Studio</a>
+                <a href="store-fixed.html">The Store</a>
+                <a href="About3hrillMusic.html">About 3hrill Music</a>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="fbc-copy">
+            © <strong>2026 3HRILL MUSIC</strong> — All Rights Reserved
+        </div>
+    </div>
+
+    <div class="fbc-right">
+        <!-- Cookie preferences -->
+        <a class="fbc-link" onclick="openCookieConsent()">Cookie Preferences</a>
+
+        <!-- Terms & conditions -->
+        <a class="fbc-link" href="About3hrillMusic.html">Terms &amp; Conditions</a>
+    </div>
+
+</div>
+        </section>
+
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="prodModal" onclick="if(event.target===this) closeProdModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeProdModal()" aria-label="Close modal">✕</button>
+            <div class="modal-img" id="modalImg"></div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+    <div class="modal-toast" id="modalToast" role="alert" aria-live="assertive"></div>
+
+
+<!-- ================= COOKIE CONSENT ================= -->
+<div class="consent-banner" id="consentBanner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <div class="consent-card">
+        <div class="consent-strings" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="consent-body">
+            <p class="consent-eyebrow">3hrill · <b>privacy</b></p>
+            <h2 class="consent-title">Cookies, Too</h2>
+            <p class="consent-text">
+                3hrill Music uses cookies to keep the site running and understand how the
+                stage gets used. Allow cookies, or pick exactly what you're comfortable with.
+            </p>
+
+            <div class="consent-prefs" id="consentPrefs">
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Essential <span class="locked">always on</span></p>
+                        <p class="pref-desc">Required for the site to load and function — navigation, layout, and security. These can't be switched off.</p>
+                    </div>
+                    <div class="switch on locked" data-cat="essential" aria-checked="true" aria-label="Essential cookies (always on)"></div>
+                </div>
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Analytics</p>
+                        <p class="pref-desc">Helps us see which pages and sets get the most love, so we know what to build next.</p>
+                    </div>
+                    <div class="switch" data-cat="analytics" tabindex="0" aria-label="Analytics cookies"></div>
+                </div>
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Personalization</p>
+                        <p class="pref-desc">Remembers things like your favorite genres and recent picks to tailor recommendations.</p>
+                    </div>
+                    <div class="switch" data-cat="personalization" tabindex="0" aria-label="Personalization cookies"></div>
+                </div>
+                <div class="consent-foot">
+                    <button type="button" class="btn btn-accept" id="savePrefs">Save Preferences</button>
+                </div>
+            </div>
+
+            <div class="consent-actions">
+                <button type="button" class="btn btn-accept" id="acceptAll">Accept All</button>
+                <button type="button" class="btn btn-reject" id="rejectAll">Reject All</button>
+                <button type="button" class="btn btn-customize" id="openPrefs" aria-expanded="false">Customize</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        (function() {
+    const toggle = document.getElementById('toggle');
+    const rail   = document.getElementById('rail');
+
+    function setOpen(open) {
+        rail.classList.toggle('open', open);
+        toggle.classList.toggle('active', open);
+        toggle.setAttribute('aria-expanded', String(open));
+    }
+
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setOpen(!rail.classList.contains('open'));
+    });
+
+    // click outside closes
+    document.addEventListener('click', function(e) {
+        if (rail.classList.contains('open')
+            && !rail.contains(e.target)
+            && !toggle.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    // Esc closes
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') setOpen(false);
+    });
+
+    // pluck animation on hover — nothing else
+    document.querySelectorAll('.row').forEach(function(row) {
+        const string = row.querySelector('.string');
+        row.addEventListener('mouseenter', function() {
+            string.classList.remove('plucked');
+            void string.offsetWidth;
+            string.classList.add('plucked');
+        });
+        // ❌ removed: row.addEventListener('click', e => e.preventDefault());
+    });
+})();
+        /* ─── MAIN APP ─── */
+        (function() {
+            'use strict';
+
+            const STORAGE_KEY = '3hrill_fan_showcase_cart';
+            const AppState = {
+                cart: [],
+                activeTab: { merch: null, giveaways: null, announcements: null },
+                modalSelectedSize: null,
+            };
+
+            // ── DATA ──
+            const ALL_PRODUCTS = [
+                { id: 'wf-hoodie', artist: 'AMARA SOUL', name: 'Wildfire Tour Hoodie', type: 'Apparel — Hoodie', emoji: '🔥',
+                    price: 52, badge: 'new', cat: 'apparel', bg: 'rgba(255,68,136,.08)', sizes: ['XS', 'S', 'M', 'L', 'XL',
+                        'XXL'
+                    ], desc: 'Official tour hoodie. Heavyweight 350gsm fleece, embroidered tour logo on chest, screen-printed back artwork.',
+                    tags: ['Tour Merch', 'Limited Run', 'Unisex'] },
+                { id: 'eclipse-tee', artist: 'AMARA SOUL', name: '"Eclipse" Tee — Restock', type: 'Apparel — T-Shirt',
+                    emoji: '🌑', price: 28, badge: 'ltd', cat: 'apparel', bg: 'rgba(136,85,255,.07)',
+                    sizes: ['S', 'M', 'L', 'XL'], desc: 'The sold-out Eclipse tee is back — final 200 units. Garment-dyed vintage wash, double-stitched.',
+                    tags: ['Restocked', 'Vintage Wash', 'Fan Favourite'] },
+                { id: 'gravity-vinyl', artist: 'BURAYO', name: '"Gravity" — 12" Vinyl', type: 'Music — 12" Single',
+                    emoji: '🎸', price: 24, badge: 'new', cat: 'music', bg: 'rgba(0,229,255,.05)', sizes: null,
+                    desc: 'Crystal clear pressing with etched B-side. Double-sided lyric insert. Limited to 500 copies worldwide.',
+                    tags: ['Ltd 500', 'Crystal Clear', 'Etched B-Side'] },
+                { id: 'parallax-cap', artist: 'DJ PARALLAX', name: 'Equinox Embroidered Cap', type: 'Apparel — Headwear',
+                    emoji: '💿', price: 32, badge: 'new', cat: 'apparel', bg: 'rgba(0,229,160,.05)', sizes: ['One Size'],
+                    desc: 'Structured 6-panel. Embroidered DJ Parallax Equinox logo. Adjustable strap. Available in Black and Sage.',
+                    tags: ['Structured Cap', 'Embroidered', 'Adjustable'] },
+                { id: 'zora-lp', artist: 'ZORA WEST', name: '"Zora West" Debut LP', type: 'Music — LP', emoji: '🎤',
+                    price: 38, badge: 'ltd', cat: 'music', bg: 'rgba(240,192,64,.05)', sizes: null,
+                    desc: 'Orange translucent vinyl. Includes 16-page lyric booklet, A3 poster, and signed insert (first 300 orders). Gatefold sleeve.',
+                    tags: ['Orange Vinyl', 'Gatefold', 'Signed 300'] },
+                { id: '3hrill-tote', artist: '3HRILL', name: '3HRILL Logo Tote Bag', type: 'Accessory — Tote', emoji: '🛍️',
+                    price: 14, badge: null, cat: 'collectibles', bg: 'rgba(0,180,255,.04)', sizes: ['One Size'],
+                    desc: 'Heavy cotton canvas, 38cm x 42cm. Screen-printed logo. Reinforced handles. The everyday carry.',
+                    tags: ['Canvas', 'Screen Print', 'Daily Use'] },
+                { id: 'parallax-usb', artist: 'DJ PARALLAX', name: 'Equinox USB Drive', type: 'Collectible — Digital',
+                    emoji: '🎛️', price: 18, badge: 'ltd', cat: 'collectibles', bg: 'rgba(136,85,255,.07)', sizes: null,
+                    desc: 'Custom-shaped USB containing the Equinox Residency Vol.1 mix (320kbps + FLAC), stems pack, and exclusive wallpapers.',
+                    tags: ['USB', 'FLAC', 'Stems Included', 'Ltd 150'] },
+                { id: 'amara-photo', artist: 'AMARA SOUL', name: 'Wildfire Tour Photo Print', type: 'Collectible — Art Print',
+                    emoji: '📸', price: 22, badge: 'new', cat: 'collectibles', bg: 'rgba(255,107,53,.06)',
+                    sizes: ['A4', 'A3'], desc: 'Archival giclée print from the Wildfire tour shoot. Signed and numbered. Edition of 200.',
+                    tags: ['Giclée', 'Signed', 'Numbered', '200 Ed.'] },
+                { id: 'bundle-fan', artist: '3HRILL', name: 'Fan Starter Bundle', type: 'Bundle — 3 Items', emoji: '🎁',
+                    price: 65, badge: 'sale', cat: 'collectibles', bg: 'rgba(0,229,160,.05)', sizes: null,
+                    desc: 'Any T-shirt + any tote + any poster of your choice. Saves $20 vs buying individually. Shipped together.',
+                    tags: ['Bundle', 'Save $20', 'Mix & Match'] },
+                { id: 'burayo-cd', artist: 'BURAYO', name: '"Deep Current" CD + Book', type: 'Music — CD', emoji: '📀',
+                    price: 19, badge: null, cat: 'music', bg: 'rgba(0,229,255,.05)', sizes: null,
+                    desc: 'Digibook format. Full album CD with 32-page hardcover booklet featuring lyrics, photos, and essays on the recording process.',
+                    tags: ['Digibook', '32-page', 'Photo Book'] },
+                { id: 'zora-hoodie', artist: 'ZORA WEST', name: 'Tour Tour Zip Hoodie', type: 'Apparel — Zip Hoodie',
+                    emoji: '🧥', price: 58, badge: 'sold', cat: 'apparel', bg: 'rgba(240,192,64,.04)', sizes: [],
+                    desc: 'SOLD OUT. Add your email to the waitlist for the next run.', tags: ['Sold Out', 'Waitlist Open'] },
+                { id: '3hrill-enamel', artist: '3HRILL', name: '3HRILL Enamel Pin Set', type: 'Collectible — Pins',
+                    emoji: '📌', price: 12, badge: 'ltd', cat: 'collectibles', bg: 'rgba(255,68,136,.05)', sizes: null,
+                    desc: 'Set of 4 hard enamel pins. 3HRILL logo, Wildfire flame, Equinox disc, Gravity waveform. Presented on backer card.',
+                    tags: ['Hard Enamel', 'Set of 4', 'Backer Card'] },
+            ];
+
+            const GIVEAWAYS_LIVE = [{
+                status: 'live',
+                statusLabel: 'LIVE NOW',
+                cls: 'active-giveaway',
+                title: 'WILDFIRE VIP EXPERIENCE',
+                artist: 'AMARA SOUL',
+                prize: '2× VIP Wildfire Tour Tickets + Backstage Access + Signed Hoodie',
+                entries: 3841,
+                maxEntries: 5000,
+                ends: { d: 3, h: 14, m: 22 },
+                color: 'var(--green)',
+            }, {
+                status: 'live',
+                statusLabel: 'LIVE NOW',
+                cls: 'active-giveaway',
+                title: 'EQUINOX VINYL BUNDLE',
+                artist: 'DJ PARALLAX',
+                prize: 'Signed 12" Vinyl + Equinox USB + VIP Club Entry (Lagos)',
+                entries: 1204,
+                maxEntries: 2000,
+                ends: { d: 6, h: 8, m: 45 },
+                color: 'var(--violet)',
+            }, ];
+
+            const GIVEAWAYS_UPCOMING = [{
+                status: 'soon',
+                statusLabel: 'COMING SOON',
+                cls: 'upcoming',
+                title: 'ZORA WEST DEBUT LP DROP',
+                artist: 'ZORA WEST',
+                prize: 'First 10 signed LPs + personalised voice message from Zora',
+                entries: 0,
+                maxEntries: 3000,
+                starts: 'Opens: 20 May 2026',
+                color: 'var(--gold)',
+            }, {
+                status: 'soon',
+                statusLabel: 'COMING SOON',
+                cls: 'upcoming',
+                title: 'BURAYO "GRAVITY" BUNDLE',
+                artist: 'BURAYO',
+                prize: 'Signed Vinyl + T-Shirt + Video Call with Burayo (15 min)',
+                entries: 0,
+                maxEntries: 2500,
+                starts: 'Opens: 25 May 2026',
+                color: 'var(--cyan)',
+            }, {
+                status: 'soon',
+                statusLabel: 'COMING SOON',
+                cls: 'upcoming',
+                title: '3HRILL FAN BUNDLE GIVEAWAY',
+                artist: '3HRILL Roster',
+                prize: 'Full merch bundle from all 4 artists ($200 value)',
+                entries: 0,
+                maxEntries: 10000,
+                starts: 'Opens: 1 Jun 2026',
+                color: 'var(--pink)',
+            }, {
+                status: 'soon',
+                statusLabel: 'COMING SOON',
+                cls: 'upcoming',
+                title: 'STUDIO SESSION FOR TWO',
+                artist: '3HRILL STUDIO',
+                prize: 'One 4-hour professional studio session for two people + engineer included',
+                entries: 0,
+                maxEntries: 1000,
+                starts: 'Opens: 15 Jun 2026',
+                color: 'var(--hot)',
+            }, ];
+
+            const PAST_WINNERS = [
+                { place: '1st', name: '@fan_ify_lagos', prize: 'VIP Amara Soul Tickets × 2', loc: 'Lagos, NG',
+                    giveaway: 'Feb Wildfire VIP' },
+                { place: '2nd', name: '@musichead_za', prize: 'Signed Vinyl + Hoodie', loc: 'Cape Town, ZA',
+                    giveaway: 'Feb Wildfire VIP' },
+                { place: '3rd', name: '@afro_listener', prize: 'Merch Bundle $60', loc: 'Accra, GH',
+                    giveaway: 'Feb Wildfire VIP' },
+                { place: '1st', name: '@dj_nkrumah', prize: 'Equinox USB + Vinyl', loc: 'Kumasi, GH',
+                    giveaway: 'Jan Equinox' },
+                { place: '1st', name: '@burayo_from_day1', prize: 'Studio Session', loc: 'Nairobi, KE',
+                    giveaway: 'Dec Studio Drop' },
+                { place: '1st', name: '@zorafan_london', prize: 'Debut LP Signed', loc: 'London, UK',
+                    giveaway: 'Nov Zora LP' },
+                { place: '2nd', name: '@parallax_crew', prize: 'Enamel Pin Set + Cap', loc: 'Joburg, ZA',
+                    giveaway: 'Nov Zora LP' },
+                { place: '1st', name: '@3hrill_always', prize: 'Full Fan Bundle', loc: 'Abuja, NG',
+                    giveaway: 'Oct Fan Bundle' },
+            ];
+
+            const ANNS = [
+                { type: 'tour', headline: 'ZORA WEST AFRICAN LEG — CONFIRMED', artist: 'ZORA WEST', date: '12 May 2026',
+                    body: 'Zora West has confirmed the African leg of her debut world tour — Lagos (Aug 14), Accra (Aug 20), Nairobi (Aug 27), Joburg (Sep 3), Cape Town (Sep 6). Pre-sale opens for Fan Club members 48 hours before public sale.',
+                    tags: ['Tour', 'Africa', '2026'], urgent: true, reacts: ['🔥 2.4K', '❤️ 1.8K'] },
+                { type: 'release', headline: '"GRAVITY" — NEW SINGLE THIS FRIDAY', artist: 'BURAYO', date: '13 May 2026',
+                    body: '"Gravity" is Burayo\'s most sonically ambitious release to date — a Nairobi-recorded Afrorock fusion track produced entirely live in the studio with his seven-piece band. Pre-save now for early access to the B-side.',
+                    tags: ['New Music', 'Single', 'Friday'], urgent: false, reacts: ['🎸 1.1K', '🔥 890'] },
+                { type: 'general', headline: '3HRILL FAN CLUB — NOW OPEN', artist: '3HRILL', date: '10 May 2026',
+                    body: 'The 3HRILL Fan Club is officially open. Membership gives you: 24hr early merch access, exclusive giveaway entries, monthly Fan Club-only newsletter, and a 10% permanent discount across the 3HRILL store. Annual membership: $12 / year.',
+                    tags: ['Fan Club', 'Membership', 'Perks'], urgent: false, reacts: ['💜 3.2K', '⭐ 2.1K'] },
+                { type: 'collab', headline: 'AMARA × DJ PARALLAX — STUDIO CONFIRMED', artist: 'AMARA SOUL & DJ PARALLAX',
+                    date: '9 May 2026',
+                    body: 'Amara Soul and DJ Parallax are officially in the studio together. No release date yet — but both artists have teased fragments on their Stories. Fans who spotted both of them at the Lagos Equinox residency last month called it first.',
+                    tags: ['Collab', 'Studio', 'Lagos'], urgent: false, reacts: ['🤯 4.8K', '🔥 3.3K'] },
+                { type: 'release', headline: 'WILDFIRE EP — STREAMING EVERYWHERE', artist: 'AMARA SOUL', date: '7 May 2026',
+                    body: 'The Wildfire EP is out now on all platforms — 6 tracks, 24 minutes, featuring productions from Sarz, BOJ, and a surprise international collab on track 4. Amara describes it as "six letters I never sent."',
+                    tags: ['EP Out Now', 'Streaming', '6 Tracks'], urgent: false, reacts: ['❤️ 5.1K', '🎶 2.9K'] },
+                { type: 'tour', headline: 'AMARA SOUL — WILDFIRE TOUR DATES', artist: 'AMARA SOUL', date: '5 May 2026',
+                    body: 'The full Wildfire Tour schedule is now live. 22 dates across Nigeria, Ghana, UK, and Germany. Lagos Night 1 is already sold out. Night 2 tickets go on sale Friday at 10:00 WAT. Full schedule on the Gigs page.',
+                    tags: ['Tour Dates', 'Sold Out', 'Tickets'], urgent: false, reacts: ['🎤 6.2K', '🔥 4.1K'] },
+                { type: 'general', headline: '3HRILL GIVEAWAY — WINNERS ANNOUNCED', artist: '3HRILL', date: '1 May 2026',
+                    body: 'The March Wildfire VIP Giveaway winners have been drawn and contacted. Congratulations to @fan_ify_lagos (1st), @musichead_za (2nd), and @afro_listener (3rd). Check your DMs. A new giveaway is live now — scroll up.',
+                    tags: ['Winners', 'Giveaway', 'Announced'], urgent: false, reacts: ['🏆 1.4K', '🎊 2.2K'] },
+                { type: 'collab', headline: 'ZORA WEST × BURAYO — "STILL" VIDEO OUT', artist: 'ZORA WEST & BURAYO',
+                    date: '28 Apr 2026',
+                    body: 'The visual for "Still" — the surprise collab between Zora West and Burayo — is out on YouTube and 3HRILL\'s social channels. Shot over three days in Accra and Nairobi, directed by award-winning filmmaker Kojo Asante.',
+                    tags: ['Music Video', 'Collab', 'Out Now'], urgent: false, reacts: ['🎬 3.8K', '❤️ 4.4K'] },
+            ];
+
+            // ── HERO CAROUSEL ──
+            const heroSlides = [{
+                id: 'artists',
+                bgImage: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1200&q=85&fit=crop',
+                cards: [
+                    { icon: '🎷', name: 'AMARA SOUL', desc: 'Afrobeats / Soul', badge: '2.4M Streams' },
+                    { icon: '🎸', name: 'BURAYO', desc: 'Afrorock / Fusion', badge: '940K Streams' },
+                    { icon: '💿', name: 'DJ PARALLAX', desc: 'Electronic / Amapiano', badge: '3.1M Streams' },
+                    { icon: '🎤', name: 'ZORA WEST', desc: 'Afropop / R&B', badge: '5.8M Streams' },
+                ]
+            }, {
+                id: 'merch',
+                bgImage: 'https://images.unsplash.com/photo-1525201548942-d8732f6617a0?w=1200&q=85&fit=crop',
+                cards: [
+                    { icon: '🔥', name: 'Wildfire Hoodie', desc: 'Amara Soul Tour', badge: 'New Drop' },
+                    { icon: '🌑', name: 'Eclipse Tee', desc: 'Amara Soul', badge: 'Restock' },
+                    { icon: '🎸', name: '"Gravity" Vinyl', desc: 'Burayo 12" Single', badge: 'Ltd 500' },
+                    { icon: '💿', name: 'Equinox Cap', desc: 'DJ Parallax', badge: 'Embroidered' },
+                ]
+            }, {
+                id: 'giveaways',
+                bgImage: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=85&fit=crop',
+                cards: [
+                    { icon: '🎫', name: 'VIP Tour Tickets', desc: 'Amara Soul — Live Now', badge: '🔥 Live' },
+                    { icon: '🎛️', name: 'Equinox Bundle', desc: 'DJ Parallax — Live Now', badge: '🎁 Open' },
+                    { icon: '📀', name: 'Zora LP Drop', desc: 'Coming 20 May', badge: '⏳ Soon' },
+                    { icon: '🎤', name: 'Studio Session', desc: '3HRILL Studio — 15 Jun', badge: '⏳ Upcoming' },
+                ]
+            }, {
+                id: 'announcements',
+                bgImage: 'https://images.unsplash.com/photo-1508700115892-45d8f6a1c4a6?w=1200&q=85&fit=crop',
+                cards: [
+                    { icon: '🌍', name: 'Zora West Tour', desc: 'African Leg — Aug 2026', badge: '🗓️ Confirmed' },
+                    { icon: '🎵', name: '"Gravity" Single', desc: 'Burayo — This Friday', badge: '📻 New Music' },
+                    { icon: '💜', name: 'Fan Club Open', desc: '3HRILL — $12/Year', badge: '✨ Join Now' },
+                    { icon: '🤝', name: 'Amara × Parallax', desc: 'Studio Collab', badge: '🎧 Teased' },
+                ]
+            }, {
+                id: 'community',
+                bgImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&q=85&fit=crop',
+                cards: [
+                    { icon: '👥', name: 'Fan Community', desc: '47.2K Members', badge: '🌍 Global' },
+                    { icon: '📊', name: 'Total Streams', desc: '12.4M Across Roster', badge: '📈 Growing' },
+                    { icon: '🎪', name: 'Events This Year', desc: '38 Events', badge: '🎟️ Active' },
+                    { icon: '🏆', name: 'Giveaways', desc: '6 Active + 4 Upcoming', badge: '🎁 Enter Now' },
+                ]
+            }];
+
+            let heroCurrent = 0;
+            let heroInterval = null;
+            const HERO_AUTO_INTERVAL = 5000;
+
+            function renderHeroCarousel() {
+                const track = document.getElementById('heroTrack');
+                const dotsContainer = document.getElementById('heroDots');
+
+                track.innerHTML = heroSlides.map(function(slide, idx) {
+                    return '<div class="hero-slide" data-index="' + idx + '">' +
+                        slide.cards.map(function(card) {
+                            return '<div class="card" "><div class="icon">' + card.icon + '</div><div class="name">' +
+                                card.name + '</div><div class="desc">' + card.desc + '</div><div class="badge">' +
+                                card.badge + '</div></div>';
+                        }).join('') +
+                        '</div>';
+                }).join('');
+
+                dotsContainer.innerHTML = heroSlides.map(function(_, i) {
+                    return '<button class="carousel-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i +
+                        '" aria-label="Slide ' + (i + 1) + '"></button>';
+                }).join('');
+
+                updateHeroCarousel(0, false);
+
+                dotsContainer.querySelectorAll('.carousel-dot').forEach(function(dot) {
+                    dot.addEventListener('click', function() {
+                        var idx = parseInt(this.dataset.index);
+                        if (idx !== heroCurrent) goToHeroSlide(idx);
+                    });
+                });
+
+                document.getElementById('heroPrev').addEventListener('click', function() {
+                    goToHeroSlide((heroCurrent - 1 + heroSlides.length) % heroSlides.length);
+                });
+                document.getElementById('heroNext').addEventListener('click', function() {
+                    goToHeroSlide((heroCurrent + 1) % heroSlides.length);
+                });
+
+                startHeroAutoPlay();
+            }
+
+            function updateHeroCarousel(index, animate) {
+                var track = document.getElementById('heroTrack');
+                var dots = document.querySelectorAll('#heroDots .carousel-dot');
+                var blurBg = document.getElementById('heroBlurBg');
+
+                if (blurBg) {
+                    blurBg.style.backgroundImage = 'url(\'' + heroSlides[index].bgImage + '\')';
+                }
+
+                if (animate) {
+                    track.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
+                } else {
+                    track.style.transition = 'none';
+                }
+                track.style.transform = 'translateX(-' + (index * 100) + '%)';
+
+                dots.forEach(function(dot, i) {
+                    dot.classList.toggle('active', i === index);
+                });
+
+                heroCurrent = index;
+            }
+
+            function goToHeroSlide(index) {
+                if (index === heroCurrent) return;
+                updateHeroCarousel(index, true);
+                resetHeroAutoPlay();
+            }
+
+            function startHeroAutoPlay() {
+                stopHeroAutoPlay();
+                heroInterval = setInterval(function() {
+                    goToHeroSlide((heroCurrent + 1) % heroSlides.length);
+                }, HERO_AUTO_INTERVAL);
+            }
+
+            function stopHeroAutoPlay() {
+                if (heroInterval) {
+                    clearInterval(heroInterval);
+                    heroInterval = null;
+                }
+            }
+
+            function resetHeroAutoPlay() {
+                stopHeroAutoPlay();
+                startHeroAutoPlay();
+            }
+
+            // ── CART ──
+            function saveCart() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(AppState.cart));
+            }
+
+            function loadCart() {
+                try {
+                    var data = localStorage.getItem(STORAGE_KEY);
+                    if (data) {
+                        AppState.cart = JSON.parse(data);
+                        AppState.cart = AppState.cart.filter(function(item) {
+                            return item.id && item.name && typeof item.price === 'number';
+                        });
+                    }
+                } catch (_) { AppState.cart = []; }
+            }
+
+            function addToCart(productId, size, qty) {
+                var p = ALL_PRODUCTS.find(function(x) { return x.id === productId; });
+                if (!p) return false;
+                if (p.badge === 'sold') {
+                    showToast('This item is sold out – join the waitlist instead');
+                    return false;
+                }
+                var existing = AppState.cart.find(function(c) { return c.id === productId && c.size === (size || null); });
+                if (existing) {
+                    existing.qty += qty;
+                } else {
+                    AppState.cart.push({ id: p.id, name: p.name, artist: p.artist, price: p.price, qty: qty, size: size ||
+                            null });
+                }
+                saveCart();
+                renderAllCarts();
+                showToast('Added "' + p.name + '" to your bag');
+                return true;
+            }
+            window.addToCart = addToCart;
+
+            function removeFromCart(index) {
+                AppState.cart.splice(index, 1);
+                saveCart();
+                renderAllCarts();
+            }
+            window.removeFromCart = removeFromCart;
+
+            function getCartTotal() {
+                return AppState.cart.reduce(function(s, c) { return s + c.price * c.qty; }, 0);
+            }
+
+            function getCartCount() {
+                return AppState.cart.reduce(function(s, c) { return s + c.qty; }, 0);
+            }
+
+            function renderCartInto(panelId) {
+                var itemsEl = document.getElementById('cartItems-' + panelId);
+                var countEl = document.getElementById('cartCount-' + panelId);
+                var totalEl = document.getElementById('cartTotal-' + panelId);
+                if (!itemsEl) return;
+
+                if (AppState.cart.length === 0) {
+                    itemsEl.innerHTML = 'Your bag is empty — browse drops above.';
+                } else {
+                    itemsEl.innerHTML = AppState.cart.map(function(c, idx) {
+                        return '<div class="cart-row"><div class="cr-name">' + c.name + (c.size ?
+                            ' <span style="color:var(--muted);font-size:.6rem">(' + c.size +
+                            ')</span>' : '') + (c.qty > 1 ? '<span style="color:var(--muted);font-size:.6rem">×' +
+                            c.qty + '</span>' : '') +
+                            '</div><div style="display:flex;align-items:center"><div class="cr-price">$' + (c
+                                .price * c.qty) +
+                            '</div><button class="cr-remove" onclick="window.removeFromCart(' + idx +
+                            ')" aria-label="Remove item">✕</button></div></div>';
+                    }).join('');
+                }
+                var total = getCartTotal();
+                if (countEl) countEl.textContent = getCartCount() + ' items';
+                if (totalEl) totalEl.textContent = '$' + total;
+            }
+
+            function renderAllCarts() {
+                document.querySelectorAll('[id^="cartItems-"]').forEach(function(el) {
+                    var panelId = el.id.replace('cartItems-', '');
+                    renderCartInto(panelId);
+                });
+            }
+
+            // ── TOAST ──
+            function showToast(msg) {
+                var t = document.getElementById('modalToast');
+                t.textContent = msg;
+                t.classList.add('show');
+                clearTimeout(window.toastTimer);
+                window.toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2200);
+            }
+            window.showToast = showToast;
+
+            // ── NAV ──
+            function goSlide(i) {
+                var slides = document.querySelectorAll('.slide');
+                if (slides[i]) slides[i].scrollIntoView({ behavior: 'smooth' });
+            }
+            window.goSlide = goSlide;
+
+            // ── TABS ──
+            function switchTab(section, panelId) {
+                var sectionMap = { merch: 'merch', giveaways: 'giveaways', announcements: 'announcements' };
+                var slideId = sectionMap[section] || section;
+                var tabsContainer = document.getElementById(section + 'Tabs');
+                if (tabsContainer) {
+                    tabsContainer.querySelectorAll('.stab').forEach(function(b) {
+                        b.classList.toggle('active', b.dataset.panel === panelId);
+                    });
+                }
+                var slide = document.getElementById('slide-' + slideId);
+                if (slide) {
+                    slide.querySelectorAll('.sub-panel').forEach(function(p) {
+                        p.classList.toggle('active', p.id === 'panel-' + panelId);
+                    });
+                }
+                var empty = document.getElementById('empty-' + section);
+                if (empty) empty.style.display = 'none';
+                var closeBtn = document.getElementById('closeTab-' + section);
+                if (closeBtn) closeBtn.style.display = '';
+                if (section === 'merch') {
+                    var input = document.getElementById('merchSearchInput');
+                    if (input) filterMerch(input.value);
+                }
+                var activePanel = document.getElementById('panel-' + panelId);
+                if (activePanel) activePanel.scrollTop = 0;
+                AppState.activeTab[section] = panelId;
+            }
+            window.switchTab = switchTab;
+
+            function closeTabs(section) {
+                var tabsContainer = document.getElementById(section + 'Tabs');
+                if (tabsContainer) {
+                    tabsContainer.querySelectorAll('.stab').forEach(function(b) { b.classList.remove('active'); });
+                }
+                var slideId = section === 'merch' ? 'merch' : section === 'giveaways' ? 'giveaways' : 'announcements';
+                var slide = document.getElementById('slide-' + slideId);
+                if (slide) {
+                    slide.querySelectorAll('.sub-panel').forEach(function(p) { p.classList.remove('active'); });
+                }
+                var empty = document.getElementById('empty-' + section);
+                if (empty) empty.style.display = '';
+                var closeBtn = document.getElementById('closeTab-' + section);
+                if (closeBtn) closeBtn.style.display = 'none';
+                if (section === 'merch') {
+                    var input = document.getElementById('merchSearchInput');
+                    if (input) {
+                        input.value = '';
+                        filterMerch('');
+                    }
+                }
+                AppState.activeTab[section] = null;
+            }
+            window.closeTabs = closeTabs;
+
+            // ── MERCH SEARCH ──
+            function debounce(fn, delay) {
+                var timer;
+                return function() {
+                    var args = arguments;
+                    clearTimeout(timer);
+                    timer = setTimeout(function() { fn.apply(null, args); }, delay);
+                };
+            }
+
+            function filterMerch(val) {
+                var s = val || '';
+                var activePanel = document.querySelector('#slide-merch .sub-panel.active');
+                if (!activePanel) return;
+                var id = activePanel.id;
+                var filterMap = {
+                    'panel-merch-all': null,
+                    'panel-merch-apparel': 'apparel',
+                    'panel-merch-music': 'music',
+                    'panel-merch-collectibles': 'collectibles'
+                };
+                var filter = filterMap[id] || null;
+                buildMerchPanel(id, filter, s, true);
+            }
+            window.filterMerch = filterMerch;
+            var debouncedFilterMerch = debounce(filterMerch, 250);
+            window.debouncedFilterMerch = debouncedFilterMerch;
+
+            function clearMerchSearch() {
+                var input = document.getElementById('merchSearchInput');
+                if (input) {
+                    input.value = '';
+                    filterMerch('');
+                }
+            }
+            window.clearMerchSearch = clearMerchSearch;
+
+            // ── MERCH PANEL ──
+            function buildMerchPanel(panelId, filter, searchTerm, searchAll) {
+                var panel = document.getElementById(panelId);
+                if (!panel) return;
+                var prods;
+                if (searchAll && searchTerm && searchTerm.trim()) {
+                    prods = ALL_PRODUCTS;
+                } else {
+                    prods = filter ? ALL_PRODUCTS.filter(function(p) { return p.cat === filter; }) : ALL_PRODUCTS;
+                }
+                if (searchTerm && searchTerm.trim()) {
+                    var s = searchTerm.trim().toLowerCase();
+                    prods = prods.filter(function(p) {
+                        return p.artist.toLowerCase().indexOf(s) !== -1 ||
+                            p.name.toLowerCase().indexOf(s) !== -1 ||
+                            p.type.toLowerCase().indexOf(s) !== -1;
+                    });
+                }
+                var gridHtml = '<div class="prod-grid">';
+                if (prods.length === 0) {
+                    gridHtml +=
+                        '<div style="grid-column:1/-1;padding:2rem 0;text-align:center;font-family:var(--fm);font-size:.7rem;letter-spacing:.12em;color:var(--ghost)">No items match your search.</div>';
+                }
+                prods.forEach(function(p) {
+                    var isSold = p.badge === 'sold';
+                    var sizeHtml = p.sizes ?
+                        '<div class="size-row">' + (p.sizes.length === 0 ?
+                            '<span style="font-family:var(--fm);font-size:.46rem;color:rgba(255,68,136,.35)">SOLD OUT — Waitlist only</span>' :
+                            p.sizes.map(function(s) {
+                                return '<div class="size-btn" onclick="event.stopPropagation()" role="button" tabindex="0" aria-label="Size ' +
+                                    s + '">' + s + '</div>';
+                            }).join('')) + '</div>' :
+                        '';
+                    var quickAddDisabled = isSold;
+                    gridHtml += '<div class="prod-card" onclick="openProdDetail(\'' + p.id +
+                        '\')" tabindex="0" role="button" aria-label="View details for ' + p.name + '">' +
+                        '<div class="prod-img" style="background:' + (p.bg || 'transparent') + '"><span>' + p
+                        .emoji + '</span>' + (p.badge ?
+                            '<div class="prod-badge ' + p.badge + '">' + (p.badge === 'new' ? 'New Drop' : p
+                                .badge === 'ltd' ? 'Ltd Edition' : p.badge === 'sale' ? 'Bundle Deal' :
+                                'Sold Out') + '</div>' : '') + '</div>' +
+                        '<div class="prod-info">' +
+                        '<div class="prod-artist">' + p.artist + '</div>' +
+                        '<div class="prod-name">' + p.name + '</div>' +
+                        '<div class="prod-type">' + p.type + '</div>' +
+                        sizeHtml +
+                        '<div class="prod-footer">' +
+                        '<div class="prod-price"><span>$</span>' + p.price + '</div>' +
+                        '<button class="prod-btn' + (quickAddDisabled ? ' disabled' : '') +
+                        '" onclick="event.stopPropagation();' + (quickAddDisabled ?
+                            'showToast(\'Added to waitlist\')' :
+                            'addToCart(\'' + p.id + '\', ' + (p.sizes && p.sizes.length ? '\'' + p
+                                .sizes[0] + '\'' : 'null') + ', 1)') +
+                        '" aria-label="' + (quickAddDisabled ? 'Join waitlist' : 'Add to bag') + '">' + (
+                            quickAddDisabled ? 'Join Waitlist' : 'Add to Bag') + '</button>' +
+                        '</div></div></div>';
+                });
+                gridHtml += '</div>';
+
+                var sideHtml =
+                    '<div class="scol"><div class="cart-card"><div class="cart-label">// Your Bag <span id="cartCount-' +
+                    panelId + '">0 items</span></div><div id="cartItems-' + panelId +
+                    '" style="min-height:36px;font-family:var(--fm);font-size:.48rem;letter-spacing:.08em;color:var(--ghost);padding:.2rem 0">Your bag is empty — browse drops above.</div><div class="cart-total"><div class="ct-lbl">Total</div><div class="ct-val" id="cartTotal-' +
+                    panelId + '">$0</div></div><button class="checkout-btn" onclick="alert(\'Checkout coming soon — stay tuned!\')" aria-label="Proceed to checkout">Proceed to Checkout →</button></div><div class="ship-card"><div class="ship-label">// Shipping & Delivery</div><div class="ship-row"><div class="ship-icon">📦</div><div class="ship-text"><strong>Free shipping</strong> on orders over $60 to Nigeria, Ghana, South Africa, UK, USA & Canada.</div></div><div class="ship-row"><div class="ship-icon">⚡</div><div class="ship-text"><strong>Express dispatch</strong> within 3 business days of order confirmation.</div></div><div class="ship-row"><div class="ship-icon">🌍</div><div class="ship-text"><strong>International shipping</strong> available to 40+ countries. Rates calculated at checkout.</div></div><div class="ship-row"><div class="ship-icon">🔄</div><div class="ship-text"><strong>30-day returns</strong> on unworn, unwashed apparel. Vinyl and digital items non-returnable.</div></div></div><div class="blk pk"><div class="b-eye" style="color:rgba(255,68,136,.5)">Fan Club Perk</div><div class="b-title">3HRILL Fan Club — Early Access</div><div class="b-body">Fan Club members get 24-hour early access to all merch drops, 10% off every order, and exclusive Fan-Only items not listed in the public store.</div><div class="b-tags"><span class="b-tag pk">Early Access</span><span class="b-tag pk">10% Off</span><span class="b-tag pk">Fan-Only Items</span></div></div></div>';
+
+                panel.innerHTML = gridHtml + sideHtml;
+
+                panel.querySelectorAll('.prod-card .size-btn').forEach(function(b) {
+                    b.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var row = b.closest('.size-row');
+                        if (row) {
+                            row.querySelectorAll('.size-btn').forEach(function(bb) { bb.classList.remove(
+                                'sel'); });
+                            b.classList.add('sel');
+                        }
+                    });
+                });
+                renderCartInto(panelId);
+                var countEl = document.getElementById('merchSearchCount');
+                if (countEl) countEl.textContent = prods.length + ' items';
+            }
+
+            // ── GIVEAWAYS ──
+            function buildGiveaways() {
+                // LIVE
+                var lp = document.getElementById('panel-giveaways-live');
+                if (lp) {
+                    var html = '<div class="scol">';
+                    GIVEAWAYS_LIVE.forEach(function(g) {
+                        var pct = Math.round((g.entries / g.maxEntries) * 100);
+                        html +=
+                            '<div class="give-card ' + g.cls + '"><div class="give-top"><div class="give-status live">' +
+                            g.statusLabel + '</div><div class="give-title">' + g.title +
+                            '</div><div class="give-artist" style="margin-bottom:.35rem">BY ' + g.artist +
+                            '</div><div class="give-prize" style="color:' + g.color + '">🏆 ' + g.prize +
+                            '</div></div><div class="give-prog-wrap"><div class="give-prog-label"><span>' + g
+                            .entries.toLocaleString() +
+                            ' entries</span><span>' + g.maxEntries.toLocaleString() +
+                            ' max</span></div><div class="give-prog-track"><div class="give-prog-fill" style="width:' +
+                            pct + '%" data-w="' + pct + '%"></div></div></div><div class="give-bottom"><div class="give-countdown" data-ends=\'' +
+                            JSON.stringify(g.ends) +
+                            '\'><div class="gc-block"><div class="gc-num" style="color:' + g.color + '">' + String(g
+                                .ends.d).padStart(2, '0') +
+                            '</div><div class="gc-lbl">Days</div></div><div class="gc-sep">:</div><div class="gc-block"><div class="gc-num" style="color:' +
+                            g.color + '">' + String(g.ends.h).padStart(2, '0') +
+                            '</div><div class="gc-lbl">Hours</div></div><div class="gc-sep">:</div><div class="gc-block"><div class="gc-num" style="color:' +
+                            g.color + '">' + String(g.ends.m).padStart(2, '0') +
+                            '</div><div class="gc-lbl">Mins</div></div></div><button class="give-enter-btn green" onclick="enterGiveaway(\'' +
+                            g.title + '\')">Enter Now →</button></div></div>';
+                    });
+                    html += '</div>';
+
+                    var entryHtml =
+                        '<div class="scol"><div class="entry-card"><div class="entry-label">// Enter the Giveaway</div><div class="entry-row"><input class="entry-input" id="entryFirstName" placeholder="First Name" type="text"><input class="entry-input" id="entryLastName" placeholder="Last Name" type="text"></div><input class="entry-input" id="entryEmail" placeholder="Email Address" type="email"><input class="entry-input" id="entryCountry" placeholder="Country" type="text"><div style="font-family:var(--fm);font-size:.46rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,229,160,.35);margin:.35rem 0 .2rem">Earn bonus entries</div>';
+                    [
+                        ['Follow @AmaraSoul on Instagram', '+ 2 entries'],
+                        ['Stream "Wildfire" on Spotify', '+ 1 entry'],
+                        ['Share this giveaway', '+ 3 entries'],
+                        ['Tag a friend', '+ 1 entry']
+                    ].forEach(function(item) {
+                        entryHtml +=
+                            '<div class="entry-method"><input type="checkbox" class="bonus-check" aria-label="' +
+                            item[0] + '"><div class="em-label">' + item[0] +
+                            '</div><div class="em-bonus">' + item[1] + '</div></div>';
+                    });
+                    entryHtml +=
+                        '<button class="entry-submit" onclick="enterGiveaway(\'' + (GIVEAWAYS_LIVE[0]?.title ||
+                            'Giveaway') +
+                        '\')">Submit My Entry →</button><div class="tnc-text">By entering you agree to the <a href="#">3HRILL Giveaway Terms & Conditions</a>.</div></div></div>';
+                    lp.innerHTML = html + entryHtml;
+                }
+
+                // UPCOMING
+                var up = document.getElementById('panel-giveaways-upcoming');
+                if (up) {
+                    var mid = Math.ceil(GIVEAWAYS_UPCOMING.length / 2);
+                    var leftItems = GIVEAWAYS_UPCOMING.slice(0, mid);
+                    var rightItems = GIVEAWAYS_UPCOMING.slice(mid);
+                    var leftHtml = '<div class="scol">';
+                    leftItems.forEach(function(g) {
+                        leftHtml +=
+                            '<div class="give-card ' + g.cls + '"><div class="give-top"><div class="give-status soon">' +
+                            g.statusLabel + '</div><div class="give-title">' + g.title +
+                            '</div><div class="give-artist" style="margin-bottom:.35rem">BY ' + g.artist +
+                            '</div><div class="give-prize" style="color:' + g.color + '">🏆 ' + g.prize +
+                            '</div></div><div class="give-bottom"><div class="give-entries" style="color:' + g
+                            .color + '">' + g.starts +
+                            '</div><button class="give-enter-btn violet">Notify Me</button></div></div>';
+                    });
+                    leftHtml += '</div>';
+                    var rightHtml = '<div class="scol">';
+                    rightItems.forEach(function(g) {
+                        rightHtml +=
+                            '<div class="give-card ' + g.cls + '"><div class="give-top"><div class="give-status soon">' +
+                            g.statusLabel + '</div><div class="give-title">' + g.title +
+                            '</div><div class="give-artist" style="margin-bottom:.35rem">BY ' + g.artist +
+                            '</div><div class="give-prize" style="color:' + g.color + '">🏆 ' + g.prize +
+                            '</div></div><div class="give-bottom"><div class="give-entries" style="color:' + g
+                            .color + '">' + g.starts +
+                            '</div><button class="give-enter-btn violet">Notify Me</button></div></div>';
+                    });
+                    rightHtml += '</div>';
+                    up.innerHTML = leftHtml + rightHtml;
+                }
+
+                // WINNERS
+                var wp = document.getElementById('panel-giveaways-winners');
+                if (wp) {
+                    var leftHtml =
+                        '<div class="scol"><div class="hcard gold"><div class="hcard-eye" style="color:rgba(240,192,64,.55)">// Hall of Winners</div><div class="hcard-name" style="color:var(--gold)">PAST GIVEAWAY WINNERS</div><div class="hcard-desc">Every winner is drawn fairly at random from all verified entries at the close of each giveaway.</div></div>';
+                    PAST_WINNERS.forEach(function(w) {
+                        leftHtml +=
+                            '<div class="winner-row"><div class="wr-place">' + w.place +
+                            '</div><div><div class="wr-name">' + w.name + '</div><div class="wr-loc">' + w
+                            .loc + '</div></div><div style="text-align:right"><div class="wr-prize">' + w
+                            .prize + '</div><div class="wr-loc" style="margin-top:.1rem">' + w.giveaway +
+                            '</div></div></div>';
+                    });
+                    leftHtml += '</div>';
+
+                    var rightHtml =
+                        '<div class="scol"><div class="blk gold"><div class="b-eye" style="color:rgba(240,192,64,.5)">How It Works</div><div class="b-title">The 3HRILL Giveaway Process</div><div class="b-body">All giveaways are run transparently. Entry is free. Winners are selected using a verified random draw tool.</div><div class="b-tags"><span class="b-tag gd">Free Entry</span><span class="b-tag gd">Random Draw</span><span class="b-tag gd">Verified</span></div></div><div class="blk gold"><div class="b-eye" style="color:rgba(240,192,64,.5)">Eligibility</div><div class="b-title">Who Can Enter</div><div class="b-body">Open to verified fans aged 16+ in eligible territories. One entry per person per giveaway.</div><div class="b-tags"><span class="b-tag gd">16+</span><span class="b-tag gd">1 Entry Per Person</span><span class="b-tag gd">Verified Fans</span></div></div><div class="blk gold"><div class="b-eye" style="color:rgba(240,192,64,.5)">Prize Fulfilment</div><div class="b-title">Getting Your Prize</div><div class="b-body">Physical prizes shipped via tracked courier within 14 business days. Digital prizes delivered electronically within 7 days.</div><div class="b-tags"><span class="b-tag gd">Tracked Shipping</span><span class="b-tag gd">14-Day Dispatch</span><span class="b-tag gd">No Substitution</span></div></div></div>';
+                    wp.innerHTML = leftHtml + rightHtml;
+                }
+            }
+
+            // ── ANNOUNCEMENTS ──
+            function buildAnnouncementsPanel(panelId, filterTypes) {
+                var panel = document.getElementById(panelId);
+                if (!panel) return;
+                var filtered = filterTypes ? ANNS.filter(function(a) { return filterTypes.indexOf(a.type) !== -1; }) :
+                ANNS;
+                var mid = Math.ceil(filtered.length / 2);
+                var left = filtered.slice(0, mid);
+                var right = filtered.slice(mid);
+
+                function renderAnns(arr) {
+                    if (arr.length === 0) {
+                        return '<div class="scol" style="align-items:center;justify-content:center;padding:2rem 0;font-family:var(--fm);font-size:.7rem;color:var(--ghost);letter-spacing:.12em">No announcements in this category.</div>';
+                    }
+                    return '<div class="scol">' + arr.map(function(a) {
+                        return '<div class="ann-card ' + a.type +
+                            '"><div class="ann-type-strip ' + a.type +
+                            '"></div><div class="ann-card-top"><div class="ann-meta"><div class="ann-type-pill ' +
+                            a.type + '">' + (a.type === 'tour' ? 'Tour / Events' : a.type === 'release' ?
+                            'New Release' : a.type === 'collab' ? 'Collaboration' :
+                            'Announcement') +
+                            '</div><div class="ann-date">' + a.date + '</div>' + (a.urgent ?
+                            '<div class="ann-urgent">Urgent</div>' : '') +
+                            '</div><div class="ann-headline">' + a.headline +
+                            '</div><div class="ann-artist-row"><div class="ann-artist-tag">' + a.artist +
+                            '</div></div><div class="ann-body">' + a.body +
+                            '</div><div class="b-tags" style="margin-top:.35rem">' + a.tags.map(function(t) {
+                                return '<span class="b-tag">' + t + '</span>';
+                            }).join('') +
+                            '</div></div><div class="ann-card-bottom"><div class="ann-read-more">Read more →</div><div class="ann-react-row">' +
+                            a.reacts.map(function(r) {
+                                return '<div class="ann-react">' + r + '</div>';
+                            }).join('') + '</div></div></div>';
+                    }).join('') + '</div>';
+                }
+
+                var extra = '';
+                if (panelId === 'panel-announcements-tour') {
+                    extra =
+                        '<div class="nl-card"><div class="nl-label">// Stay First — Fan Newsletter</div><input class="nl-input" type="text" placeholder="Your Name"><input class="nl-input" type="email" placeholder="Email Address"><button class="nl-btn">Subscribe to Fan Updates →</button><div class="nl-perks"><span class="nl-perk">Early Access</span><span class="nl-perk">Exclusive News</span><span class="nl-perk">Giveaway Alerts</span><span class="nl-perk">No Spam</span></div></div>';
+                }
+
+                panel.innerHTML = renderAnns(left) + '<div class="scol">' + extra + renderAnns(right).replace(
+                    '<div class="scol">', '').replace('</div>', '') + '</div>';
+            }
+
+            // ── ENTER GIVEAWAY ──
+            function enterGiveaway(title) {
+                var firstName = document.getElementById('entryFirstName');
+                var lastName = document.getElementById('entryLastName');
+                var email = document.getElementById('entryEmail');
+                var country = document.getElementById('entryCountry');
+
+                if (!firstName || !lastName || !email || !country) {
+                    showToast('Please fill in all required fields');
+                    return;
+                }
+
+                if (firstName.value.trim().length < 2) {
+                    showToast('Please enter your first name');
+                    firstName.focus();
+                    return;
+                }
+                if (lastName.value.trim().length < 2) {
+                    showToast('Please enter your last name');
+                    lastName.focus();
+                    return;
+                }
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email.value.trim())) {
+                    showToast('Please enter a valid email address');
+                    email.focus();
+                    return;
+                }
+                if (country.value.trim().length < 2) {
+                    showToast('Please enter your country');
+                    country.focus();
+                    return;
+                }
+
+                showToast('✅ You\'ve entered the "' + title + '" giveaway! Good luck!');
+            }
+            window.enterGiveaway = enterGiveaway;
+
+            // ── COUNTDOWN ──
+            function startCountdowns() {
+                var containers = document.querySelectorAll('.give-countdown[data-ends]');
+                containers.forEach(function(container) {
+                    var data = container.dataset.ends;
+                    if (!data) return;
+                    var ends = JSON.parse(data);
+                    var d = ends.d,
+                        h = ends.h,
+                        m = ends.m;
+                    var numEls = container.querySelectorAll('.gc-num');
+                    if (!numEls || numEls.length < 3) return;
+
+                    function updateDisplay() {
+                        numEls[0].textContent = String(d).padStart(2, '0');
+                        numEls[1].textContent = String(h).padStart(2, '0');
+                        numEls[2].textContent = String(m).padStart(2, '0');
+                    }
+
+                    updateDisplay();
+                    var interval = setInterval(function() {
+                        m--;
+                        if (m < 0) {
+                            m = 59;
+                            h--;
+                            if (h < 0) {
+                                h = 23;
+                                d--;
+                                if (d < 0) {
+                                    d = 0;
+                                    h = 0;
+                                    m = 0;
+                                    clearInterval(interval);
+                                }
+                            }
+                        }
+                        updateDisplay();
+                    }, 60000);
+                });
+            }
+
+            // ── MODAL ──
+            var modalQty = 1;
+
+            function openProdDetail(id) {
+                var p = ALL_PRODUCTS.find(function(x) { return x.id === id; });
+                if (!p) return;
+                AppState.modalSelectedSize = (p.sizes && p.sizes.length > 0) ? p.sizes[0] : null;
+                modalQty = 1;
+                var isSold = p.badge === 'sold';
+
+                document.getElementById('modalImg').style.background = p.bg || 'rgba(0,0,0,0)';
+                document.getElementById('modalImg').innerHTML = '<span>' + p.emoji + '</span>';
+
+                var sizeBlock = '';
+                if (p.sizes && p.sizes.length > 0) {
+                    sizeBlock =
+                        '<div class="modal-section-lbl">// Select Size</div><div class="size-row" id="modalSizeRow">' +
+                        p.sizes.map(function(s) {
+                            return '<div class="size-btn' + (s === AppState.modalSelectedSize ? ' sel' : '') +
+                                '" onclick="selectModalSize(this,\'' + s +
+                                '\')" role="button" tabindex="0" aria-label="Select size ' + s + '">' + s +
+                                '</div>';
+                        }).join('') + '</div>';
+                } else if (p.sizes && p.sizes.length === 0) {
+                    sizeBlock = '<div class="modal-section-lbl" style="color:rgba(255,68,136,.4)">Sold Out — Waitlist Only</div>';
+                } else {
+                    sizeBlock = '';
+                }
+
+                document.getElementById('modalBody').innerHTML =
+                    '<div class="modal-artist">' + p.artist + '</div><div class="modal-name" id="modal-title">' + p
+                    .name + '</div><div class="modal-type">' + p.type + '</div><div class="modal-price"><span>$</span>' +
+                    p.price + '</div><div class="modal-desc">' + p.desc + '</div><div class="b-tags" style="margin-bottom:.5rem">' +
+                    p.tags.map(function(t) { return '<span class="b-tag pk">' + t + '</span>'; }).join('') +
+                    '</div>' + sizeBlock + (!isSold ?
+                        '<div class="modal-qty-row"><div class="modal-section-lbl" style="margin-bottom:0">Qty</div><div class="modal-qty-ctrl"><button class="modal-qty-btn" onclick="changeModalQty(-1)" aria-label="Decrease quantity">−</button><div class="modal-qty-val" id="modalQtyVal">1</div><button class="modal-qty-btn" onclick="changeModalQty(1)" aria-label="Increase quantity">+</button></div></div>' :
+                        '<div style="margin-top:.7rem"></div>') +
+                    '<div class="modal-btn-row">' + (isSold ?
+                        '<button class="modal-btn add" onclick="showToast(\'You have been added to the waitlist\')" aria-label="Join waitlist">Join Waitlist</button>' :
+                        '<button class="modal-btn add" onclick="window.addToCart(\'' + p.id +
+                        '\', AppState.modalSelectedSize, getModalQty())" aria-label="Add to bag">Add to Bag</button><button class="modal-btn buy" onclick="buyNow(\'' +
+                        p.id + '\', AppState.modalSelectedSize, getModalQty())" aria-label="Buy now">Buy Now →</button>') +
+                    '</div>';
+
+                document.getElementById('prodModal').classList.add('open');
+                document.body.style.overflow = 'hidden';
+                var modal = document.getElementById('prodModal');
+                var focusable = modal.querySelectorAll('button, [tabindex="0"]');
+                if (focusable.length) focusable[0].focus();
+            }
+            window.openProdDetail = openProdDetail;
+
+            function selectModalSize(el, size) {
+                AppState.modalSelectedSize = size;
+                var row = document.getElementById('modalSizeRow');
+                if (row) row.querySelectorAll('.size-btn').forEach(function(b) { b.classList.remove('sel'); });
+                el.classList.add('sel');
+            }
+            window.selectModalSize = selectModalSize;
+
+            function getModalQty() {
+                var el = document.getElementById('modalQtyVal');
+                return el ? parseInt(el.textContent, 10) || 1 : 1;
+            }
+            window.getModalQty = getModalQty;
+
+            function changeModalQty(delta) {
+                var el = document.getElementById('modalQtyVal');
+                if (!el) return;
+                var v = parseInt(el.textContent, 10) || 1;
+                v = Math.max(1, Math.min(20, v + delta));
+                el.textContent = v;
+            }
+            window.changeModalQty = changeModalQty;
+
+            function buyNow(productId, size, qty) {
+                var added = addToCart(productId, size, qty);
+                if (added) {
+                    closeProdModal();
+                    showToast('Proceeding to checkout…');
+                }
+            }
+            window.buyNow = buyNow;
+
+            function closeProdModal() {
+                document.getElementById('prodModal').classList.remove('open');
+                document.body.style.overflow = '';
+                document.activeElement && document.activeElement.blur();
+            }
+            window.closeProdModal = closeProdModal;
+
+            // ── INIT ──
+            function init() {
+                loadCart();
+
+                // Hero carousel
+                renderHeroCarousel();
+                var carousel = document.querySelector('.intro-right-carousel');
+                if (carousel) {
+                    carousel.addEventListener('mouseenter', stopHeroAutoPlay);
+                    carousel.addEventListener('mouseleave', startHeroAutoPlay);
+                }
+
+                // Merch panels
+                buildMerchPanel('panel-merch-all', null, '');
+                buildMerchPanel('panel-merch-apparel', 'apparel', '');
+                buildMerchPanel('panel-merch-music', 'music', '');
+                buildMerchPanel('panel-merch-collectibles', 'collectibles', '');
+
+                // Giveaways
+                buildGiveaways();
+
+                // Announcements
+                buildAnnouncementsPanel('panel-announcements-tour', ['tour']);
+                buildAnnouncementsPanel('panel-announcements-releases', ['release']);
+                buildAnnouncementsPanel('panel-announcements-community', ['general', 'collab']);
+
+                // Countdowns
+                startCountdowns();
+
+                // Progress bars
+                var obs = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(e) {
+                        if (e.isIntersecting) {
+                            e.target.querySelectorAll('[data-w]').forEach(function(b) {
+                                b.style.width = b.dataset.w;
+                            });
+                        }
+                    });
+                }, { threshold: .15 });
+                document.querySelectorAll('.sub-panel,.slide').forEach(function(p) { obs.observe(p); });
+
+                // Clock
+                setInterval(function() {
+                    var d = new Date();
+                    document.getElementById('navClock').innerHTML = '3HRILL<br>' + d.toUTCString().slice(17, 22) +
+                        ' UTC';
+                }, 1000);
+
+                // Keyboard
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') closeProdModal();
+                });
+
+                console.log('3HRILL Fan Showcase — Ready.');
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        })();
+
+
+/* ════════════════════════════════════════════
+   FOOTER BREADCRUMB — SITE MAP + COOKIE CONSENT
+════════════════════════════════════════════ */
+
+// ── Site Map dropdown toggle ──
+function toggleSitemap(e) {
+    e.stopPropagation();
+    const btn = document.getElementById('sitemapBtn');
+    btn.classList.toggle('open');
+}
+
+// Close sitemap when clicking outside
+document.addEventListener('click', e => {
+    const btn = document.getElementById('sitemapBtn');
+    if (btn && !btn.contains(e.target)) {
+        btn.classList.remove('open');
+    }
+});
+
+// ── Cookie consent modal ──
+function openCookieConsent() {
+    document.getElementById('cookieOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCookieConsent() {
+    document.getElementById('cookieOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function cookieChoice(action) {
+    const analytics = document.getElementById('cookieAnalytics').checked;
+    const marketing = document.getElementById('cookieMarketing').checked;
+
+    const prefs = {
+        essential: true,
+        analytics: action === 'accept' ? true : action === 'reject' ? false : analytics,
+        marketing: action === 'accept' ? true : action === 'reject' ? false : marketing,
+        timestamp: new Date().toISOString()
+    };
+
+    // Store in localStorage
+    try {
+        localStorage.setItem('3hrill_cookie_prefs', JSON.stringify(prefs));
+    } catch (err) {
+        console.warn('Cookie preferences could not be saved:', err);
+    }
+
+    // Visual feedback
+    const messages = {
+        accept: '✓ All cookies accepted',
+        reject: '✓ Only essential cookies active',
+        save: '✓ Preferences saved'
+    };
+    showFooterToast(messages[action] || '✓ Saved');
+
+    closeCookieConsent();
+}
+
+// Small toast feedback
+function showFooterToast(msg) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 4.5rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        z-index: 800;
+        background: linear-gradient(140deg, rgba(240, 192, 64, .12), rgba(4, 10, 22, .98));
+        border: 1px solid rgba(240, 192, 64, .35);
+        color: var(--gold);
+        font-family: var(--fm);
+        font-size: .55rem;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        padding: .55rem 1.2rem;
+        border-radius: 2px;
+        opacity: 0;
+        transition: opacity .3s ease, transform .3s ease;
+        pointer-events: none;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+    `;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(10px)';
+        setTimeout(() => toast.remove(), 400);
+    }, 2400);
+}
+
+// ── Escape key closes cookie modal ──
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('cookieOverlay').classList.contains('open')) {
+        closeCookieConsent();
+    }
+});
+
+
+
+// ── Auto-restore saved preferences on load (optional) ──
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const saved = localStorage.getItem('3hrill_cookie_prefs');
+        if (saved) {
+            const prefs = JSON.parse(saved);
+            const analyticsEl = document.getElementById('cookieAnalytics');
+            const marketingEl = document.getElementById('cookieMarketing');
+            if (analyticsEl) analyticsEl.checked = !!prefs.analytics;
+            if (marketingEl) marketingEl.checked = !!prefs.marketing;
+        }
+    } catch (err) {
+        // no saved preferences
+    }
+});
+
+/* ═══════════════════════════════════════════
+   COOKIE CONSENT — controller
+═══════════════════════════════════════════ */
+(function () {
+    const STORAGE_KEY = '3hrill_cookie_consent_v1';
+
+    const banner = document.getElementById('consentBanner');
+    const prefsEl = document.getElementById('consentPrefs');
+    const openPrefsBtn = document.getElementById('openPrefs');
+    const savePrefsBtn = document.getElementById('savePrefs');
+    const acceptAllBtn = document.getElementById('acceptAll');
+    const rejectAllBtn = document.getElementById('rejectAll');
+    const switches = banner.querySelectorAll('.switch[data-cat]');
+
+    if (!banner) return;
+
+    /* ── Read / write consent state ── */
+    function readConsent() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (err) { return null; }
+    }
+
+    function writeConsent(state) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                essential: true,
+                analytics: !!state.analytics,
+                personalization: !!state.personalization,
+                timestamp: new Date().toISOString()
+            }));
+        } catch (err) { /* storage may be blocked — ignore */ }
+    }
+
+    /* ── Apply saved state to switches ── */
+    function applyState(state) {
+        switches.forEach(sw => {
+            const cat = sw.dataset.cat;
+            if (cat === 'essential') return;
+            const isOn = !!state[cat];
+            sw.classList.toggle('on', isOn);
+            sw.setAttribute('aria-checked', String(isOn));
+        });
+    }
+
+    /* ── Read current switch state ── */
+    function readSwitches() {
+        const out = { essential: true, analytics: false, personalization: false };
+        switches.forEach(sw => {
+            const cat = sw.dataset.cat;
+            if (cat === 'essential') return;
+            out[cat] = sw.classList.contains('on');
+        });
+        return out;
+    }
+
+    /* ── Toggle a switch ── */
+    function toggleSwitch(sw) {
+        if (sw.classList.contains('locked')) return;
+        const next = !sw.classList.contains('on');
+        sw.classList.toggle('on', next);
+        sw.setAttribute('aria-checked', String(next));
+    }
+
+    /* ── Open / close ── */
+    function openBanner() {
+        // Restore saved state if it exists
+        const saved = readConsent();
+        if (saved) applyState(saved);
+        banner.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeBanner() {
+        banner.classList.remove('open');
+        document.body.style.overflow = '';
+        // Reset customise panel to collapsed
+        prefsEl.classList.remove('open');
+        openPrefsBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Toast ── */
+    function toast(msg) {
+        const el = document.createElement('div');
+        el.className = 'consent-toast';
+        el.textContent = msg;
+        document.body.appendChild(el);
+        requestAnimationFrame(() => el.classList.add('show'));
+        setTimeout(() => {
+            el.classList.remove('show');
+            setTimeout(() => el.remove(), 400);
+        }, 2200);
+    }
+
+    /* ── Switch interactions ── */
+    switches.forEach(sw => {
+        sw.addEventListener('click', () => toggleSwitch(sw));
+        sw.addEventListener('keydown', e => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleSwitch(sw);
+            }
+        });
+    });
+
+    /* ── Customise toggle ── */
+    openPrefsBtn.addEventListener('click', () => {
+        const isOpen = prefsEl.classList.toggle('open');
+        openPrefsBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    /* ── Save preferences (custom) ── */
+    savePrefsBtn.addEventListener('click', () => {
+        const state = readSwitches();
+        writeConsent(state);
+        toast('✓ Preferences saved');
+        closeBanner();
+    });
+
+    /* ── Accept all ── */
+    acceptAllBtn.addEventListener('click', () => {
+        const state = { essential: true, analytics: true, personalization: true };
+        applyState(state);
+        writeConsent(state);
+        toast('✓ All cookies accepted');
+        closeBanner();
+    });
+
+    /* ── Reject all ── */
+    rejectAllBtn.addEventListener('click', () => {
+        const state = { essential: true, analytics: false, personalization: false };
+        applyState(state);
+        writeConsent(state);
+        toast('✓ Only essential cookies active');
+        closeBanner();
+    });
+
+    /* ── Escape closes ── */
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && banner.classList.contains('open')) {
+            closeBanner();
+        }
+    });
+
+    /* ── Backdrop click closes (if you want) — click outside card ── */
+    banner.addEventListener('click', e => {
+        if (e.target === banner) closeBanner();
+    });
+
+    /* ═══════════════════════════════════════════
+       Wire it to the FOOTER Cookie Preferences link
+    ═══════════════════════════════════════════ */
+    window.openCookieConsent = openBanner;
+
+    /* ═══════════════════════════════════════════
+       Auto-open on first visit (only if no choice saved)
+    ═══════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
+        const saved = readConsent();
+        if (!saved) {
+            setTimeout(openBanner, 1000);
+        }
+    });
+})();
+/* Close modal when clicking the backdrop */
+document.addEventListener('click', e => {
+    const overlay = document.getElementById('cookieOverlay');
+    if (overlay && e.target === overlay) closeCookieConsent();
+});
+
+/* Close modal with Escape key */
+document.addEventListener('keydown', e => {
+    const overlay = document.getElementById('cookieOverlay');
+    if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+        closeCookieConsent();
+    }
+});
+    </script>
+</body>
+</html>

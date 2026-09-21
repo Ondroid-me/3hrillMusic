@@ -1,0 +1,3034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3HRILL MUSIC — Library Pass</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght=0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght=300;400;500&family=Playfair+Display:ital,wght=1,400;1,700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --void:#020810;
+  --deep:#040c1a;
+  --dark:#060f1e;
+  --panel:#0a1828;
+  --ridge:#0d2040;
+  --elec:#00aaff;
+  --cyan:#00e5ff;
+  --hot:#ff6b35;
+  --gold:#f0c040;
+  --green:#00e5a0;
+  --white:#e8f4ff;
+  --muted:#3a6080;
+  --ghost:#152535;
+  --fd:'Bebas Neue',sans-serif;
+  --fb:'Barlow Condensed',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --fp:'Playfair Display',serif;
+}
+
+html,
+body{
+  height:100%;
+  overflow:hidden;
+  background:grey;
+  color:var(--white);
+  font-family:var(--fb)}
+
+/* scanlines */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,170,255,.008) 3px,rgba(0,170,255,.008) 4px)}
+
+
+/* ════════ SLIDE SYSTEM ════════ */
+#slides{
+  height:100vh;
+  overflow-y:scroll;
+  scroll-snap-type:y mandatory;
+  scrollbar-width:none;
+   padding-top: 0px;
+  margin-bottom:0px;
+}
+#slides::-webkit-scrollbar{display:none}
+.slide{
+  height:100vh;
+  scroll-snap-align:start;
+  position:relative;
+  overflow:hidden;
+  transition:background-image 0.8s ease-in-out, background-color 0.8s ease-in-out;
+}
+
+/* mesh bg */
+.mesh{
+  position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:
+    radial-gradient(ellipse 55% 65% at 10% 40%,rgba(7, 19, 39, 0.5) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 40% at 90% 15%,rgba(180, 191, 223, 0.38) 0%,transparent 65%),
+    radial-gradient(ellipse 60% 50% at 50% 100%,rgba(2, 8, 30, .55) 0%,transparent 65%);
+}
+
+/* ══════════════════════════════
+   SLIDE 1 — INTRO
+══════════════════════════════ */
+#slide-intro{
+  background:linear-gradient(158deg,#020810 0%,#030d1c 45%,#050e1d 100%);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  padding:0 4rem;
+  gap:4rem;
+}
+
+/* LEFT */
+.intro-left{position:relative;z-index:2}
+.intro-eyebrow{
+  font-family:var(--fm);font-size:.6rem;letter-spacing:.3em;
+display:none;
+  color:var(--elec);opacity:.6;text-transform:uppercase;margin-bottom:.7rem;
+}
+.intro-headline{
+  font-family:var(--fd);font-size:clamp(3rem,5.5vw,5.2rem);
+  letter-spacing:.06em;line-height:.92;
+  margin-bottom:1.4rem;
+}
+.intro-headline em{
+  font-style:normal;
+  -webkit-text-stroke:1px rgba(0,200,255,.35);
+  color:transparent;
+}
+.intro-body{
+  font-size:1.02rem;font-weight:400;line-height:1.7;
+  color:rgba(160,210,245,.7);max-width:420px;margin-bottom:1.8rem;
+}
+.intro-body strong{color:var(--white);font-weight:700}
+
+/* Access Toggles / Site Switchers */
+.access-modes{display:flex;flex-direction:column;gap:1.6rem;margin-bottom:2.2rem}
+.amode{
+  display:flex;align-items:center;gap:1rem;
+  padding:.75rem 1.1rem;
+  border:1px solid rgba(0,130,200,.15);border-radius:3px;
+  background:rgba(6,14,28,.6);backdrop-filter:blur(4px);
+  transition:all .25s;cursor:pointer;
+}
+.amode:hover{border-color:rgba(0,180,255,.28);background:rgba(0,100,200,.06)}
+.amode.active{
+  border-color:var(--cyan);
+  background:rgba(0,229,255,.08);
+  box-shadow:0 0 15px rgba(0,229,255,0.15);
+}
+.amode-icon{
+  width:36px;height:36px;border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:1.1rem;
+  background: rgba(6,14,28,.8);
+  transition: background .2s;
+}
+.amode.active .amode-icon{background:rgba(0,229,255,.12)}
+.amode-info{}
+.amode-name{font-family:var(--fb);font-size:.88rem;font-weight:700;letter-spacing:.05em;color:var(--white)}
+.amode-desc{font-family:var(--fm);font-size:.54rem;letter-spacing:.07em;color:var(--muted);margin-top:.1rem}
+.amode-pref{
+  margin-left:auto;flex-shrink:0;
+  font-family:var(--fm);font-size:.52rem;letter-spacing:.14em;
+  color:var(--cyan);background:rgba(0,229,255,.08);
+  border:1px solid rgba(0,229,255,.2);border-radius:2px;
+  padding:.16rem .5rem;text-transform:uppercase;
+}
+
+.intro-cta-row{display:flex;gap:.8rem;align-items:center}
+.btn-primary{
+  padding:.65rem 1.8rem;
+  font-family:var(--fb);font-size:.82rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(0,170,255,.15);border:1px solid rgba(0,180,255,.35);
+  color:var(--cyan);border-radius:2px;cursor:pointer;transition:all .25s;
+}
+.btn-primary:hover{background:rgba(0,200,255,.25);box-shadow:0 0 24px rgba(0,200,255,.18)}
+.btn-ghost{
+  padding:.65rem 1.4rem;
+  font-family:var(--fb);font-size:.82rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  background:transparent;border:1px solid rgba(0,130,200,.2);
+  color:var(--muted);border-radius:2px;cursor:pointer;transition:all .25s;
+}
+.btn-ghost:hover{border
+  
+  -color:var(--elec);color:var(--elec)}
+
+/* RIGHT — archival visual cards */
+.intro-right{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;gap:1.1rem;
+}
+.arch-card{
+  background:linear-gradient(135deg,rgba(8,18,38,.94),rgba(4,10,22,.97));
+  border:1px solid rgba(0,120,190,.14);border-radius:3px;
+  padding:1.1rem 1.3rem;
+  position:relative;overflow:hidden;
+  transition:border-color .25s, transform .2s ease;
+  cursor:pointer;
+}
+.arch-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,transparent,var(--elec),transparent);
+  opacity:0;transition:opacity .25s;
+}
+.arch-card:hover{border-color:rgba(0,160,255,.28);transform:translateY(-2px)}
+.arch-card:hover::before{opacity:.7}
+.arch-card-num{font-family:var(--fd);font-size:3rem;color:var(--ghost);position:absolute;right:.8rem;top:.3rem;letter-spacing:.04em}
+.arch-card-title{font-family:var(--fd);font-size:1.35rem;letter-spacing:.08em;color:var(--white);margin-bottom:.3rem}
+.arch-card-body{font-size:.82rem;color:var(--muted);line-height:1.55;max-width:85%}
+.arch-card-tag{
+  display:inline-block;margin-top:.6rem;
+  font-family:var(--fm);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ghost);border:1px solid rgba(0,100,160,.15);border-radius:2px;padding:.15rem .5rem;
+}
+
+/* wave decoration */
+.intro-wave{
+  position:absolute;bottom:0;left:0;right:0;height:120px;
+  background:linear-gradient(180deg,transparent,rgba(2,8,16,.4));
+  pointer-events:none;z-index:1;
+}
+
+/* scroll indicator */
+.scroll-ind{
+  position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  font-family:var(--fm);font-size:1.55rem;letter-spacing:.22em;
+  color:var(--ghost);text-transform:uppercase;cursor:pointer;z-index:5;
+  animation:indBounce 2.5s ease infinite;
+}
+.scroll-ind .caret{
+width:26px;
+height:26px;
+border-right:1px solid rgba(0,160,255,.25);
+border-bottom:1px solid rgba(0,160,255,.25);
+transform:rotate(45deg)}
+@keyframes indBounce{
+0%,100%{
+transform:translateX(-50%) 
+translateY(0)}
+50%
+{transform:translateX(-50%) translateY(6px)}}
+
+/* ══════════════════════════════
+   SLIDE 2 — GET PASS
+══════════════════════════════ */
+#slide-pass{
+  background:linear-gradient(155deg,#030a18 0%,#040c1c 50%,#030910 100%);
+  display:flex;flex-direction:column;
+  overflow-y:auto;scrollbar-width:none;
+  padding:2rem 4rem 2rem;
+  position:relative;
+}
+#slide-pass::-webkit-scrollbar{display:none}
+
+/* dynamic active slide background element with absolute positioning */
+.slide-bg-overlay {
+  position:absolute;inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  z-index:0;
+  transition:opacity 0.8s ease-in-out, background-image 0.8s ease-in-out;
+  pointer-events:none;
+}
+
+.slide-content-wrapper {
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.pass-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:1px;
+            margin-top: 1.95rem;
+            position: relative;flex-shrink:0;
+}
+.pass-header-left .pass-eye{
+  font-family:var(--fm);font-size:.6rem;letter-spacing:.28em;
+display:none;
+  color:var(--elec);opacity:.55;text-transform:uppercase;margin-bottom:.4rem;
+}
+.pass-header-left h2{
+  font-family:var(--fd);font-size:clamp(4.7rem,4vw,4rem);letter-spacing:.5rem;line-height:.72;
+}
+
+.pass-header-left h2 span{color:var(--elec);letter-spacing:1.24rem;}
+.pass-header-right{
+  display:flex;gap:.65rem;align-items:center;flex-shrink:0;
+}
+
+/* action buttons row */
+.pass-actions{
+  display:flex;gap:1.8rem;margin-top:1.4rem;flex-wrap:wrap;flex-shrink:0;
+}
+.pact-btn{
+  display:flex;align-items:center;gap:.55rem;
+  padding:.58rem 1.3rem;border-radius:2px;cursor:pointer;
+  font-family:var(--fb);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  transition:all .25s;border:0px solid;
+}
+.pact-btn.listen{
+  background:rgba(0,229,255,.12);border-color:rgba(0,229,255,.3);color:var(--cyan);
+}
+.pact-btn.listen:hover{background:rgba(0,229,255,.22);box-shadow:0 0 22px rgba(0,229,255,.18)}
+.pact-btn.radio{
+  background:rgba(240,192,64,.08);border-color:rgba(240,192,64,.25);color:var(--gold);
+}
+.pact-btn.radio:hover{background:rgba(240,192,64,.16)}
+.pact-btn.get-pass-direct{
+  background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.22);color:var(--green);
+}
+.pact-btn.get-pass-direct:hover{background:rgba(0,229,160,.15)}
+.pact-btn svg{flex-shrink:0}
+
+/* ══════════════════════════════
+   SERVICE CAROUSEL
+══════════════════════════════ */
+.college-label{
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ghost);margin-bottom:.85rem;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.college-counter{color:var(--elec);opacity:.5}
+
+/* ── CAROUSEL WRAPPER ── */
+.carousel{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.4rem;
+  flex:1;
+  min-height:0;
+}
+
+/* ── ACTIVE (FEATURE) CARD ── */
+.car-active{
+  position:relative;overflow:hidden;border-radius:3px;
+  border:1px solid rgba(0,180,255,.22);
+  display:flex;flex-direction:column;
+  background:linear-gradient(160deg,rgba(6,16,34,.97),rgba(2,8,20,.99));
+  transition:border-color .3s;
+}
+.car-active-img{
+  flex:1;min-height:0;
+  background-size:cover;background-position:center;
+  position:relative;
+  transition:background-image .45s ease;
+}
+.car-active-img::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(2,6,16,.1) 0%,rgba(2,8,20,.92) 100%);
+}
+.car-active-img-logo{
+  position:absolute;top:1.1rem;left:1.1rem;z-index:2;
+  font-size:2.4rem;
+  width:58px;height:58px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(2,8,20,.75);border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(8px);
+}
+.car-active-type-badge{
+  position:absolute;top:1.1rem;right:1.1rem;z-index:2;
+  font-family:var(--fm);font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--void);background:var(--elec);border-radius:2px;padding:.2rem .6rem;
+}
+.car-active-body{
+  padding:1.3rem 1.5rem 1.5rem;
+  display:flex;flex-direction:column;gap:.7rem;
+  flex-shrink:0;
+}
+.car-active-name{
+  font-family:var(--fd);font-size:2.2rem;letter-spacing:.08em;
+  color:var(--white);line-height:1;
+}
+.car-active-desc{
+  font-family:var(--fb);font-size:.88rem;font-weight:400;
+  color:rgba(140,200,240,.65);line-height:1.55;
+}
+.car-active-features{
+  display:flex;gap:.45rem;flex-wrap:wrap;
+}
+.car-feat{
+  font-family:var(--fm);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid rgba(0,130,200,.2);color:var(--muted);
+  border-radius:2px;padding:.15rem .5rem;
+}
+.car-active-actions{
+  display:flex;gap:.65rem;align-items:center;padding-top:.3rem;
+}
+.car-getpass-btn{
+  padding:.6rem 1.6rem;
+  font-family:var(--fb);font-size:.85rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(0,200,255,.14);border:1px solid rgba(0,200,255,.35);
+  color:var(--cyan);border-radius:2px;cursor:pointer;transition:all .25s;
+}
+.car-getpass-btn:hover{background:rgba(0,229,255,.25);box-shadow:0 0 22px rgba(0,229,255,.2)}
+.car-web-btn{
+  padding:.6rem 1.1rem;
+  font-family:var(--fb);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  background:transparent;border:1px solid rgba(0,130,200,.2);
+  color:var(--muted);border-radius:2px;cursor:pointer;transition:all .25s;
+}
+.car-web-btn:hover{border-color:var(--elec);color:var(--elec)}
+
+/* ── RIGHT PANEL: THUMB STRIP + NAV ── */
+.car-right{
+  display:flex;flex-direction:column;gap:.75rem;min-height:0;
+}
+
+/* prev / next */
+.car-nav-row{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.car-nav-info{font-family:var(--fm);font-size:.58rem;letter-spacing:.12em;color:var(--ghost)}
+.car-nav-btns{display:flex;gap:.45rem}
+.car-nav-btn{
+  width:36px;height:36px;border-radius:2px;
+  border:1px solid rgba(0,130,200,.2);background:rgba(6,14,28,.7);
+  color:var(--muted);font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .22s;user-select:none;
+}
+.car-nav-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 16px rgba(0,200,255,.1)}
+.car-nav-btn:active{transform:scale(.93)}
+
+/* thumb grid */
+.car-thumbs{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:.5rem;
+  overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,100,180,.12) transparent;
+  flex:1;align-content:start;
+}
+.car-thumbs::-webkit-scrollbar{width:2px}
+.car-thumbs::-webkit-scrollbar-thumb{background:rgba(0,100,180,.15)}
+
+.car-thumb{
+  background:linear-gradient(145deg,rgba(8,18,36,.92),rgba(4,10,22,.97));
+  border:1px solid rgba(0,110,180,.12);border-radius:3px;
+  padding:.65rem .7rem;
+  cursor:pointer;transition:all .22s;
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  text-align:center;position:relative;
+}
+.car-thumb:hover{border-color:rgba(0,160,255,.25);transform:translateY(-2px)}
+.car-thumb.active{
+  border-color:var(--cyan);background:rgba(0,180,255,.08);
+}
+.car-thumb.active::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:50%;height:1px;background:var(--cyan);
+}
+.car-thumb-icon{font-size:1.3rem;line-height:1}
+.car-thumb-name{
+  font-family:var(--fm);font-size:.5rem;letter-spacing:.07em;
+  color:var(--muted);text-transform:uppercase;line-height:1.2;
+}
+.car-thumb.active .car-thumb-name{color:var(--cyan)}
+
+/* ══════════════════════════════
+   SLIDE 3 — BUY NOW
+══════════════════════════════ */
+#slide-buy{
+  background:linear-gradient(155deg,#020c1a 0%,#030a16 50%,#020810 100%);
+  display:flex;flex-direction:column;
+  overflow-y:auto;scrollbar-width:none;
+  padding:2rem 4rem 2rem;
+}
+#slide-buy::-webkit-scrollbar{display:none}
+
+.buy-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:1.2rem;flex-shrink:0;
+}
+.buy-header h2{font-family:var(--fd);font-size:clamp(2.5rem,4vw,4rem);letter-spacing:.07em;line-height:.92}
+.buy-header h2 span{color:var(--gold)}
+
+/* Category Selection Toggles */
+.buy-categories-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+}
+.buy-cat-btn {
+  padding: 0.65rem 1.4rem;
+  font-family: var(--fb);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(6, 14, 28, 0.6);
+  border: 1px solid rgba(0, 130, 200, 0.2);
+  color: var(--muted);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.buy-cat-btn:hover {
+  border-color: var(--elec);
+  color: var(--elec);
+}
+.buy-cat-btn.active {
+  background: rgba(240, 192, 64, 0.12);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 16px rgba(240, 192, 64, 0.15);
+}
+
+.buy-layout{
+  display:grid;
+  grid-template-columns:1fr 1.15fr;
+  gap:1.4rem;
+  flex:1;overflow:hidden;
+}
+
+/* STORE LIST */
+.store-col{display:flex;flex-direction:column;gap:1.55rem;overflow-y:auto;scrollbar-width:none;scrollbar-color:rgba(0,100,180,.1) transparent}
+.store-col::-webkit-scrollbar{width:0px}
+.store-col::-webkit-scrollbar-thumb{background:rgba(0,100,180,.12)}
+.store-label{font-family:var(--fm);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ghost);margin-bottom:.3rem;flex-shrink:0}
+
+.store-card{
+  background:linear-gradient(140deg,rgba(8,18,36,.93),rgba(4,10,22,.97));
+  border:1px solid rgba(0,110,180,.13);border-radius:3px;height:197px;
+  padding:.85rem 1.1rem;position:absolute;display:flex;align-items:center;gap:14.9rem;
+  cursor:pointer;transition:all .25s;position:relative;overflow:hidden;
+}
+.store-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--elec);opacity:0;transition:opacity .25s}
+.store-card:hover{border-color:rgba(0,180,255,.26);transform:translateX(4px)}
+.store-card:hover::before{opacity:.65}
+.store-icon{width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.store-info{flex:1}
+.store-name{font-family:var(--fb);font-size:.9rem;font-weight:700;letter-spacing:.04em;color:var(--white);margin-bottom:.15rem}
+.store-desc{font-family:var(--fm);font-size:.52rem;letter-spacing:.06em;color:var(--muted)}
+.store-tags{display:flex;gap:.35rem;margin-top:.35rem;flex-wrap:wrap}
+.stag{font-family:var(--fm);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ghost);border:1px solid rgba(0,100,160,.15);border-radius:2px;padding:.1rem .38rem}
+.stag.dig {border-color:rgba(0,180,255,.18);color:var(--elec)}
+.stag.phy {border-color:rgba(240,192,64,.18);color:var(--gold)}
+.stag.meta {border-color:rgba(0,229,160,.18);color:var(--green)}
+.store-arrow{color:var(--muted);font-size:.8rem;transition:all .25s;margin-left:auto;flex-shrink:0}
+.store-card:hover .store-arrow{color:var(--elec);transform:translateX(3px)}
+
+/* INFOGRAPH */
+.infograph-col{display:flex;flex-direction:column;gap:1rem;overflow-y:auto;scrollbar-width:none}
+.infograph-col::-webkit-scrollbar{width:0px}
+.infograph-label{font-family:var(--fm);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ghost);margin-bottom:.3rem;flex-shrink:0}
+
+.infograph-panel{
+  background:linear-gradient(145deg,rgba(8,18,36,.93),rgba(4,10,22,.97));
+  border:1px solid rgba(0,110,180,.13);border-radius:3px;
+  padding:1.1rem 1.2rem;
+}
+.ig-title{font-family:var(--fd);font-size:1.2rem;letter-spacing:.08em;color:var(--white);margin-bottom:.9rem}
+
+/* bar chart */
+.bar-chart{display:flex;flex-direction:column;gap:.45rem}
+.bar-row{display:flex;align-items:center;gap:.7rem}
+.bar-label{font-family:var(--fm);font-size:.54rem;letter-spacing:.07em;color:var(--muted);width:88px;flex-shrink:0;text-transform:uppercase}
+.bar-track{flex:1;height:6px;background:rgba(0,100,180,.12);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;position:relative;
+  background:linear-gradient(90deg,rgba(0,150,255,.6),rgba(0,229,255,.9));
+  transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+.bar-fill.gold{background:linear-gradient(90deg,rgba(200,140,20,.6),rgba(240,192,64,.9))}
+.bar-fill.green{background:linear-gradient(90deg,rgba(0,160,100,.6),rgba(0,229,160,.9))}
+.bar-fill.hot{background:linear-gradient(90deg,rgba(200,80,20,.6),rgba(255,107,53,.9))}
+.bar-val{font-family:var(--fm);font-size:.54rem;letter-spacing:.07em;color:var(--muted);width:38px;text-align:right;flex-shrink:0}
+
+/* stat pills */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.55rem;margin-top:.3rem}
+.stat-pill{
+  background:rgba(0,100,180,.07);border:1px solid rgba(0,120,200,.14);border-radius:3px;
+  padding:.65rem .75rem;text-align:center;
+}
+.stat-val{font-family:var(--fd);font-size:1.55rem;letter-spacing:.06em;color:var(--cyan)}
+.stat-val.gold{color:var(--gold)}
+.stat-val.green{color:var(--green)}
+.stat-lbl{font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;color:var(--ghost);text-transform:uppercase;margin-top:.15rem}
+
+/* donut chart */
+.donut-wrap{display:flex;align-items:center;gap:1.4rem;margin-top:.5rem}
+.donut-svg{flex-shrink:0}
+.donut-legend{display:flex;flex-direction:column;gap:.5rem}
+.dl-item{display:flex;align-items:center;gap:.55rem}
+.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dl-name{font-family:var(--fm);font-size:.56rem;letter-spacing:.07em;color:var(--muted)}
+.dl-pct{font-family:var(--fd);font-size:.95rem;letter-spacing:.06em;margin-left:auto;padding-left:.5rem}
+
+/* back nav */
+.back-nav{
+  position: absolute;
+  top: -25px;
+  left: 3rem;
+  font-family:var(--fm);font-size: 1.55rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ghost);cursor:pointer;display:flex;align-items:center;gap:.4rem;
+  z-index:5;transition:color .2s;
+}
+.back-nav:hover{color:var(--cyan);
+letter-spacing:13px;
+transition: 1.3s;}
+
+/* ══════════════════════════════
+   ARCHIVAL DETAIL CUSTOM MODAL
+══════════════════════════════ */
+#archival-modal{
+  position:fixed;inset:0;z-index:450;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(2,6,16,0);pointer-events:none;transition:background .35s;
+}
+#archival-modal.open{background:rgba(2,6,16,.94);pointer-events:all}
+#archival-panel{
+  background:linear-gradient(160deg,rgba(8,18,38,.98),rgba(4,10,22,.99));
+  border:1px solid rgba(0,180,255,.28);border-radius:4px;
+  width:90%;max-width:560px;
+  padding:2.5rem;
+  transform:scale(.92);opacity:0;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .35s;
+  position:relative;
+  box-shadow: 0 0 40px rgba(0,180,255,0.15);
+}
+#archival-modal.open #archival-panel{transform:scale(1);opacity:1}
+.archival-close{
+  position:absolute;top:1.1rem;right:1.3rem;
+  width:32px;height:32px;background:rgba(0,100,180,.1);
+  border:1px solid rgba(0,140,220,.18);border-radius:2px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.archival-close:hover{background:rgba(0,180,255,.15);border-color:var(--cyan)}
+.archival-close span{position:absolute;width:12px;height:1px;background:var(--white)}
+.archival-close span:first-child{transform:rotate(45deg)}
+.archival-close span:last-child{transform:rotate(-45deg)}
+
+.archival-title {
+  font-family:var(--fd);font-size:2.4rem;letter-spacing:.08em;color:var(--white);margin-bottom:1rem;
+}
+.archival-tag {
+  display:inline-block;margin-bottom:1.5rem;
+  font-family:var(--fm);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cyan);border:1px solid rgba(0,180,255,.3);border-radius:2px;padding:.2rem .6rem;
+  background: rgba(0,180,255,0.06);
+}
+.archival-description {
+  font-size:1.02rem;color:rgba(160,210,245,.75);line-height:1.7;margin-bottom:2rem;
+}
+.archival-actions {
+  display:flex;gap:1rem;
+}
+
+ .logo{
+position:absolute;right:10px;top:7px;width:18px;height:36%;z-index:954;
+}
+  
+  /* ── WRAPPER ── */
+.hmenu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 0;                /* don't let it push anything */
+    height: 0;
+    z-index: 999;
+}
+
+/* ── TOGGLE ── */
+.toggle {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;           /* above the rail */
+    transition: transform .15s ease, background .3s ease, box-shadow .3s ease;
+}
+.toggle:hover  { background: rgba(12,17,32,.96); }
+.toggle:active { transform: scale(.92); }
+
+.toggle .peg {
+    width: 1px;
+    height: 20px;
+    border-radius: 2px;
+    background: var(--steel);
+    transition: background .3s ease, height .3s ease, width .3s ease;
+}
+.toggle .peg[data-p="0"] { width: 2.8px; height: 24px; background: #e7c98f; }
+.toggle .peg[data-p="1"] { width: 2.4px; height: 22px; background: #8fcbff; }
+.toggle .peg[data-p="2"] { width: 2px;   height: 20px; background: #b8a5ff; }
+.toggle .peg[data-p="3"] { width: 1.6px; height: 18px; background: #7dd8c0; }
+.toggle .peg[data-p="4"] { width: 1.2px; height: 15px; background: #ff9a9a; }
+
+/* ── RAIL ── */
+.rail {
+    position: absolute;
+    top: 20px;
+    right: 144px;
+    width: 95px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 17px;       /* leave room for the toggle */
+    background: linear-gradient(to left, rgba(12,17,32,.95), rgba(12,17,32,0));
+    border-left: 1px solid rgba(63,224,255,.12);
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform .55s cubic-bezier(.22,1,.36,1),
+                opacity .35s ease,
+                visibility .35s ease;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+.rail.open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* ── ROW (the <a>) ── */
+.row {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    /* nothing else — no top/right offsets, those broke hit-testing */
+}
+
+/* the thin visual line */
+.string {
+    height: 2px;
+    width: 130px;
+    border-radius: 3px;
+    background: #e7c98f;
+    pointer-events: none;    /* clicks go to the <a> */
+    transition: height .3s ease, background .3s ease, filter .3s ease, box-shadow .3s ease;
+}
+.row:hover .string {
+    height: 48%;
+    background: #3fe0ff;
+    filter: drop-shadow(0 0 12px rgba(63,224,255,.7));
+    box-shadow: 0 0 20px rgba(63,224,255,.2);
+}
+
+/* ── FLYOUT ── */
+.flyout {
+    position: absolute;
+    right: calc(100% + 14px);
+    top: 50%;
+    transform: translate(10px, -50%);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 18px;
+    background: rgba(12,17,32,.95);
+    border: 1px solid rgba(63,224,255,.12);
+    border-right: 2px solid #3d4a63;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;    /* hidden by default */
+    transition: opacity .3s ease,
+                transform .3s cubic-bezier(.2,1,.3,1),
+                border-color .25s ease;
+    backdrop-filter: blur(8px);
+}
+
+/* show flyout when hovering EITHER the row OR the flyout itself */
+.row:hover .flyout,
+.flyout:hover {
+    opacity: 1;
+    transform: translate(0, -50%);
+    pointer-events: auto;    /* now clickable */
+    border-right-color: #3fe0ff;
+}
+/* ══════════════════════════════
+   WEB PLAYER EMBED MODAL
+══════════════════════════════ */
+#player-modal{
+  position:fixed;inset:0;z-index:400;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(2,6,16,0);pointer-events:none;transition:background .35s;
+}
+#player-modal.open{background:rgba(2,6,16,.92);pointer-events:all}
+#player-panel{
+  background:linear-gradient(180deg,rgba(5,14,28,.99),rgba(2,8,18,1));
+  border:1px solid rgba(0,150,220,.25);
+  border-radius:6px;
+  width:95%;max-width:850px;
+  height:85vh;
+  display:flex;flex-direction:column;
+  transform:scale(.92);opacity:0;
+  transition:all .45s cubic-bezier(.22,1,.36,1);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 0 50px rgba(0,170,255,.15);
+}
+#player-modal.open #player-panel{transform:scale(1);opacity:1}
+
+.player-header {
+  padding:1.5rem 2.2rem 1.2rem;
+  border-bottom:1px solid rgba(0,120,200,.15);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(4,10,22,0.8);
+}
+
+.player-close{
+  width:32px;height:32px;background:rgba(0,100,180,.1);
+  border:1px solid rgba(0,140,220,.18);border-radius:2px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.player-close:hover{background:rgba(0,180,255,.15);border-color:var(--cyan)}
+.player-close span{position:absolute;width:12px;height:1px;background:var(--white)}
+.player-close span:first-child{transform:rotate(45deg)}
+.player-close span:last-child{transform:rotate(-45deg)}
+
+.player-eye{font-family:var(--fm);font-size:.58rem;letter-spacing:.25em;color:var(--elec);opacity:.55;text-transform:uppercase;margin-bottom:.3rem}
+.player-title{font-family:var(--fd);font-size:2rem;letter-spacing:.1em}
+.player-sub{font-family:var(--fb);font-size:.88rem;color:var(--muted)}
+
+.player-svc-select{
+  display:flex;gap:.5rem;flex-wrap:wrap;padding:1rem 2.2rem;
+  background:rgba(2,8,16,0.5);
+  border-bottom:1px solid rgba(0,120,200,.1);
+}
+.psvc{
+  padding:.4rem .9rem;border-radius:2px;cursor:pointer;
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid rgba(0,120,190,.2);color:var(--muted);background:rgba(6,14,28,.7);
+  transition:all .2s;
+}
+.psvc:hover{border-color:var(--elec);color:var(--elec)}
+.psvc.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.08)}
+
+.player-embed-area{
+  flex:1;
+  background:rgba(1,3,6,0.95);
+  display:flex;
+  flex-direction:column;
+  position:relative;
+}
+.player-iframe-container {
+  width:100%;
+  height:100%;
+  border:none;
+}
+.player-embed-placeholder {
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1rem;background:rgba(2,8,16,.95);z-index:2;
+  transition:opacity 0.4s ease;
+  padding:2rem;
+  text-align:center;
+}
+.player-embed-icon{font-size:3rem;opacity:.5}
+.player-embed-msg{font-family:var(--fm);font-size:.8rem;letter-spacing:.1em;color:var(--muted);max-width:400px;line-height:1.6}
+.player-embed-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.6rem;border-radius:2px;
+  font-family:var(--fb);font-size:.85rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  background:rgba(0,160,255,.12);border:1px solid rgba(0,160,255,.28);
+  color:var(--cyan);cursor:pointer;transition:all .22s;text-decoration:none;
+}
+.player-embed-btn:hover{background:rgba(0,200,255,.2);box-shadow: 0 0 15px rgba(0,200,255,0.25)}
+
+/* ══════════════════════════════
+   RADIO MODAL
+══════════════════════════════ */
+#radio-modal{
+  position:fixed;inset:0;z-index:400;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(2,6,16,0);pointer-events:none;transition:background .35s;
+}
+#radio-modal.open{background:rgba(2,6,16,.92);pointer-events:all}
+#radio-panel{
+  background:linear-gradient(160deg,rgba(5,14,28,.99),rgba(2,8,18,1));
+  border:1px solid rgba(0,150,220,.18);border-radius:4px;
+  width:90%;max-width:740px;max-height:82vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.92) translateY(20px);opacity:0;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .35s;
+  position:relative;
+}
+#radio-modal.open #radio-panel{transform:scale(1) translateY(0);opacity:1}
+
+.radio-head{
+  padding:1.5rem 2rem 1.2rem;
+  border-bottom:1px solid rgba(0,120,200,.1);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.radio-head-left .radio-eye{font-family:var(--fm);font-size:.58rem;letter-spacing:.25em;color:var(--gold);opacity:.6;text-transform:uppercase;margin-bottom:.3rem}
+.radio-head-left h3{font-family:var(--fd);font-size:2rem;letter-spacing:.1em}
+.radio-close{
+  width:32px;height:32px;background:rgba(0,100,180,.1);
+  border:1px solid rgba(0,140,220,.18);border-radius:2px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;
+}
+.radio-close:hover{background:rgba(0,180,255,.15);border-color:var(--cyan)}
+.radio-close span{position:absolute;width:12px;height:1px;background:var(--white)}
+.radio-close span:first-child{transform:rotate(45deg)}
+.radio-close span:last-child{transform:rotate(-45deg)}
+
+/* now playing bar */
+.radio-now{
+  padding:.7rem 2rem;
+  background:rgba(0,150,255,.05);border-bottom:1px solid rgba(0,120,200,.08);
+  display:flex;align-items:center;gap:.8rem;flex-shrink:0;
+}
+.radio-playing-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 1.5s ease infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.65)}}
+.radio-np-label{font-family:var(--fm);font-size:.56rem;letter-spacing:.14em;color:var(--gold);opacity:.7;text-transform:uppercase}
+#radioNowText{font-family:var(--fb);font-size:.82rem;font-weight:700;color:var(--white);margin-left:.4rem}
+
+.radio-list{
+  overflow-y:auto;flex:1;padding:1rem 2rem 1.5rem;
+  scrollbar-width:thin;scrollbar-color:rgba(0,100,180,.12) transparent;
+}
+.radio-list::-webkit-scrollbar{width:2px}
+.radio-list::-webkit-scrollbar-thumb{background:rgba(0,100,180,.15)}
+
+.radio-section-label{
+  font-family:var(--fm);font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ghost);margin:.6rem 0 .5rem;
+}
+.radio-item{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.65rem .75rem;border-radius:2px;
+  border:1px solid transparent;cursor:pointer;transition:all .22s;
+}
+.radio-item:hover{background:rgba(0,100,180,.06);border-color:rgba(0,150,220,.14)}
+.radio-item.playing{background:rgba(0,160,255,.08);border-color:rgba(0,200,255,.2)}
+.radio-flag{font-size:1.1rem;flex-shrink:0;width:28px;text-align:center}
+.radio-info{flex:1}
+.radio-name{font-family:var(--fb);font-size:.88rem;font-weight:700;color:var(--white);letter-spacing:.03em}
+.radio-item.playing .radio-name{color:var(--cyan)}
+.radio-freq{font-family:var(--fm);font-size:.52rem;letter-spacing:.07em;color:var(--muted)}
+.radio-genre-tag{
+  font-family:var(--fm);font-size:.50rem;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid rgba(0,110,170,.15);color:var(--ghost);border-radius:2px;padding:.12rem .4rem;
+}
+.radio-play-btn{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(0,120,180,.1);border:1px solid rgba(0,150,220,.2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--elec);font-size:.65rem;flex-shrink:0;transition:all .2s;
+}
+.radio-item:hover .radio-play-btn{background:rgba(0,180,255,.15);border-color:var(--cyan)}
+.radio-item.playing .radio-play-btn{background:rgba(0,229,255,.15);border-color:var(--cyan);color:var(--cyan)}
+
+
+/* ── FOOTER BREADCRUMB (last slide) ── */
+.footer-breadcrumb {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .55rem 3.2rem;
+    background: linear-gradient(180deg, rgba(2, 8, 16, 0) 0%, rgba(2, 8, 16, .88) 40%, rgba(2, 8, 16, .98) 100%);
+    border-top: 1px solid rgba(240, 192, 64, .12);
+    backdrop-filter: blur(8px);
+    font-family: var(--fm);
+    font-size: .5rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+}
+
+/* Left group — sitemap + copyright */
+.fbc-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.fbc-sitemap {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--gold);
+    cursor: pointer;
+    font-weight: 700;
+    transition: color .2s;
+    position: relative;
+}
+.fbc-sitemap:hover {
+    color: var(--cyan);
+}
+.fbc-sitemap .arrow {
+    font-size: .6rem;
+    transition: transform .25s;
+    display: inline-block;
+}
+.fbc-sitemap.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.fbc-sitemap-panel {
+    position: absolute;
+    bottom: 130%;
+    left: 0;
+    min-width: 260px;
+    background: linear-gradient(160deg, rgba(6, 14, 28, .98), rgba(2, 8, 16, .99));
+    border: 1px solid rgba(240, 192, 64, .18);
+    border-radius: 3px;
+    padding: .6rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity .25s, transform .25s;
+    z-index: 30;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+}
+.fbc-sitemap.open .fbc-sitemap-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+.fbc-sitemap-panel a {
+    font-family: var(--fm);
+    font-size: .48rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: .4rem 1rem;
+    transition: color .2s, background .2s, padding-left .2s;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+.fbc-sitemap-panel a:hover {
+    color: var(--gold);
+    background: rgba(240, 192, 64, .05);
+    padding-left: 1.3rem;
+}
+.fbc-sitemap-panel a::before {
+    content: '›';
+    color: rgba(240, 192, 64, .4);
+    font-size: .7rem;
+}
+
+/* Copyright */
+.fbc-copy {
+    color: var(--ghost);
+    font-size: .48rem;
+}
+.fbc-copy strong {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+/* Right group — cookie + terms */
+.fbc-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.fbc-link {
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: color .2s, letter-spacing .2s;
+    font-size: .48rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+.fbc-link:hover {
+    color: var(--gold);
+    letter-spacing: .2em;
+}
+
+/* ═══════════════════════════════════════════
+   COOKIE CONSENT
+═══════════════════════════════════════════ */
+.consent-banner {
+    position: fixed;
+    inset: 0;
+    z-index: 800;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 1.6rem;
+    background: rgba(2, 8, 16, .55);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+    font-family: var(--fb);
+}
+.consent-banner.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.consent-card {
+    width: min(440px, 92vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(160deg, #040c1a 0%, #020810 100%);
+    border: 1px solid rgba(240, 192, 64, .22);
+    border-radius: 4px;
+    padding: 1.3rem 1.4rem 1.1rem;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .75);
+    position: relative;
+    transform: translateY(24px) scale(.97);
+    transition: transform .4s cubic-bezier(.22, 1, .36, 1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(240, 192, 64, .2) transparent;
+}
+.consent-banner.open .consent-card {
+    transform: translateY(0) scale(1);
+}
+.consent-card::-webkit-scrollbar { width: 3px; }
+.consent-card::-webkit-scrollbar-thumb {
+    background: rgba(240, 192, 64, .25);
+    border-radius: 2px;
+}
+.consent-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--hot), var(--violet));
+    opacity: .65;
+    border-radius: 4px 4px 0 0;
+}
+
+/* decorative vertical strings */
+.consent-strings {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    display: flex;
+    gap: 3px;
+    opacity: .35;
+    pointer-events: none;
+}
+.consent-strings span {
+    display: block;
+    width: 1px;
+    height: 14px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+}
+.consent-strings span:nth-child(2) { height: 20px; opacity: .8; }
+.consent-strings span:nth-child(3) { height: 12px; opacity: .6; }
+.consent-strings span:nth-child(4) { height: 18px; opacity: .9; }
+.consent-strings span:nth-child(5) { height: 10px; opacity: .5; }
+
+.consent-body { position: relative; z-index: 2; }
+
+.consent-eyebrow {
+    font-family: var(--fm);
+    font-size: .5rem;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    margin-bottom: .35rem;
+}
+.consent-eyebrow b {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.consent-title {
+    font-family: var(--fd);
+    font-size: 1.8rem;
+    letter-spacing: .09em;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: .55rem;
+}
+
+.consent-text {
+    font-size: .82rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(180, 210, 240, .72);
+    margin-bottom: 1rem;
+}
+
+/* Preference rows */
+.consent-prefs {
+    display: none;
+    flex-direction: column;
+    gap: .45rem;
+    margin-bottom: .9rem;
+    animation: consentFade .3s ease both;
+}
+.consent-prefs.open { display: flex; }
+
+@keyframes consentFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pref-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .8rem;
+    padding: .65rem .75rem;
+    border: 1px solid rgba(0, 120, 190, .14);
+    border-radius: 3px;
+    background: rgba(6, 14, 28, .55);
+    transition: border-color .2s, background .2s;
+}
+.pref-row:hover {
+    border-color: rgba(240, 192, 64, .28);
+    background: rgba(240, 192, 64, .04);
+}
+.pref-copy { flex: 1; min-width: 0; }
+.pref-name {
+    font-family: var(--fb);
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--white);
+    margin-bottom: .18rem;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+.pref-name .locked {
+    font-family: var(--fm);
+    font-size: .4rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(240, 192, 64, .28);
+    border-radius: 2px;
+    padding: .05rem .32rem;
+    font-weight: 400;
+}
+.pref-desc {
+    font-size: .72rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+/* Switch */
+.switch {
+    flex-shrink: 0;
+    width: 34px;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(0, 100, 180, .14);
+    border: 1px solid rgba(0, 120, 190, .22);
+    position: relative;
+    cursor: pointer;
+    transition: background .25s, border-color .25s;
+    margin-top: .15rem;
+}
+.switch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(180, 210, 240, .45);
+    transition: left .25s cubic-bezier(.22, 1, .36, 1), background .25s;
+}
+.switch.on {
+    background: rgba(240, 192, 64, .18);
+    border-color: rgba(240, 192, 64, .45);
+}
+.switch.on::after {
+    left: calc(100% - 14px);
+    background: var(--gold);
+    box-shadow: 0 0 6px rgba(240, 192, 64, .55);
+}
+.switch.locked {
+    cursor: not-allowed;
+    opacity: .85;
+}
+.switch:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* Preference footer button */
+.consent-foot {
+    margin-top: .35rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Actions */
+.consent-actions {
+    display: flex;
+    gap: .45rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: .35rem;
+}
+
+.btn {
+    padding: .55rem 1.1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--fb);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    transition: all .22s;
+    border: 1px solid transparent;
+    background: transparent;
+}
+.btn:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+.btn-accept {
+    background: rgba(240, 192, 64, .12);
+    border-color: rgba(240, 192, 64, .35);
+    color: var(--gold);
+}
+.btn-accept:hover {
+    background: rgba(240, 192, 64, .24);
+    box-shadow: 0 0 18px rgba(240, 192, 64, .2);
+}
+.btn-reject {
+    background: transparent;
+    border-color: rgba(0, 120, 190, .22);
+    color: var(--muted);
+}
+.btn-reject:hover { border-color: var(--elec); color: var(--elec); }
+.btn-customize {
+    background: transparent;
+    border-color: rgba(136, 85, 255, .28);
+    color: var(--violet);
+}
+.btn-customize:hover {
+    background: rgba(136, 85, 255, .1);
+    border-color: rgba(136, 85, 255, .5);
+}
+
+/* Toast */
+.consent-toast {
+    position: fixed;
+    bottom: 4.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    z-index: 810;
+    background: linear-gradient(140deg, rgba(240, 192, 64, .12), rgba(4, 10, 22, .98));
+    border: 1px solid rgba(240, 192, 64, .35);
+    color: var(--gold);
+    font-family: var(--fm);
+    font-size: .55rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    padding: .55rem 1.2rem;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+}
+.consent-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .consent-banner {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0;
+    }
+    .consent-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 6px 6px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        max-height: 92vh;
+        padding: 1.2rem 1.1rem 1rem;
+    }
+    .consent-actions {
+        gap: .35rem;
+        justify-content: stretch;
+    }
+    .consent-actions .btn {
+        flex: 1;
+        text-align: center;
+        padding: .55rem .6rem;
+        font-size: .66rem;
+    }
+}
+</style>
+</head>
+<body>
+<div class="logo" ><img src="images/3hrill.png" alt=""
+style="position:absolute;right:65px;top:25px;height:10%;opacity:36%"></div>
+     <!-- TOGGLE + RAIL -->
+    <div class="hmenu">
+<button class="toggle" id="toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span class="peg" data-p="0"></span>
+        <span class="peg" data-p="1"></span>
+        <span class="peg" data-p="2"></span>
+        <span class="peg" data-p="3"></span>
+        <span class="peg" data-p="4"></span>
+    </button>
+
+    <nav class="rail" id="rail">
+        <span class="tag">NAV</span>
+        
+        <a class="row" data-i="0" href="index.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">02</span><span class="label">Home</span></span>
+        </a>
+        <a class="row" data-i="1" href="newssplash.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">03</span><span class="label">News Splash</span></span>
+        </a>
+        <a class="row" data-i="2" href="3hrillcharts.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Music Charts</span></span>
+        </a>
+<a class="row" data-i="3" href="Librarypass.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">04</span><span class="label">Library Pass</span></span>
+        </a>
+        <a class="row" data-i="4" href="fanshowcase.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Funs showcase</span></span>
+        </a>
+<a class="row" data-i="5" href="3hrillgigs.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Gigs</span></span>
+        </a>
+<a class="row" data-i="6" href="musicschool.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music School</span></span>
+        </a>
+<a class="row" data-i="7" href="musicstudio.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">Music Studio</span></span>
+        </a>
+<a class="row" data-i="8" href="3hrillstore.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label"> The Store</span></span>
+        </a>
+<a class="row" data-i="9" href="About3hrillMusic.html">
+            <span class="string"></span>
+            <span class="flyout"><span class="num">05</span><span class="label">3hrill Music</span></span>
+        </a>
+    </nav>
+</div>
+<!-- ══════════ SLIDES ══════════ -->
+<div id="slides">
+
+<!-- ── SLIDE 1 · INTRO ── -->
+<section class="slide" id="slide-intro">
+  <div class="mesh"></div>
+
+  <div class="intro-left">
+    <div class="intro-eyebrow">// 01 — Music Library</div>
+    <h1 class="intro-headline">ACCESS THE<br><em>ARCHIVE</em><br>PASS IN</h1>
+
+    <p class="intro-body">
+      Every song ever recorded is part of a living archive — a vast library of human sound.
+      <strong>3HRILL Library Pass</strong> is your gateway into how music is preserved, catalogued,
+      and distributed across the world. Whether you consume music as <strong>text</strong>,
+      <strong>audio</strong>, or <strong>video</strong> — physically or digitally — the library
+      holds it all.
+    </p>
+
+    <!-- Site Switcher Toggle Matrix -->
+    <div class="access-modes">
+      <div class="amode" id="amode-read" onclick="setAccessMode('read')">
+        <div class="amode-icon">📄</div>
+        <div class="amode-info">
+          <div class="amode-name">Read Notes</div>
+          <div class="amode-desc">Sheet music, lyrics, liner notes — archived text formats</div>
+        </div>
+        <span class="amode-pref" style="display:none" id="badge-read">Active</span>
+      </div>
+      <div class="amode active" id="amode-audio" onclick="setAccessMode('audio')">
+        <div class="amode-icon">🎧</div>
+        <div class="amode-info">
+          <div class="amode-name">Audio Stream</div>
+          <div class="amode-desc">Digital or physical — streaming, download, vinyl, CD</div>
+        </div>
+        <span class="amode-pref" id="badge-audio">Active</span>
+      </div>
+      <div class="amode" id="amode-video" onclick="setAccessMode('video')">
+        <div class="amode-icon">🎬</div>
+        <div class="amode-info">
+          <div class="amode-name">Video</div>
+          <div class="amode-desc">Music videos, live sessions, soft or hard copy distribution</div>
+        </div>
+        <span class="amode-pref" style="display:none" id="badge-video">Active</span>
+      </div>
+    </div>
+
+    <div class="intro-cta-row">
+      <button class="btn-primary" onclick="goSlide(1)">Get Your Pass</button>
+      <button class="btn-ghost"   onclick="goSlide(2)">Buy Music</button>
+    </div>
+  </div>
+
+  <div class="intro-right">
+    <div class="arch-card" onclick="openArchivalDetail(0)">
+      <div class="arch-card-num">01</div>
+      <div class="arch-card-title">Digital Archives</div>
+      <div class="arch-card-body">Petabytes of audio held across streaming platforms, cloud libraries, and digital stores — instantly accessible anywhere on Earth.</div>
+      <span class="arch-card-tag">Soft Copy</span>
+    </div>
+    <div class="arch-card" onclick="openArchivalDetail(1)">
+      <div class="arch-card-num">02</div>
+      <div class="arch-card-title">Physical Vaults</div>
+      <div class="arch-card-body">Vinyl records, magnetic tape, CDs, and cassettes — the original medium through which music survived and spread across generations.</div>
+      <span class="arch-card-tag">Hard Copy</span>
+    </div>
+    <div class="arch-card" onclick="openArchivalDetail(2)">
+      <div class="arch-card-num">03</div>
+      <div class="arch-card-title">Catalogue Metadata</div>
+      <div class="arch-card-body">ISRCs, rights registry, liner notes, and site-readable scores — the hidden architecture that links every recording to its creators.</div>
+      <span class="arch-card-tag">Read Notes</span>
+    </div>
+  </div>
+
+  <div class="scroll-ind" onclick="goSlide(1)"><span>Get Pass</span><div class="caret"></div></div>
+  <div class="intro-wave"></div>
+</section>
+
+<!-- ── SLIDE 2 · GET PASS ── -->
+<section class="slide" id="slide-pass">
+  <!-- Immersive backdrop container dynamically modified by selected streaming service -->
+  <div class="slide-bg-overlay" id="slidePassBg" src="images/homeicon.png"></div>
+  <div class="mesh" style="z-index: 1;"></div>
+
+  <div class="slide-content-wrapper">
+    <div class="back-nav" onclick="goSlide(0)">↑ Intro</div>
+
+    <div class="pass-header">
+      <div class="pass-header-left">
+        <div class="pass-eye">// 02 — Get Pass</div>
+        <h2 id="slide2-headline">CHOOSE YOUR<span>LIBRARY</span></h2>
+      </div>
+      <div class="pass-header-right">
+        <div style="font-family:var(--fm);font-size:.58rem;letter-spacing:.1em;color:rgba(160,210,245,.85)">
+          Select a service · then<br>sign in or create account
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="pass-actions">
+      <button class="pact-btn listen" onclick="openPlayer()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Open Player
+      </button>
+      <button class="pact-btn get-pass-direct" onclick="triggerDirectSignup()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Get Pass
+      </button>
+      <button class="pact-btn radio" onclick="openRadio()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 7.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 14.92z"/></svg>
+        Online Radio
+      </button>
+      <button class="pact-btn" style="border-color:rgba(0,130,200,.2);color:var(--muted)" onclick="goSlide(2)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Buy Music
+      </button>
+    </div>
+
+    <div class="college-label" id="slide2-section-label">
+      
+      <span class="college-counter" id="carCounter">1 / 16</span>
+    </div>
+
+    <!-- SERVICE CAROUSEL -->
+    <div class="carousel">
+
+      <!-- LEFT: active feature card -->
+      <div class="car-active" id="carActive">
+        <div class="car-active-img" id="carImg">
+          <div class="car-active-img-logo" id="carLogo"></div>
+          <div class="car-active-type-badge" id="carTypeBadge"></div>
+        </div>
+        <div class="car-active-body">
+          <div class="car-active-name" id="carName"></div>
+          <div class="car-active-desc" id="carDesc"></div>
+          <div class="car-active-features" id="carFeats"></div>
+          <div class="car-active-actions">
+            <button class="car-getpass-btn" id="carGetPass">Get Pass</button>
+            <button class="car-web-btn" id="carWebBtn">Open Player ↗</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: nav + thumb grid -->
+      <div class="car-right">
+        <div class="car-nav-row">
+          <div class="car-nav-info" id="carNavInfo">Use arrows or tap a service</div>
+          <div class="car-nav-btns">
+            <button class="car-nav-btn" id="carPrev" title="Previous">‹</button>
+            <button class="car-nav-btn" id="carNext" title="Next">›</button>
+          </div>
+        </div>
+        <div class="car-thumbs" id="carThumbs"></div>
+      </div>
+
+    </div>
+  </div>
+<div class="scroll-ind" onclick="goSlide(2)"><span>Buy Now</span><div class="caret"></div></div>
+<div class="intro-wave"></div>
+</section>
+
+<!-- ── SLIDE 3 · BUY NOW ── -->
+<section class="slide" id="slide-buy">
+  <div class="mesh"></div>
+  <div class="back-nav" onclick="goSlide(1)" style="position:absolute;top:1px;">↑ Get Pass</div>
+
+  <div class="buy-header" style="margin-top:50px;">
+    <div>
+      <div style="font-family:var(--fm);font-size:.6rem;letter-spacing:.28em;display:none;color:var(--gold);opacity:.55;text-transform:uppercase;margin-bottom:.4rem">// 03 — Buy Music</div>
+      <h2 style="font-family:var(--fd);font-size:clamp(4.7rem,4vw,4rem);gap:3px;letter-spacing:.5rem;line-height:.72;">OWN YOUR <span>SOUND</span></h2>
+    </div>
+    <div style="font-family:var(--fm);font-size:.58rem;letter-spacing:.08em;color:var(--ghost);text-align:right;line-height:1.9">
+      Digital &amp; physical · singles &amp; albums<br>
+      <span style="color:var(--muted)" id="buyDate">—</span>
+    </div>
+  </div>
+
+  <!-- Music Purchase Category Selection toggles -->
+  <div class="buy-categories-nav">
+    <button class="buy-cat-btn active" id="btn-cat-all" onclick="filterBuyCategory('all')">All Products</button>
+    <button class="buy-cat-btn" id="btn-cat-digital" onclick="filterBuyCategory('digital')">Digital (Soft Copy)</button>
+    <button class="buy-cat-btn" id="btn-cat-hardcopy" onclick="filterBuyCategory('physical')">Hard Copy (CDs/Vinyl)</button>
+    <button class="buy-cat-btn" id="btn-cat-meta" onclick="filterBuyCategory('metadata')">Catalogue &amp; Metadata</button>
+  </div>
+
+  <div class="buy-layout">
+
+    <!-- STORES -->
+    <div class="store-col">
+      <div class="store-label" id="current-category-label">// All Products</div>
+      <div id="storeList" ></div>
+    </div>
+
+    <!-- INFOGRAPH -->
+    <div class="infograph-col">
+      <div class="infograph-label">// Sales Infograph</div>
+
+      <!-- global stats -->
+      <div class="infograph-panel">
+        <div class="ig-title">Global Music Sales 2024</div>
+        <div class="stat-row">
+          <div class="stat-pill"><div class="stat-val">$28.6B</div><div class="stat-lbl">Total Revenue</div></div>
+          <div class="stat-pill"><div class="stat-val gold">67%</div><div class="stat-lbl">Streaming</div></div>
+          <div class="stat-pill"><div class="stat-val green">$4.1B</div><div class="stat-lbl">Physical</div></div>
+        </div>
+      </div>
+
+      <!-- singles bar chart -->
+      <div class="infograph-panel">
+        <div class="ig-title">Singles — Top Genre Sales</div>
+        <div class="bar-chart" id="singlesChart"></div>
+      </div>
+
+      <!-- album bar chart -->
+      <div class="infograph-panel">
+        <div class="ig-title">Albums — Format Split</div>
+        <div class="bar-chart" id="albumsChart"></div>
+      </div>
+
+      <!-- format donut -->
+      <div class="infograph-panel">
+        <div class="ig-title">Format Distribution</div>
+        <div class="donut-wrap">
+          <svg class="donut-svg" width="88" height="88" viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="34" fill="none" stroke="rgba(0,100,180,.1)" stroke-width="12"/>
+            <!-- streaming 67% -->
+            <circle cx="44" cy="44" r="34" fill="none" stroke="rgba(0,200,255,.75)" stroke-width="12"
+              stroke-dasharray="143 213" stroke-dashoffset="0" transform="rotate(-90 44 44)"/>
+            <!-- downloads 10% -->
+            <circle cx="44" cy="44" r="34" fill="none" stroke="rgba(240,192,64,.7)" stroke-width="12"
+              stroke-dasharray="21 335" stroke-dashoffset="-143" transform="rotate(-90 44 44)"/>
+            <!-- physical 14% -->
+            <circle cx="44" cy="44" r="34" fill="none" stroke="rgba(0,229,160,.65)" stroke-width="12"
+              stroke-dasharray="30 326" stroke-dashoffset="-164" transform="rotate(-90 44 44)"/>
+            <!-- sync/other 9% -->
+            <circle cx="44" cy="44" r="34" fill="none" stroke="rgba(255,107,53,.6)" stroke-width="12"
+              stroke-dasharray="19 337" stroke-dashoffset="-194" transform="rotate(-90 44 44)"/>
+          </svg>
+          <div class="donut-legend">
+            <div class="dl-item"><div class="dl-dot" style="background:rgba(0,200,255,.85)"></div><div class="dl-name">Streaming</div><div class="dl-pct" style="color:var(--cyan)">67%</div></div>
+            <div class="dl-item"><div class="dl-dot" style="background:rgba(0,229,160,.8)"></div><div class="dl-name">Physical</div><div class="dl-pct" style="color:var(--green)">14%</div></div>
+            <div class="dl-item"><div class="dl-dot" style="background:rgba(240,192,64,.85)"></div><div class="dl-name">Downloads</div><div class="dl-pct" style="color:var(--gold)">10%</div></div>
+            <div class="dl-item"><div class="dl-dot" style="background:rgba(255,107,53,.8)"></div><div class="dl-name">Sync / Other</div><div class="dl-pct" style="color:var(--hot)">9%</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<<!-- ─── FOOTER BREADCRUMB ─── -->
+<div class="footer-breadcrumb">
+
+    <div class="fbc-left">
+        <!-- Site Map dropdown -->
+        <div class="fbc-sitemap" id="sitemapBtn" onclick="toggleSitemap(event)">
+            <span>Site Map</span>
+            <span class="arrow">▾</span>
+
+            <div class="fbc-sitemap-panel" id="sitemapPanel">
+                <a href="index.html">Home</a>
+                <a href="news-splash.html">News</a>
+                <a href="3hrillCharts.html">Charts</a>
+                <a href="library-pass.html">Library</a>
+                <a href="Funshowcase.html">Fun Showcase</a>
+                <a href="3hrillgigs.html">3hrill Gigs</a>
+                <a href="3hrillschool.html">3hrill School</a>
+                <a href="3hrillstudio.html">3hrill Studio</a>
+                <a href="store-fixed.html">The Store</a>
+                <a href="About3hrillMusic.html">About 3hrill Music</a>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="fbc-copy">
+            © <strong>2026 3HRILL MUSIC</strong> — All Rights Reserved
+        </div>
+    </div>
+
+    <div class="fbc-right">
+        <!-- Cookie preferences -->
+        <a class="fbc-link" onclick="openCookieConsent()">Cookie Preferences</a>
+
+        <!-- Terms & conditions -->
+        <a class="fbc-link" href="About3hrillMusic.html">Terms &amp; Conditions</a>
+    </div>
+
+</div>
+</section>
+
+</div><!-- /slides -->
+
+<!-- ══════════ ARCHIVAL CUSTOM MODAL ══════════ -->
+<div id="archival-modal">
+  <div id="archival-panel">
+    <button class="archival-close" onclick="closeArchivalDetail()"><span></span><span></span></button>
+    <div id="archivalTag" class="archival-tag">DIGITAL VAULT</div>
+    <div id="archivalTitle" class="archival-title">Digital Archives</div>
+    <div id="archivalDesc" class="archival-description">
+      Petabytes of audio held across streaming platforms, cloud libraries, and digital stores — instantly accessible anywhere on Earth.
+    </div>
+    <div class="archival-actions">
+      <button id="archivalBtnPass" class="btn-primary" onclick="triggerArchivalPass()">Get Pass</button>
+      <button id="archivalBtnBuy" class="btn-ghost" onclick="triggerArchivalBuy()">Buy Music</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ WEB PLAYER MODAL ══════════ -->
+<div id="player-modal">
+  <div id="player-panel">
+    <div class="player-header">
+      <div>
+        <div class="player-eye">// 3HRILL — Secure Web Integration</div>
+        <div class="player-title" id="playerTitleLabel">NOW STREAMING</div>
+        <div class="player-sub" id="playerSub">Select your integrated streaming library to begin</div>
+      </div>
+      <button class="player-close" onclick="closePlayer()"><span></span><span></span></button>
+    </div>
+
+    <div class="player-svc-select" id="playerSvcRow"></div>
+
+    <div class="player-embed-area" id="playerEmbed">
+      <!-- Embedded iframe placeholder for dynamic secure player streams -->
+      <iframe class="player-iframe-container" id="playerIframe" src="about:blank"></iframe>
+      
+      <div class="player-embed-placeholder" id="playerFallbackPlaceholder">
+        <div class="player-embed-icon">🎧</div>
+        <div class="player-embed-msg" id="playerEmbedMsg">Pick an active service above — credentials will be requested in the secured frame above to load live audio.</div>
+        <a id="playerLaunchBtn" class="player-embed-btn" target="_blank" rel="noopener">
+          Open Web Player ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ RADIO MODAL ══════════ -->
+<div id="radio-modal">
+  <div id="radio-panel">
+    <div class="radio-head">
+      <div class="radio-head-left">
+        <div class="radio-eye">// Live Broadcast</div>
+        <h3>ONLINE RADIO</h3>
+      </div>
+      <button class="radio-close" onclick="closeRadio()"><span></span><span></span></button>
+    </div>
+
+    <div class="radio-now">
+      <div class="radio-playing-dot" id="radioPlayDot" style="background:var(--ghost);animation:none"></div>
+      <span class="radio-np-label">Now Playing —</span>
+      <span id="radioNowText" style="color:var(--ghost)">Select a station</span>
+    </div>
+
+    <div class="radio-list" id="radioList"></div>
+  </div>
+</div>
+
+<!-- ================= COOKIE CONSENT ================= -->
+<div class="consent-banner" id="consentBanner" role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <div class="consent-card">
+        <div class="consent-strings" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="consent-body">
+            <p class="consent-eyebrow">3hrill · <b>privacy</b></p>
+            <h2 class="consent-title">Cookies, Too</h2>
+            <p class="consent-text">
+                3hrill Music uses cookies to keep the site running and understand how the
+                stage gets used. Allow cookies, or pick exactly what you're comfortable with.
+            </p>
+
+            <div class="consent-prefs" id="consentPrefs">
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Essential <span class="locked">always on</span></p>
+                        <p class="pref-desc">Required for the site to load and function — navigation, layout, and security. These can't be switched off.</p>
+                    </div>
+                    <div class="switch on locked" data-cat="essential" aria-checked="true" aria-label="Essential cookies (always on)"></div>
+                </div>
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Analytics</p>
+                        <p class="pref-desc">Helps us see which pages and sets get the most love, so we know what to build next.</p>
+                    </div>
+                    <div class="switch" data-cat="analytics" tabindex="0" aria-label="Analytics cookies"></div>
+                </div>
+                <div class="pref-row">
+                    <div class="pref-copy">
+                        <p class="pref-name">Personalization</p>
+                        <p class="pref-desc">Remembers things like your favorite genres and recent picks to tailor recommendations.</p>
+                    </div>
+                    <div class="switch" data-cat="personalization" tabindex="0" aria-label="Personalization cookies"></div>
+                </div>
+                <div class="consent-foot">
+                    <button type="button" class="btn btn-accept" id="savePrefs">Save Preferences</button>
+                </div>
+            </div>
+
+            <div class="consent-actions">
+                <button type="button" class="btn btn-accept" id="acceptAll">Accept All</button>
+                <button type="button" class="btn btn-reject" id="rejectAll">Reject All</button>
+                <button type="button" class="btn btn-customize" id="openPrefs" aria-expanded="false">Customize</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+
+
+/* ════════════════════════════════════════════
+   MASTER DATA — ALL STREAMING SERVICES (CATEGORIZED BY SWITCHERS)
+════════════════════════════════════════════ */
+const ALL_SERVICES = [
+  /* AUDIO SERVICES */
+  {id:'spotify',    name:'Spotify',       icon:'', type:'Streaming',   mode:'audio',
+   img:'images/spotify.jpg',
+   color:'rgba(30,215,96,.18)',
+   desc:'The world\'s most popular audio streaming service with over 100 million tracks, personalised playlists, and podcasts. Available across all devices.',
+   features:['100M+ Tracks','Podcasts','Offline Play','Hi-Fi Tier'],
+   web:'https://open.spotify.com/embed/playlist/37i9dQZF1DX10zKzsJ6j77', signup:'https://www.spotify.com/signup'},
+
+  {id:'apple',      name:'Apple Music',   icon:'', type:'Streaming',   mode:'audio',
+   img:'images/applemusic.jpg',
+   color:'rgba(252,60,60,.18)',
+   desc:'Apple\'s premium music service offering lossless and spatial audio, exclusive artist content, live radio stations, and seamless iCloud integration.',
+   features:['Lossless Audio','Spatial Audio','Beats 1 Radio','90M Songs'],
+   web:'https://embed.music.apple.com/us/playlist/todays-hits/pl.f4d168de22754a0ca513e421273dbb4a', signup:'https://music.apple.com/subscribe'},
+
+  {id:'tidal',      name:'TIDAL',         icon:'🌊', type:'HiFi',        mode:'audio',
+   img:'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1200&q=80&fit=crop',
+   color:'rgba(0,200,255,.14)',
+   desc:'Artist-owned HiFi streaming service renowned for the highest audio quality — MQA Masters, Dolby Atmos, and 360 Reality Audio for true audiophiles.',
+   features:['MQA Masters','Dolby Atmos','Artist-Owned','Exclusive Content'],
+   web:'https://listen.tidal.com', signup:'https://tidal.com/subscribe'},
+
+  {id:'amazon',     name:'Amazon Music',  icon:'📦', type:'Streaming',   mode:'audio',
+   img:'images/amazonmusic.jpg',
+   color:'rgba(255,153,0,.16)',
+   desc:'Amazon\'s music streaming service offering HD and Ultra HD audio, X-Ray lyrics, Alexa voice control, and included with Prime membership.',
+   features:['Ultra HD Audio','Alexa Voice','Prime Included','100M Songs'],
+   web:'https://music.amazon.com/embed', signup:'https://music.amazon.com'},
+
+  {id:'youtube',    name:'YouTube Music', icon:'▶️', type:'Streaming',   mode:'audio',
+   img:'images/youtubemusic.png',
+   color:'rgba(255,0,0,.14)',
+   desc:'Google\'s music streaming platform powered by YouTube\'s vast video library — find official tracks, live performances, covers and remixes all in one place.',
+   features:['Video + Audio','100M+ Songs','YouTube Integration','Smart Search'],
+   web:'https://music.youtube.com', signup:'https://music.youtube.com'},
+
+  {id:'deezer',     name:'Deezer',        icon:'🎵', type:'Streaming',   mode:'audio',
+   img:'images/dow.jpeg',
+   color:'rgba(255,100,0,.14)',
+   desc:'French streaming pioneer with 90M+ tracks, Flow personalisation engine, HiFi lossless FLAC streaming, and lyrics synced to every song.',
+   features:['Flow AI DJ','HiFi FLAC','Sync Lyrics','90M+ Tracks'],
+   web:'https://www.deezer.com', signup:'https://www.deezer.com/en/register'},
+
+  {id:'soundcloud', name:'SoundCloud',    icon:'☁️', type:'Community',   mode:'audio',
+   img:'images/soundcloud.jpg',
+   color:'rgba(255,85,0,.14)',
+   desc:'The world\'s largest open audio platform — discover independent artists, upload original music, and access 300 million tracks including unreleased and rare content.',
+   features:['300M Tracks','Upload Music','Indie Artists','Free Tier'],
+   web:'https://soundcloud.com', signup:'https://soundcloud.com/signup'},
+
+  {id:'boomplay',   name:'Boomplay',      icon:'💫', type:'Africa',      mode:'audio',
+   img:'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1200&q=80&fit=crop',
+   color:'rgba(255,60,130,.14)',
+   desc:'Africa\'s leading music streaming platform with 100M+ users — the home of Afrobeats, Highlife, Amapiano, and the continent\'s entire sonic identity.',
+   features:['African Focus','80M+ Songs','Video Streaming','Offline Mode'],
+   web:'https://www.boomplay.com', signup:'https://www.boomplay.com/register'},
+
+  {id:'audiomack',  name:'Audiomack',     icon:'🎤', type:'Hip-Hop',     mode:'audio',
+   img:'https://images.unsplash.com/photo-1540039155733-5bb30b4f07dd?w=1200&q=80&fit=crop',
+   color:'rgba(255,165,0,.14)',
+   desc:'The dominant streaming platform for Hip-Hop, R&B, and Afrobeats — direct artist uploads, unlimited free streaming, and the pulse of street-level music culture.',
+   features:['Free Streaming','Artist Uploads','Hip-Hop Focus','Live Charts'],
+   web:'https://audiomack.com', signup:'https://audiomack.com/signup'},
+
+  {id:'pandora',    name:'Pandora',       icon:'📻', type:'Radio+',      mode:'audio',
+   img:'images/pandora.jpeg',
+   color:'rgba(0,160,225,.14)',
+   desc:'America\'s original personalised internet radio — Pandora\'s Music Genome Project analyses musical DNA to build stations and playlists that fit your exact taste.',
+   features:['Music Genome','Personalised Radio','Podcast Integration','US-Based'],
+   web:'https://www.pandora.com', signup:'https://www.pandora.com/account/register'},
+
+  {id:'qobuz',      name:'Qobuz',         icon:'🔷', type:'HiRes',       mode:'audio',
+   img:'images/qobuz.png',
+   color:'rgba(0,120,200,.16)',
+   desc:'The audiophile\'s choice — Qobuz streams and sells music in true Hi-Res FLAC up to 24-bit/192kHz, paired with editorial liner notes and album journalism.',
+   features:['24-bit/192kHz','FLAC Download','Editorial Content','Classical Library'],
+   web:'https://play.qobuz.com', signup:'https://www.qobuz.com/us-en/account/create'},
+
+  {id:'napster',    name:'Napster',       icon:'🟣', type:'Streaming',   mode:'audio',
+   img:'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1200&q=80&fit=crop',
+   color:'rgba(180,60,255,.14)',
+   desc:'The legendary name reborn — Napster now offers full licensed streaming with blockchain-powered artist royalties, Web3 integration, and a legacy catalogue.',
+   features:['Web3 Royalties','Blockchain','Full Catalogue','Legacy Brand'],
+   web:'https://napster.com', signup:'https://us.napster.com/register'},
+
+  {id:'idagio',     name:'IDAGIO',        icon:'🎻', type:'Classical',   mode:'audio',
+   img:'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=1200&q=80&fit=crop',
+   color:'rgba(200,200,200,.08)',
+   desc:'The world\'s most complete classical music streaming service — search by composer, ensemble, conductor, or instrument across a meticulously curated archive.',
+   features:['Classical Only','Conductor Search','Lossless','140K Albums'],
+   web:'https://app.idagio.com', signup:'https://app.idagio.com/register'},
+
+  {id:'kkbox',      name:'KKBOX',         icon:'🟦', type:'Asia',        mode:'audio',
+   img:'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80&fit=crop',
+   color:'rgba(0,210,180,.12)',
+   desc:'Asia\'s leading music streaming platform with 60M+ tracks — dominant in Taiwan, Hong Kong, Japan, and Singapore, with K-Pop and J-Pop at its core.',
+   features:['60M+ Songs','K-Pop Focus','Lyrics','Asia-First'],
+   web:'https://www.kkbox.com', signup:'https://www.kkbox.com'},
+
+  {id:'jiosaavn',   name:'JioSaavn',      icon:'🇮🇳', type:'India',       mode:'audio',
+   img:'images/saavn.png',
+   color:'rgba(255,100,60,.12)',
+   desc:'India\'s largest music streaming service — Bollywood, regional Indian languages, international hits, and original podcasts all in one app with 100M+ users.',
+   features:['Bollywood Focus','15 Languages','100M Users','Free Tier'],
+   web:'https://www.jiosaavn.com', signup:'https://www.jiosaavn.com'},
+  
+  {id:'wynk',   name:'wynk Music',      icon:'🇮🇳', type:'India',       mode:'audio',
+   img:'images/wynkmusic.jpg',
+   color:'rgba(255,100,60,.12)',
+   desc:'Indian platform backed by Airtel; one of the former market leaders',
+   features:['Bollywood Focus','15 Languages','100M Users','Free Tier'],
+   web:'https://www.wynk.in', signup:'https://www.wynk.in'},
+   
+   {id:'liveone',   name:'Liveone',      icon:'🇮🇳', type:'India',       mode:'audio',
+   img:'images/liveone.png',
+   color:'rgba(255,100,60,.12)',
+   desc:'Combines music streaming with live events and curated channels (formerly LiveXLive).',
+   features:['Bollywood Focus','15 Languages','100M Users','Free Tier'],
+   web:'https://www.liveone.com', signup:'https://www.liveone.com'},
+    
+  
+  {id:'times_music',   name:'Times Music',      icon:'🇮🇳', type:'India',       mode:'audio',
+   img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=80&fit=crop',
+   color:'rgba(255,100,60,.12)',
+   desc:'Indian platform backed by Airtel; one of the former market leaders',
+   features:['Bollywood Focus','15 Languages','100M Users','Free Tier'],
+   web:'https://www.timesmusic.com', signup:'https://timesmusic.com'},
+
+  {id:'kuwo',   name:'Kuwo',      icon:'🇮🇳', type:'China',       mode:'audio',
+   img:'images/kuwo.jpeg',
+   color:'rgba(255,100,60,.12)',
+   desc:'Tencent owned',
+   features:['Bollywood Focus','15 Languages','169M Users','Free Tier'],
+   web:'https://www.kuwo.cn', signup:'https://kuwo.cn'},
+   
+
+  {id:'anghami',    name:'Anghami',       icon:'🌙', type:'MENA',        mode:'audio',
+   img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=1200&q=80&fit=crop',
+   color:'rgba(255,60,120,.12)',
+   desc:'The Middle East and North Africa\'s first and largest music streaming platform — Arabic music, khaleeji, pop, and local exclusives for 70M+ registered users.',
+   features:['Arabic Music','MENA Focus','70M Users','Offline Play'],
+   web:'https://play.anghami.com', signup:'https://play.anghami.com'},
+
+  /* READ NOTES SERVICES (TEXT FORMATS) */
+  {id:'musicnotes_read', name:'Musicnotes Viewer', icon:'🎼', type:'Sheet Music', mode:'read',
+   img:'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=1200&q=80&fit=crop',
+   color:'rgba(0,180,255,.15)',
+   desc:'Interactive digital sheet music player. Transpose scores, mute instrument parts, and view site-readable annotations for over 400,000 catalogued songs.',
+   features:['Transpose','Score Mute','Annotate','400K+ Titles'],
+   web:'https://www.musicnotes.com', signup:'https://www.musicnotes.com/register'},
+
+  {id:'genius_read', name:'Genius Lyrics', icon:'📄', type:'Lyrics/Notes', mode:'read',
+   img:'https://images.unsplash.com/photo-1453733190148-c44698c26578?w=1200&q=80&fit=crop',
+   color:'rgba(240,192,64,.15)',
+   desc:'The world\'s deepest lyrics archive. Read verified song lyrics, interactive producer annotations, background liner notes, and historic music trivia.',
+   features:['Verified Lyrics','Liner Notes','Trivia','Artist Annotations'],
+   web:'https://genius.com', signup:'https://genius.com/signup'},
+
+  {id:'musescore_read', name:'MuseScore Reader', icon:'🎻', type:'Scores', mode:'read',
+   img:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1200&q=80&fit=crop',
+   color:'rgba(0,229,160,.15)',
+   desc:'Community-driven music repository. Open and view millions of user-uploaded classical transcriptions, band scores, and instrument scripts.',
+   features:['User Transcriptions','Classical catalog','Export PDFs','Interactive play'],
+   web:'https://musescore.com', signup:'https://musescore.com/user/register'},
+
+  {id:'songtrust_read', name:'Songtrust Registry', icon:'🔷', type:'Publishing', mode:'read',
+   img:'https://images.unsplash.com/photo-1486591978090-58e619d37fe7?w=1200&q=80&fit=crop',
+   color:'rgba(0,120,200,.16)',
+   desc:'Global rights and licensing database. View sound registries, verified songwriter credits, and statutory mechanical royalties parameters for global tracks.',
+   features:['Credit Directory','Rights Check','ISRC Registry','Royalties Info'],
+   web:'https://www.songtrust.com', signup:'https://app.songtrust.com/signup'},
+
+  {id:'ultimate_tabs', name:'Ultimate Guitar', icon:'🎸', type:'Tabs', mode:'read',
+   img:'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1200&q=80&fit=crop',
+   color:'rgba(255,107,53,.15)',
+   desc:'The largest repository of guitar chords, bass tabs, ukulele scales, and lyrics sheets. Over 1.1 million interactive community transcriptions.',
+   features:['Chords Matrix','Autoscroll','Bass Tabs','Pro Playbacks'],
+   web:'https://www.ultimate-guitar.com', signup:'https://www.ultimate-guitar.com/registration/register'},
+
+  /* VIDEO SERVICES */
+  {id:'youtube_vid', name:'YouTube Video Stage', icon:'📺', type:'Video Hub', mode:'video',
+   img:'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1200&q=80&fit=crop',
+   color:'rgba(255,0,0,.15)',
+   desc:'Access millions of live performance streams, high-definition official music videos, and multi-cam fan recordings from concerts worldwide.',
+   features:['Live Streams','Official Music MVs','4K Resolution','Multi-Cam Channels'],
+   web:'https://www.youtube.com', signup:'https://accounts.google.com/signup'},
+
+  {id:'vimeo_vid', name:'Vimeo Studio', icon:'🎬', type:'Acoustic Stages', mode:'video',
+   img:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80&fit=crop',
+   color:'rgba(0,170,255,.15)',
+   desc:'Home of cinematic live performances, independent artist documentaries, high-production music videos, and exclusive behind-the-scenes streams.',
+   features:['Cinematic MVs','Indie Films','No Ads','Behind-the-Scenes'],
+   web:'https://vimeo.com', signup:'https://vimeo.com/join'},
+
+  {id:'vevo_vid', name:'Vevo Premium', icon:'▶️', type:'Official MVs', mode:'video',
+   img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=80&fit=crop',
+   color:'rgba(0,229,255,.15)',
+   desc:'Official global syndication partner for major record label music videos. Pure, high-bitrate music video channels categorized by genre.',
+   features:['Pure Music Video','Bitrate Audio','Premier Releases','Label catalogs'],
+   web:'https://www.vevo.com', signup:'https://www.vevo.com'},
+
+  {id:'qello_concerts', name:'Qello Concerts', icon:'🎟️', type:'Live Concerts', mode:'video',
+   img:'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80&fit=crop',
+   color:'rgba(240,192,64,.15)',
+   desc:'The world\'s largest library of full-length concert films, music documentaries, and live broadcasts from legendary artists throughout history.',
+   features:['Full Concerts','Documentaries','Legendary Artists','Live Broadcasts'],
+   web:'https://qello.com', signup:'https://qello.com/auth/signup'}
+];
+
+/* ════════════════════════════════════════════
+   MASTER DATA — ALL STORES (CATEGORIZED BY SWITCHERS)
+════════════════════════════════════════════ */
+const ALL_STORES = [
+  /* AUDIO STORES (mode: 'audio') */
+  {icon:'🍎', name:'iTunes / Apple Music Store', desc:'Buy singles & albums digitally — permanent download', tags:['Digital'], link:'https://music.apple.com', category:'digital', mode:'audio', col:'rgba(252,60,60,.08)'},
+  {icon:'📦', name:'Amazon Music Store',   desc:'MP3 downloads and cloud library delivery',          tags:['Digital'], link:'https://www.amazon.com/music', category:'digital', mode:'audio', col:'rgba(255,153,0,.07)'},
+  {icon:'🎙️', name:'Qobuz Store',          desc:'High-resolution FLAC & WAV digital downloads',       tags:['Digital','HiRes'], link:'https://www.qobuz.com', category:'digital', mode:'audio', col:'rgba(0,120,200,.07)'},
+  {icon:'🛒', name:'Beatport Store',            desc:'Electronic music downloads for DJs — lossless audio', tags:['Digital'], link:'https://www.beatport.com', category:'digital', mode:'audio', col:'rgba(0,120,255,.07)'},
+  {icon:'💿', name:'Discogs Marketplace',              desc:'Vinyl records, CDs, cassettes — marketplace & new shipping',   tags:['Physical'], link:'https://www.discogs.com', category:'physical', mode:'audio', col:'rgba(200,150,50,.06)'},
+  {icon:'🏪', name:'Rough Trade Records',          desc:'Independent record store — curated physical releases worldwide', tags:['Physical'], link:'https://www.roughtrade.com', category:'physical', mode:'audio', col:'rgba(200,100,200,.06)'},
+  {icon:'🎵', name:'Bandcamp Artist Store',             desc:'Buy directly from physical catalogs — vinyl, tapes, & merch', tags:['Physical', 'Merch'], link:'https://bandcamp.com', category:'physical', mode:'audio', col:'rgba(0,200,200,.06)'},
+  {icon:'🇿🇦', name:'Takealot South Africa',       desc:'South Africa\'s leading online physical CD & Vinyl shipper',          tags:['Physical'], link:'https://www.takealot.com', category:'physical', mode:'audio', col:'rgba(0,180,120,.06)'},
+
+  /* READ NOTES STORES (mode: 'read') */
+  {icon:'🎼', name:'Musicnotes Library', desc:'Instantly purchase site-readable scores, sheet music, & lyrics', tags:['Digital', 'Sheets'], link:'https://www.musicnotes.com', category:'digital', mode:'read', col:'rgba(0,180,255,.08)'},
+  {icon:'📄', name:'Sheet Music Direct Store', desc:'High-resolution PDF music transcriptions, tabs, and vocal scripts', tags:['Digital', 'PDFs'], link:'https://www.sheetmusicdirect.com', category:'digital', mode:'read', col:'rgba(0,229,255,.08)'},
+  {icon:'🎹', name:'J.W. Pepper Print Sheets', desc:'Printed scores, marching band sheet packets, and performance folders', tags:['Physical', 'Print'], link:'https://www.jwpepper.com', category:'physical', mode:'read', col:'rgba(240,192,64,.08)'},
+  {icon:'📚', name:'Hal Leonard Book Store', desc:'Printed biographies, liner note companion books, and instructional scriptures', tags:['Physical', 'Textbooks'], link:'https://www.halleonard.com', category:'physical', mode:'read', col:'rgba(255,107,53,.08)'},
+  {icon:'💼', name:'Songtrust Copyrights Broker', desc:'Register digital lyrics ownership, mechanical publishings, and legal publishing metadata', tags:['Catalogue', 'Registry'], link:'https://www.songtrust.com', category:'metadata', mode:'read', col:'rgba(0,229,160,.08)'},
+  {icon:'🏷️', name:'LyricFind Licensing Registry', desc:'Purchase global publishing registries, sync rights, and site-readable APIs', tags:['Catalogue', 'Metadata'], link:'https://www.lyricfind.com', category:'metadata', mode:'read', col:'rgba(0,150,255,.08)'},
+
+  /* VIDEO STORES (mode: 'video') */
+  {icon:'🎬', name:'iTunes Video Store', desc:'Purchase concert films, high-fidelity music documentaries, and live stages', tags:['Digital', 'Film'], link:'https://www.apple.com/itunes', category:'digital', mode:'video', col:'rgba(0,170,255,.08)'},
+  {icon:'📹', name:'Vimeo On Demand Concerts', desc:'Rent or buy ultra high-bitrate acoustic sets and music documentaries', tags:['Digital', 'VOD'], link:'https://vimeo.com/ondemand', category:'digital', mode:'video', col:'rgba(0,229,255,.08)'},
+  {icon:'💿', name:'Amazon Concert DVD Collector', desc:'Order collector CD/DVD/Blu-ray live performance boxes with global shipping', tags:['Physical', 'Discs'], link:'https://www.amazon.com', category:'physical', mode:'video', col:'rgba(255,153,0,.08)'},
+  {icon:'🎞️', name:'Criterion Performance Collection', desc:'Rare archival concert films, art house music releases, and historical video recordings', tags:['Physical', 'Archival'], link:'https://www.criterion.com', category:'physical', mode:'video', col:'rgba(200,100,200,.08)'},
+  {icon:'🎫', name:'Qello Premium Concert Passes', desc:'Acquire premium concert licensing rights, metadata archives, and permanent live stream catalog passes', tags:['Catalogue', 'Access Pass'], link:'https://qello.com', category:'metadata', mode:'video', col:'rgba(240,192,64,.08)'},
+  {icon:'🎟️', name:'Boiler Room Access Registry', desc:'Acquire certified video stream sync registers and interactive live concert metadata access codes', tags:['Catalogue', 'Sync Metadata'], link:'https://boilerroom.tv', category:'metadata', mode:'video', col:'rgba(0,229,160,.08)'}
+];
+
+/* ════════════════════════════════════════════
+   DATA — RADIO STATIONS
+════════════════════════════════════════════ */
+const STATIONS = [
+  {flag:'🇬🇧', name:'BBC Radio 1',         freq:'Online',     genre:'Pop / Mainstream', stream:'https://stream.live.vc.bbcmedia.co.uk/bbc_radio_one'},
+  {flag:'🇬🇧', name:'BBC Radio 1Xtra',      freq:'Online',     genre:'Urban / R&B',      stream:'https://stream.live.vc.bbcmedia.co.uk/bbc_1xtra'},
+  {flag:'🇺🇸', name:'NPR Music',            freq:'Online',     genre:'Indie / Alt',      stream:'https://wwno.streamguys1.com/wwno64.mp3'},
+  {flag:'🇺🇸', name:'KEXP Seattle',         freq:'90.3 FM',    genre:'Indie / World',    stream:'https://kexp-mp3-128.streamguys1.com/kexp128.mp3'},
+  {flag:'🇳🇬', name:'Beat FM Lagos',        freq:'99.9 FM',    genre:'Afrobeats',        stream:'https://s7.radio.co/s5b9d01bff/listen'},
+  {flag:'🇬🇭', name:'Joy FM Accra',         freq:'99.7 FM',    genre:'Highlife / Afro',  stream:'https://stream.myjoyonline.com:8443/joyfm'},
+  {flag:'🇿🇦', name:'Metro FM South Africa',freq:'Online',     genre:'Afrobeats / Pop',  stream:'https://21233.live.streamtheworld.com/METROFM_SC'},
+  {flag:'🇯🇲', name:'Irie FM Jamaica',      freq:'107.5 FM',   genre:'Reggae / Dancehall',stream:'https://14313.live.streamtheworld.com/IRIEFM_SC'},
+  {flag:'🇩🇪', name:'1LIVE Cologne',        freq:'Online',     genre:'Electronic / Pop', stream:'https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3'},
+  {flag:'🌍', name:'Radio Naba',            freq:'Online',     genre:'World / Roots',    stream:'https://ice1.somafm.com/groovesalad-256-mp3'},
+  {flag:'🌐', name:'SomaFM Groove Salad',   freq:'Online',     genre:'Electronic / Chill',stream:'https://ice1.somafm.com/groovesalad-256-mp3'},
+  {flag:'🌐', name:'SomaFM Drone Zone',     freq:'Online',     genre:'Ambient',          stream:'https://ice1.somafm.com/dronezone-256-mp3'},
+];
+
+/* ════════════════════════════════════════════
+   DATA — CHART VALUES
+════════════════════════════════════════════ */
+const SINGLES_DATA = [
+  {label:'Hip-Hop/R&B', pct:85, cls:''},
+  {label:'Pop',         pct:72, cls:'gold'},
+  {label:'Afrobeats',   pct:61, cls:'green'},
+  {label:'Electronic',  pct:53, cls:''},
+  {label:'Rock/Alt',    pct:38, cls:'hot'},
+  {label:'Latin',       pct:58, cls:'gold'},
+  {label:'Jazz/Soul',   pct:22, cls:''},
+];
+const ALBUMS_DATA = [
+  {label:'Streaming',   pct:67, cls:''},
+  {label:'CD',          pct:12, cls:'gold'},
+  {label:'Vinyl',       pct:10, cls:'green'},
+  {label:'Download',    pct:10, cls:''},
+  {label:'Cassette',    pct:1,  cls:'hot'},
+];
+
+/* ════════════════════════════════════════════
+   DATA — ARCHIVAL DETAIL TYPES (SLIDE 1 MODALS)
+════════════════════════════════════════════ */
+const ARCHIVAL_MODES = [
+  {
+    tag: 'DIGITAL VAULTS',
+    title: 'Digital Archives',
+    desc: 'Unlock access to petabytes of soft-copy stereo audio, lossless tracks, spatial mixes, and master distribution stems held globally across top cloud archives.',
+    showPass: true,
+    showBuy: true,
+    targetCategory: 'digital'
+  },
+  {
+    tag: 'PHYSICAL VALUATION',
+    title: 'Physical Vaults',
+    desc: 'Discover authentic physical media including high-fidelity vinyl record presses, magnetic cassette tapes, limited edition CD releases, and global shipping options.',
+    showPass: false,
+    showBuy: true,
+    targetCategory: 'physical'
+  },
+  {
+    tag: 'METADATA & DOCUMENTATION',
+    title: 'Catalogue Metadata',
+    desc: 'Explore essential publishing architecture. Gain instant access to international ISRC registration codes, legal rights registries, original liner notes, and site-readable sheets.',
+    showPass: false,
+    showBuy: true,
+    targetCategory: 'metadata'
+  }
+];
+
+/* ════════════════════════════════════════════
+   SERVICE CAROUSEL & DYNAMIC BACKGROUNDS
+════════════════════════════════════════════ */
+let carIdx = 0;
+let SERVICES = [];
+let STORES = [];
+let selectedSvc = null;
+let activeMode = 'audio'; // 'read' | 'audio' | 'video'
+
+/* Dynamic Switcher Function to handle whole site transformations */
+function setAccessMode(mode) {
+  activeMode = mode;
+
+  // Toggle active class on Slide 1 buttons
+  document.querySelectorAll('.access-modes .amode').forEach(el => {
+    el.classList.remove('active');
+  });
+  document.getElementById(`amode-${mode}`).classList.add('active');
+
+  // Toggle dynamic active badges
+  document.querySelectorAll('.access-modes .amode-pref').forEach(badge => {
+    badge.style.display = 'none';
+  });
+  document.getElementById(`badge-${mode}`).style.display = 'block';
+
+  // Customize slide 2 headers based on mode
+  const headTitle = document.getElementById('slide2-headline');
+  const sectLabel = document.getElementById('slide2-section-label');
+  if (mode === 'read') {
+    headTitle.innerHTML = 'READ NOTES &amp;<br><span>SHEETS</span>';
+    sectLabel.innerHTML = '// Score, Lyrics &amp; Liner Notes Platforms — pick yours <span class="college-counter" id="carCounter">1 / 16</span>';
+  } else if (mode === 'video') {
+    headTitle.innerHTML = 'STREAM CONCERTS &amp;<br><span>VIDEOS</span>';
+    sectLabel.innerHTML = '// Live Stages &amp; Music Video Platforms — pick yours <span class="college-counter" id="carCounter">1 / 16</span>';
+  } else {
+    headTitle.innerHTML = 'CHOOSE YOUR<br><span>LIBRARY</span>';
+    sectLabel.innerHTML = '// Music Streaming Services — pick yours <span class="college-counter" id="carCounter">1 / 16</span>';
+  }
+
+  // Filter global datasets
+  SERVICES = ALL_SERVICES.filter(s => s.mode === mode);
+  STORES = ALL_STORES.filter(s => s.mode === mode);
+
+  // Reset indices
+  carIdx = 0;
+  selectedSvc = SERVICES[0];
+
+  // Rebuild Carousel UI Components
+  rebuildCarousel();
+  buildStores();
+  filterBuyCategory('all');
+}
+
+function rebuildCarousel() {
+  const thumbs = document.getElementById('carThumbs');
+  thumbs.innerHTML = '';
+  SERVICES.forEach((s, i) => {
+    const t = document.createElement('div');
+    t.className = 'car-thumb' + (i === 0 ? ' active' : '');
+    t.id = 'thumb-' + s.id;
+    t.innerHTML = `<div class="car-thumb-icon">${s.icon}</div><div class="car-thumb-name">${s.name}</div>`;
+    t.addEventListener('click', () => goToService(i));
+    thumbs.appendChild(t);
+  });
+  renderActiveCard(SERVICES[0]);
+}
+
+function goToService(idx) {
+  if (!SERVICES.length) return;
+  /* wrap around so Prev/Next cycle through the full list */
+  idx = ((idx % SERVICES.length) + SERVICES.length) % SERVICES.length;
+
+  /* deactivate old thumb */
+  const oldThumb = document.getElementById('thumb-' + SERVICES[carIdx].id);
+  if (oldThumb) oldThumb.classList.remove('active');
+
+  carIdx = idx;
+  const s = SERVICES[idx];
+  selectedSvc = s;
+
+  /* activate new thumb + scroll it into view */
+  const newThumb = document.getElementById('thumb-' + s.id);
+  if (newThumb) {
+    newThumb.classList.add('active');
+    newThumb.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+
+  renderActiveCard(s);
+}
+
+/* The ‹ › arrow buttons beside the carousel had no click handlers at all —
+   wire them here so they actually step through the service list. */
+document.getElementById('carPrev').addEventListener('click', () => goToService(carIdx - 1));
+document.getElementById('carNext').addEventListener('click', () => goToService(carIdx + 1));
+
+/* Preloads an image URL and only applies it once it's confirmed to load.
+   If it fails (404, blocked, bad local path, etc.) we fall back to a plain
+   colour gradient instead of leaving the element blank/looking "broken". */
+const _imgOkCache = {};
+function setBgImageSafe(el, url, gradient) {
+  const fallback = () => { el.style.backgroundImage = gradient || ''; };
+  if (!url) { fallback(); return; }
+  if (_imgOkCache[url] === true) {
+    el.style.backgroundImage = (gradient ? gradient + ',' : '') + `url(${url})`;
+    return;
+  }
+  if (_imgOkCache[url] === false) { fallback(); return; }
+  // show the gradient immediately so there's never a blank frame while we test the image
+  fallback();
+  const test = new Image();
+  test.onload = () => {
+    _imgOkCache[url] = true;
+    el.style.backgroundImage = (gradient ? gradient + ',' : '') + `url(${url})`;
+  };
+  test.onerror = () => { _imgOkCache[url] = false; fallback(); };
+  test.src = url;
+}
+
+function renderActiveCard(s) {
+  if (!s) return;
+  /* counter */
+  document.getElementById('carCounter').textContent = (carIdx + 1) + ' / ' + SERVICES.length;
+  document.getElementById('carNavInfo').textContent = s.name + ' · ' + s.type;
+
+  /* Dynamic slide background change on click (with graceful image fallback) */
+  const slideBg = document.getElementById('slidePassBg');
+  setBgImageSafe(slideBg, s.img, 'linear-gradient(180deg, rgba(2, 8, 16, 0.95) 0%, rgba(4, 12, 28, 0.8) 100%)');
+  slideBg.style.opacity = '0.35';
+
+  /* active card image + colour fade (with graceful image fallback) */
+  const img = document.getElementById('carImg');
+  img.style.backgroundSize = 'cover';
+  img.style.backgroundPosition = 'center';
+  setBgImageSafe(img, s.img, `linear-gradient(160deg,${s.color},rgba(2,8,20,.55))`);
+
+  document.getElementById('carLogo').textContent = s.icon;
+  document.getElementById('carTypeBadge').textContent = s.type;
+  document.getElementById('carName').textContent = s.name;
+  document.getElementById('carDesc').textContent = s.desc;
+
+  const feats = document.getElementById('carFeats');
+  feats.innerHTML = (s.features || []).map(f => `<span class="car-feat">${f}</span>`).join('');
+
+  document.getElementById('carGetPass').onclick = () => window.open(s.signup, '_blank');
+  document.getElementById('carWebBtn').onclick  = () => openPlayer();
+
+  /* animate active card text content in */
+  const body = document.querySelector('.car-active-body');
+  body.style.opacity = '0';
+  body.style.transform = 'translateY(8px)';
+  requestAnimationFrame(() => {
+    body.style.transition = 'opacity .35s ease, transform .35s ease';
+    body.style.opacity = '1';
+    body.style.transform = 'translateY(0)';
+  });
+}
+
+/* ════════════════════════════════════════════
+   DIRECT PASS ACTION ON SLIDE 2
+════════════════════════════════════════════ */
+function triggerDirectSignup() {
+  const target = selectedSvc || SERVICES[0];
+  if(target) {
+    window.open(target.signup, '_blank');
+  }
+}
+
+/* ════════════════════════════════════════════
+   BUILD & FILTER STORES (SLIDE 3)
+════════════════════════════════════════════ */
+let currentCategory = 'all';
+
+function buildStores() {
+  const list = document.getElementById('storeList');
+  list.innerHTML = '';
+  
+  document.getElementById('buyDate').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+  
+  const filtered = STORES.filter(s => currentCategory === 'all' || s.category === currentCategory);
+
+  filtered.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'store-card';
+    el.style.background = `linear-gradient(140deg,${s.col},rgba(4,10,22,.97))`;
+    el.style.display =`flex`;
+    el.style.gap = `4px`;
+    // Assign specific tags color matching
+    let tagMarkup = '';
+    s.tags.forEach(t => {
+      let extraCls = '';
+      if (t === 'Digital' || t === 'HiRes' || t === 'PDFs' || t === 'Sheets' || t === 'Film' || t === 'VOD') extraCls = 'dig';
+      else if (t === 'Physical' || t === 'Merch' || t === 'Print' || t === 'Textbooks' || t === 'Discs' || t === 'Archival') extraCls = 'phy';
+      else if (t === 'Catalogue' || t === 'Metadata' || t === 'Liner Notes' || t === 'Registry' || t === 'Access Pass' || t === 'Sync Metadata') extraCls = 'meta';
+      tagMarkup += `<span class="stag ${extraCls}">${t}</span>`;
+    });
+
+    el.innerHTML = `
+      <div class="store-icon" style="background:${s.col};border-radius:8px">${s.icon}</div>
+      <div class="store-info">
+        <div class="store-name">${s.name}</div>
+        <div class="store-desc">${s.desc}</div>
+        <div class="store-tags">${tagMarkup}</div>
+      </div>
+      <div class="store-arrow">›</div>`;
+    el.addEventListener('click', () => window.open(s.link, '_blank'));
+    list.appendChild(el);
+  });
+}
+
+function filterBuyCategory(categoryName) {
+  currentCategory = categoryName;
+
+  // Toggle active button class
+  document.querySelectorAll('.buy-cat-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  const catLabel = document.getElementById('current-category-label');
+  if(categoryName === 'all') {
+    document.getElementById('btn-cat-all').classList.add('active');
+    catLabel.textContent = '// All Products';
+  } else if(categoryName === 'digital') {
+    document.getElementById('btn-cat-digital').classList.add('active');
+    catLabel.textContent = activeMode === 'read' ? '// Digital Transcriptions & PDFs' : activeMode === 'video' ? '// Digital Concert Streams' : '// Digital Soft Copies';
+  } else if(categoryName === 'physical') {
+    document.getElementById('btn-cat-hardcopy').classList.add('active');
+    catLabel.textContent = activeMode === 'read' ? '// Printed Scores & Manuals' : activeMode === 'video' ? '// physical Collectors DVD / BD' : '// Physical Media & Hard Copies';
+  } else if(categoryName === 'metadata') {
+    document.getElementById('btn-cat-meta').classList.add('active');
+    catLabel.textContent = activeMode === 'read' ? '// Copyright Registries & Sheet Scores' : activeMode === 'video' ? '// Concert Sync Registries' : '// Catalogue Registries & scores';
+  }
+
+  buildStores();
+}
+
+/* ════════════════════════════════════════════
+   BUILD CHARTS
+════════════════════════════════════════════ */
+function buildCharts() {
+  function makeBar(container, data) {
+    const chart = document.getElementById(container);
+    data.forEach(d => {
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML = `
+        <div class="bar-label">${d.label}</div>
+        <div class="bar-track"><div class="bar-fill ${d.cls}" style="width:0%" data-w="${d.pct}%"></div></div>
+        <div class="bar-val">${d.pct}%</div>`;
+      chart.appendChild(row);
+    });
+  }
+  makeBar('singlesChart', SINGLES_DATA);
+  makeBar('albumsChart',  ALBUMS_DATA);
+
+  /* animate bars when slide 3 is visible */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.bar-fill').forEach(b => {
+          b.style.width = b.dataset.w;
+        });
+        obs.disconnect();
+      }
+    });
+  }, {threshold:.3});
+  obs.observe(document.getElementById('slide-buy'));
+}
+
+/* ════════════════════════════════════════════
+   BUILD RADIO LIST
+════════════════════════════════════════════ */
+let currentAudio = null;
+let playingStation = null;
+
+function buildRadio() {
+  const list = document.getElementById('radioList');
+
+  const groups = {};
+  STATIONS.forEach(s => {
+    const key = s.genre.split(' / ')[0];
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(s);
+  });
+
+  Object.entries(groups).forEach(([genre, stations]) => {
+    const label = document.createElement('div');
+    label.className = 'radio-section-label';
+    label.textContent = '// ' + genre;
+    list.appendChild(label);
+
+    stations.forEach(s => {
+      const item = document.createElement('div');
+      item.className = 'radio-item';
+      item.innerHTML = `
+        <div class="radio-flag">${s.flag}</div>
+        <div class="radio-info">
+          <div class="radio-name">${s.name}</div>
+          <div class="radio-freq">${s.freq} · ${s.genre}</div>
+        </div>
+        <div class="radio-genre-tag">${s.genre.split(' / ')[0]}</div>
+        <div class="radio-play-btn">▶</div>`;
+      item.addEventListener('click', () => playStation(s, item));
+      list.appendChild(item);
+    });
+  });
+}
+
+function playStation(s, el) {
+  /* stop current */
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  document.querySelectorAll('.radio-item').forEach(i => {
+    i.classList.remove('playing');
+    i.querySelector('.radio-play-btn').textContent = '▶';
+  });
+
+  if (playingStation === s.name) {
+    playingStation = null;
+    document.getElementById('radioNowText').textContent = 'Select a station';
+    document.getElementById('radioNowText').style.color = 'var(--ghost)';
+    const dot = document.getElementById('radioPlayDot');
+    dot.style.background = 'var(--ghost)'; dot.style.animation = 'none';
+    return;
+  }
+
+  try {
+    currentAudio = new Audio(s.stream);
+    currentAudio.volume = 0.7;
+    currentAudio.play().catch(() => {});
+  } catch(e){}
+
+  el.classList.add('playing');
+  el.querySelector('.radio-play-btn').textContent = '■';
+  playingStation = s.name;
+
+  document.getElementById('radioNowText').textContent = s.name + ' — ' + s.genre;
+  document.getElementById('radioNowText').style.color = 'var(--white)';
+  const dot = document.getElementById('radioPlayDot');
+  dot.style.background = 'var(--gold)'; dot.style.animation = 'pulse 1.5s ease infinite';
+}
+
+/* ════════════════════════════════════════════
+   ARCHIVAL CUSTOM MODALS (SLIDE 1 DETAILED MODALS)
+════════════════════════════════════════════ */
+let activeArchivalIdx = 0;
+
+function openArchivalDetail(idx) {
+  activeArchivalIdx = idx;
+  const data = ARCHIVAL_MODES[idx];
+  
+  document.getElementById('archivalTag').textContent = data.tag;
+  document.getElementById('archivalTitle').textContent = data.title;
+  document.getElementById('archivalDesc').textContent = data.desc;
+
+  // Toggle dynamic action button views per modal context specifications
+  const passBtn = document.getElementById('archivalBtnPass');
+  const buyBtn = document.getElementById('archivalBtnBuy');
+
+  passBtn.style.display = data.showPass ? 'block' : 'none';
+  buyBtn.style.display = data.showBuy ? 'block' : 'none';
+
+  document.getElementById('archival-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeArchivalDetail() {
+  document.getElementById('archival-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function triggerArchivalPass() {
+  closeArchivalDetail();
+  goSlide(1); // Scroll directly to slide 2
+}
+
+function triggerArchivalBuy() {
+  closeArchivalDetail();
+  const targetCat = ARCHIVAL_MODES[activeArchivalIdx].targetCategory;
+  filterBuyCategory(targetCat);
+  goSlide(2); // Scroll directly to slide 3
+}
+
+document.getElementById('archival-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('archival-modal')) closeArchivalDetail();
+});
+
+
+/* ════════════════════════════════════════════
+   INTEGRATED SECURE WEB PLAYER MODAL
+════════════════════════════════════════════ */
+function buildPlayerRow() {
+  const row = document.getElementById('playerSvcRow');
+  row.innerHTML = '';
+  // Support up to first 8 global configurations
+  SERVICES.slice(0,8).forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'psvc' + (selectedSvc && selectedSvc.id === s.id ? ' active' : '');
+    btn.textContent = s.name;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.psvc').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSvc = s;
+      showPlayerEmbed(s);
+    });
+    row.appendChild(btn);
+  });
+  if (selectedSvc) showPlayerEmbed(selectedSvc);
+}
+
+function showPlayerEmbed(s) {
+  if (!s) return;
+  document.getElementById('playerSub').textContent = 'Streaming via integrated ' + s.name + ' secure interface';
+  
+  const placeholder = document.getElementById('playerFallbackPlaceholder');
+  const msg = document.getElementById('playerEmbedMsg');
+  const btn = document.getElementById('playerLaunchBtn');
+  const iframe = document.getElementById('playerIframe');
+
+  // Verify if it is Spotify or Apple Music (which support embeds reliably in iframes)
+  if (s.id === 'spotify' || s.id === 'apple') {
+    iframe.style.display = 'block';
+    iframe.src = s.web;
+    placeholder.style.opacity = '0';
+    // explicitly non-interactive so this invisible layer never blocks the embedded player,
+    // but note: when the modal itself is closed it's already pointer-events:none by inheritance
+    placeholder.style.pointerEvents = 'none';
+  } else {
+    // Other platforms open securely via direct player anchors.
+    // Deliberately NOT forcing pointer-events here — it inherits 'all' only while
+    // #player-modal has the .open class, so this can never intercept clicks on the
+    // rest of the page while the modal is closed.
+    iframe.style.display = 'none';
+    iframe.src = 'about:blank';
+    placeholder.style.opacity = '1';
+    placeholder.style.removeProperty('pointer-events');
+    msg.textContent = `Credentials will be verified on ${s.name}'s secure cloud node. Click below to initialize playback.`;
+    btn.textContent = `Verify & Launch via ${s.name} ↗`;
+    btn.href = s.web;
+  }
+}
+
+function openPlayer() {
+  buildPlayerRow();
+  document.getElementById('player-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePlayer() {
+  document.getElementById('player-modal').classList.remove('open');
+  document.getElementById('playerIframe').src = 'about:blank'; // clean stream on exit
+  document.body.style.overflow = '';
+}
+document.getElementById('player-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('player-modal')) closePlayer();
+});
+
+/* ════════════════════════════════════════════
+   RADIO MODAL
+════════════════════════════════════════════ */
+function openRadio() {
+  document.getElementById('radio-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeRadio() {
+  document.getElementById('radio-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('radio-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('radio-modal')) closeRadio();
+});
+
+/* ════════════════════════════════════════════
+   SLIDE NAV
+════════════════════════════════════════════ */
+function goSlide(idx) {
+  const els = document.querySelectorAll('.slide');
+  if (els[idx]) els[idx].scrollIntoView({behavior:'smooth'});
+}
+
+/* ESC closes modals */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { 
+    closePlayer(); 
+    closeRadio(); 
+    closeArchivalDetail();
+  }
+});
+
+/* ════════════════════════════════════════════
+   CLOCK
+════════════════════════════════════════════ */
+function tick() {
+  const d = new Date();
+  const el = document.getElementById('navClock');
+  if (el) el.innerHTML = '3HRILL MUSIC<br>' + d.toUTCString().slice(17,22) + ' UTC';
+}
+tick(); setInterval(tick, 1000);
+
+ 
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+// Initialize site in Audio Stream mode by default
+setAccessMode('audio');
+buildCharts();
+buildRadio();
+
+
+
+(function() {
+    const toggle = document.getElementById('toggle');
+    const rail   = document.getElementById('rail');
+
+    function setOpen(open) {
+        rail.classList.toggle('open', open);
+        toggle.classList.toggle('active', open);
+        toggle.setAttribute('aria-expanded', String(open));
+    }
+
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setOpen(!rail.classList.contains('open'));
+    });
+
+    // click outside closes
+    document.addEventListener('click', function(e) {
+        if (rail.classList.contains('open')
+            && !rail.contains(e.target)
+            && !toggle.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    // Esc closes
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') setOpen(false);
+    });
+
+    // pluck animation on hover — nothing else
+    document.querySelectorAll('.row').forEach(function(row) {
+        const string = row.querySelector('.string');
+        row.addEventListener('mouseenter', function() {
+            string.classList.remove('plucked');
+            void string.offsetWidth;
+            string.classList.add('plucked');
+        });
+        // ❌ removed: row.addEventListener('click', e => e.preventDefault());
+    });
+})();
+
+/* ════════════════════════════════════════════
+   FOOTER BREADCRUMB — SITE MAP + COOKIE CONSENT
+════════════════════════════════════════════ */
+
+// ── Site Map dropdown toggle ──
+function toggleSitemap(e) {
+    e.stopPropagation();
+    const btn = document.getElementById('sitemapBtn');
+    btn.classList.toggle('open');
+}
+
+// Close sitemap when clicking outside
+document.addEventListener('click', e => {
+    const btn = document.getElementById('sitemapBtn');
+    if (btn && !btn.contains(e.target)) {
+        btn.classList.remove('open');
+    }
+});
+
+// ── Cookie consent modal ──
+function openCookieConsent() {
+    document.getElementById('cookieOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCookieConsent() {
+    document.getElementById('cookieOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function cookieChoice(action) {
+    const analytics = document.getElementById('cookieAnalytics').checked;
+    const marketing = document.getElementById('cookieMarketing').checked;
+
+    const prefs = {
+        essential: true,
+        analytics: action === 'accept' ? true : action === 'reject' ? false : analytics,
+        marketing: action === 'accept' ? true : action === 'reject' ? false : marketing,
+        timestamp: new Date().toISOString()
+    };
+
+    // Store in localStorage
+    try {
+        localStorage.setItem('3hrill_cookie_prefs', JSON.stringify(prefs));
+    } catch (err) {
+        console.warn('Cookie preferences could not be saved:', err);
+    }
+
+    // Visual feedback
+    const messages = {
+        accept: '✓ All cookies accepted',
+        reject: '✓ Only essential cookies active',
+        save: '✓ Preferences saved'
+    };
+    showFooterToast(messages[action] || '✓ Saved');
+
+    closeCookieConsent();
+}
+
+// Small toast feedback
+function showFooterToast(msg) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 4.5rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        z-index: 800;
+        background: linear-gradient(140deg, rgba(240, 192, 64, .12), rgba(4, 10, 22, .98));
+        border: 1px solid rgba(240, 192, 64, .35);
+        color: var(--gold);
+        font-family: var(--fm);
+        font-size: .55rem;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        padding: .55rem 1.2rem;
+        border-radius: 2px;
+        opacity: 0;
+        transition: opacity .3s ease, transform .3s ease;
+        pointer-events: none;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+    `;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(10px)';
+        setTimeout(() => toast.remove(), 400);
+    }, 2400);
+}
+
+// ── Escape key closes cookie modal ──
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('cookieOverlay').classList.contains('open')) {
+        closeCookieConsent();
+    }
+});
+
+
+
+// ── Auto-restore saved preferences on load (optional) ──
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const saved = localStorage.getItem('3hrill_cookie_prefs');
+        if (saved) {
+            const prefs = JSON.parse(saved);
+            const analyticsEl = document.getElementById('cookieAnalytics');
+            const marketingEl = document.getElementById('cookieMarketing');
+            if (analyticsEl) analyticsEl.checked = !!prefs.analytics;
+            if (marketingEl) marketingEl.checked = !!prefs.marketing;
+        }
+    } catch (err) {
+        // no saved preferences
+    }
+});
+
+/* ═══════════════════════════════════════════
+   COOKIE CONSENT — controller
+═══════════════════════════════════════════ */
+(function () {
+    const STORAGE_KEY = '3hrill_cookie_consent_v1';
+
+    const banner = document.getElementById('consentBanner');
+    const prefsEl = document.getElementById('consentPrefs');
+    const openPrefsBtn = document.getElementById('openPrefs');
+    const savePrefsBtn = document.getElementById('savePrefs');
+    const acceptAllBtn = document.getElementById('acceptAll');
+    const rejectAllBtn = document.getElementById('rejectAll');
+    const switches = banner.querySelectorAll('.switch[data-cat]');
+
+    if (!banner) return;
+
+    /* ── Read / write consent state ── */
+    function readConsent() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (err) { return null; }
+    }
+
+    function writeConsent(state) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                essential: true,
+                analytics: !!state.analytics,
+                personalization: !!state.personalization,
+                timestamp: new Date().toISOString()
+            }));
+        } catch (err) { /* storage may be blocked — ignore */ }
+    }
+
+    /* ── Apply saved state to switches ── */
+    function applyState(state) {
+        switches.forEach(sw => {
+            const cat = sw.dataset.cat;
+            if (cat === 'essential') return;
+            const isOn = !!state[cat];
+            sw.classList.toggle('on', isOn);
+            sw.setAttribute('aria-checked', String(isOn));
+        });
+    }
+
+    /* ── Read current switch state ── */
+    function readSwitches() {
+        const out = { essential: true, analytics: false, personalization: false };
+        switches.forEach(sw => {
+            const cat = sw.dataset.cat;
+            if (cat === 'essential') return;
+            out[cat] = sw.classList.contains('on');
+        });
+        return out;
+    }
+
+    /* ── Toggle a switch ── */
+    function toggleSwitch(sw) {
+        if (sw.classList.contains('locked')) return;
+        const next = !sw.classList.contains('on');
+        sw.classList.toggle('on', next);
+        sw.setAttribute('aria-checked', String(next));
+    }
+
+    /* ── Open / close ── */
+    function openBanner() {
+        // Restore saved state if it exists
+        const saved = readConsent();
+        if (saved) applyState(saved);
+        banner.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeBanner() {
+        banner.classList.remove('open');
+        document.body.style.overflow = '';
+        // Reset customise panel to collapsed
+        prefsEl.classList.remove('open');
+        openPrefsBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Toast ── */
+    function toast(msg) {
+        const el = document.createElement('div');
+        el.className = 'consent-toast';
+        el.textContent = msg;
+        document.body.appendChild(el);
+        requestAnimationFrame(() => el.classList.add('show'));
+        setTimeout(() => {
+            el.classList.remove('show');
+            setTimeout(() => el.remove(), 400);
+        }, 2200);
+    }
+
+    /* ── Switch interactions ── */
+    switches.forEach(sw => {
+        sw.addEventListener('click', () => toggleSwitch(sw));
+        sw.addEventListener('keydown', e => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleSwitch(sw);
+            }
+        });
+    });
+
+    /* ── Customise toggle ── */
+    openPrefsBtn.addEventListener('click', () => {
+        const isOpen = prefsEl.classList.toggle('open');
+        openPrefsBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    /* ── Save preferences (custom) ── */
+    savePrefsBtn.addEventListener('click', () => {
+        const state = readSwitches();
+        writeConsent(state);
+        toast('✓ Preferences saved');
+        closeBanner();
+    });
+
+    /* ── Accept all ── */
+    acceptAllBtn.addEventListener('click', () => {
+        const state = { essential: true, analytics: true, personalization: true };
+        applyState(state);
+        writeConsent(state);
+        toast('✓ All cookies accepted');
+        closeBanner();
+    });
+
+    /* ── Reject all ── */
+    rejectAllBtn.addEventListener('click', () => {
+        const state = { essential: true, analytics: false, personalization: false };
+        applyState(state);
+        writeConsent(state);
+        toast('✓ Only essential cookies active');
+        closeBanner();
+    });
+
+    /* ── Escape closes ── */
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && banner.classList.contains('open')) {
+            closeBanner();
+        }
+    });
+
+    /* ── Backdrop click closes (if you want) — click outside card ── */
+    banner.addEventListener('click', e => {
+        if (e.target === banner) closeBanner();
+    });
+
+    /* ═══════════════════════════════════════════
+       Wire it to the FOOTER Cookie Preferences link
+    ═══════════════════════════════════════════ */
+    window.openCookieConsent = openBanner;
+
+    /* ═══════════════════════════════════════════
+       Auto-open on first visit (only if no choice saved)
+    ═══════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
+        const saved = readConsent();
+        if (!saved) {
+            setTimeout(openBanner, 1000);
+        }
+    });
+})();
+/* Close modal when clicking the backdrop */
+document.addEventListener('click', e => {
+    const overlay = document.getElementById('cookieOverlay');
+    if (overlay && e.target === overlay) closeCookieConsent();
+});
+
+/* Close modal with Escape key */
+document.addEventListener('keydown', e => {
+    const overlay = document.getElementById('cookieOverlay');
+    if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+        closeCookieConsent();
+    }
+});
+</script>
+</body>
+</html>

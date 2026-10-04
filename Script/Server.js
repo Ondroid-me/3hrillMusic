@@ -6,7 +6,7 @@ const { scrapeAll, processResults, ZONES } = require('./scraper');
 const cache = require('./cache');
 
 const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = path.join(__dirname, 'public');
+const PUBLIC_DIR = path.join(__dirname, '..');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -19,19 +19,26 @@ const MIME = {
   '.ico' : 'image/x-icon',
 };
 
-/* ── Static file server for /public ── */
 function serveStatic(req, res) {
   let p = req.url.split('?')[0];
-  if (p === '/') p = '/index.html';
+  if (p === '/') p = '/newssplash.html';
+
+  // Don't expose scraper source from the repo root
+  if (/^\/js\/(server|scraper|feeds|cache)\.js$|^\/js\/package\.json$/i.test(p)) {
+    res.writeHead(403); return res.end('Forbidden');
+  }
+
   const full = path.join(PUBLIC_DIR, p);
   if (!full.startsWith(PUBLIC_DIR)) { res.writeHead(403); return res.end('Forbidden'); }
+
   fs.readFile(full, (err, data) => {
     if (err) { res.writeHead(404); return res.end('Not Found'); }
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(full).toLowerCase()] || 'application/octet-stream' });
+    res.writeHead(200, {
+      'Content-Type': MIME[path.extname(full).toLowerCase()] || 'application/octet-stream'
+    });
     res.end(data);
   });
 }
-
 /* ── /api/zones — returns your ZONES map to the frontend ── */
 function handleZones(res) {
   res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });

@@ -1,139 +1,334 @@
-/* ═══════════════════════════════════════════════════════════
-   3HRILL MUSIC — Pulse.js
-   Links newssplash.html to the Python scraper (pulse.py).
-
-   • Live mode   : python pulse.py is running  → /api/news, /api/refresh, /api/status
-   • Static mode : GitHub Pages / any static host → reads feed.json (written by pulse.py --once)
-
-   newssplash.html needs NO other edits. Pulse.js sits in front of fetch(),
-   so the page's existing fetchZone() / Refresh button work in both modes.
-   It also polls for new stories and re-renders when the scraper publishes some.
-
-   Optional config (put BEFORE the script tag):
-     <script>window.PULSE_CONFIG = { api: 'https://my-server.example.com', feedUrl: 'feed.json', pollMinutes: 5 };</script>
-   ═══════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
-  const CFG = Object.assign({ api: '', feedUrl: 'feed.json', pollMinutes: 5, maxPerZone: 24 }, window.PULSE_CONFIG || {});
+  const DEFAULT_CFG = {
+    api: '',
+    feedUrl: 'feed.json',
+    pollMinutes: 5,
+    maxPerZone: 24,
+    pageSize: 8
+  };
+
+  const CFG = Object.assign({}, DEFAULT_CFG, window.PULSE_CONFIG || {});
   const nativeFetch = window.fetch.bind(window);
 
-  let mode = 'unknown';          // 'live' | 'static' | 'unknown'
-  let lastScrapedAt = null;      // newest scrape stamp the page has displayed
-
-  /* ── helpers ── */
-  const json = (obj, status = 200) =>
-    new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
+  const state = {
+    mode: 'unknown',
+    lastScrapedAt: null,
+    currentZone: 'hot'
+  };
 
   function ago(epoch) {
-    const s = Math.max(0, Date.now() / 1000 - epoch);
-    if (s < 3600)  return Math.max(1, Math.floor(s / 60)) + 'm ago';
-    if (s < 86400) return Math.floor(s / 3600) + 'h ago';
-    return Math.floor(s / 86400) + 'd ago';
+    const seconds = Math.max(0, Date.now() / 1000 - Number(epoch || 0));
+    if (seconds < 3600) return Math.max(1, Math.floor(seconds / 60)) + 'm ago';
+    if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+    return Math.floor(seconds / 86400) + 'd ago';
   }
 
-  function apiUrl(path, search) {
-    const base = (CFG.api || window.location.origin).replace(/\/$/, '');
-    return base + path + (search || '');
+  function sanitizeZone(zone) {
+    const z = (zone || 'hot').toLowerCase();
+    return ['hot', 'warm', 'cold'].includes(z) ? z : 'hot';
+  }
+
+  function jsonResponse(obj, status = 200) {
+    return new Response(JSON.stringify(obj), {
+      status,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    });
+  }
+
+  function apiBase() {
+    const base = (CFG.api || window.location.origin || '').replace(/\/$/, '');
+    return base;
+  }
+
+  function buildApiUrl(path, params = {}) {
+    const url = new URL(path, window.location.origin);
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        url.searchParams.set(key, String(value));
+      }
+    });
+    const base = apiBase();
+    if (base) {
+      return new URL(url.pathname + url.search, base).toString();
+    }
+    return url.toString();
+  }
+
+  function normalizeArticle(article, fallbackZone) {
+    const zone = sanitizeZone(fallbackZone || article.zone || 'hot');
+    const cfg = (window.PULSE_ZONE_COLORS && window.PULSE_ZONE_COLORS[zone]) || {
+      label: zone === 'hot' ? ' HOT' : zone === 'warm' ? ' WARM' : ' COLD',
+      color: zone === 'hot' ? '#ff6b35' : zone === 'warm' ? '#c084fc' : '#38bdf8',
+      tagClass: zone === 'hot' ? 'hot-r' : zone === 'warm' ? 'warm-r' : 'cold-r'
+    };
+
+    return {
+      headline: article.headline || article.title || '',
+      kicker: article.kicker || article.summary || article.description || '',
+      body: article.body || '',
+      source: article.source || article.site || '3HRILL MUSIC',
+      author: article.author || '',
+      url: article.url || article.link || '',
+      image: article.image || article.img || '',
+      timeAgo: article.timeAgo || (article.published ? ago(article.published) : 'Recently'),
+      published: Number(article.published || Date.now() / 1000),
+      tagClass: article.tagClass || cfg.tagClass,
+      color: article.color || cfg.color,
+      label: article.label || cfg.label,
+      zone
+    };
   }
 
   async function loadFeedFile() {
-    const r = await nativeFetch(CFG.feedUrl + (CFG.feedUrl.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' });
-    if (!r.ok) throw new Error('feed.json HTTP ' + r.status);
-    return r.json();
+    const url = CFG.feedUrl + (CFG.feedUrl.includes('?') ? '&' : '?') + '_=' + Date.now();
+    const res = await nativeFetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('feed.json HTTP ' + res.status);
+    return res.json();
   }
 
-  /* ── /api/news ── */
-  async function handleNews(reqUrl, input, init) {
-    const zone = (reqUrl.searchParams.get('zone') || 'hot').toLowerCase();
+  function payloadFromFeed(data, zone, page = 1, pageSize = CFG.pageSize) {
+    const entries = Array.isArray(data?.zones?.[zone]) ? data.zones[zone] : [];
+    const normalized = entries
+      .slice(0, CFG.maxPerZone)
+      .map(item => normalizeArticle(item, zone));
 
-    if (mode !== 'static') {
-      try {
-        const r = await nativeFetch(apiUrl('/api/news', '?zone=' + zone), init || { cache: 'no-store' });
-        if (r.ok && (r.headers.get('content-type') || '').includes('json')) {
-          mode = 'live';
-          const clone = r.clone();
-          clone.json().then(d => { if (d.scrapedAt) lastScrapedAt = d.scrapedAt; }).catch(() => {});
-          return r;
+    const currentPage = Math.max(1, Number(page) || 1);
+    const size = Math.max(1, Number(pageSize) || CFG.pageSize);
+    const chunk = normalized.slice((currentPage - 1) * size, currentPage * size);
+
+    return {
+      zone: sanitizeZone(zone),
+      scrapedAt: data?.scrapedAt || null,
+      page: currentPage,
+      total: normalized.length,
+      hasMore: currentPage * size < normalized.length,
+      articles: chunk
+    };
+  }
+
+  async function liveNews(zone) {
+    const url = buildApiUrl('/api/news', { zone: sanitizeZone(zone) });
+    const res = await nativeFetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('live API error ' + res.status);
+    const data = await res.json();
+    state.mode = 'live';
+    if (data && data.scrapedAt) state.lastScrapedAt = data.scrapedAt;
+    if (data && Array.isArray(data.articles)) {
+      return data;
+    }
+    if (data && data.zones) {
+      return {
+        zone: sanitizeZone(zone),
+        scrapedAt: data.scrapedAt,
+        articles: (data.zones[zone] || []).slice(0, CFG.maxPerZone).map(item => normalizeArticle(item, zone))
+      };
+    }
+    throw new Error('Unexpected API payload');
+  }
+
+  async function liveFeed(zone, page, pageSize) {
+    const url = buildApiUrl('/api/feed', {
+      zone: sanitizeZone(zone),
+      page: page || 1,
+      pageSize: pageSize || CFG.pageSize
+    });
+    const res = await nativeFetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('live feed error ' + res.status);
+    const data = await res.json();
+    state.mode = 'live';
+    if (data && data.scrapedAt) state.lastScrapedAt = data.scrapedAt;
+    return data;
+  }
+
+  async function liveStatus() {
+    const url = buildApiUrl('/api/status');
+    const res = await nativeFetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('status error ' + res.status);
+    const data = await res.json();
+    state.mode = 'live';
+    if (data && data.scrapedAt) state.lastScrapedAt = data.scrapedAt;
+    return data;
+  }
+
+  async function staticNews(zone) {
+    const data = await loadFeedFile();
+    state.mode = 'static';
+    state.lastScrapedAt = data?.scrapedAt || state.lastScrapedAt;
+    return payloadFromFeed(data, zone, 1, CFG.maxPerZone);
+  }
+
+  async function staticFeed(zone, page, pageSize) {
+    const data = await loadFeedFile();
+    state.mode = 'static';
+    state.lastScrapedAt = data?.scrapedAt || state.lastScrapedAt;
+    return payloadFromFeed(data, zone, page, pageSize);
+  }
+
+  async function staticStatus() {
+    const data = await loadFeedFile();
+    state.mode = 'static';
+    state.lastScrapedAt = data?.scrapedAt || state.lastScrapedAt;
+    return {
+      scrapedAt: data?.scrapedAt || null,
+      counts: data?.zones ? Object.fromEntries(Object.entries(data.zones).map(([key, value]) => [key, Array.isArray(value) ? value.length : 0])) : { hot: 0, warm: 0, cold: 0 },
+      sources: 0,
+      refreshMinutes: CFG.pollMinutes
+    };
+  }
+
+  function handleNewsRequest(urlLike, input, init) {
+    const url = new URL(typeof urlLike === 'string' ? urlLike : urlLike.href, window.location.href);
+    const zone = sanitizeZone(url.searchParams.get('zone') || 'hot');
+
+    if (state.mode !== 'static') {
+      return (async () => {
+        try {
+          return await liveNews(zone);
+        } catch (error) {
+          state.mode = 'static';
+          return staticNews(zone);
         }
-        throw new Error('API not available');
-      } catch (_) {
-        mode = 'static';
-        console.info('[Pulse] no live API — using ' + CFG.feedUrl);
-      }
+      })();
     }
 
+    return staticNews(zone);
+  }
+
+  function handleFeedRequest(urlLike, input, init) {
+    const url = new URL(typeof urlLike === 'string' ? urlLike : urlLike.href, window.location.href);
+    const zone = sanitizeZone(url.searchParams.get('zone') || 'hot');
+    const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
+    const pageSize = Math.max(1, Number(url.searchParams.get('pageSize')) || CFG.pageSize);
+
+    if (state.mode !== 'static') {
+      return (async () => {
+        try {
+          return await liveFeed(zone, page, pageSize);
+        } catch (error) {
+          state.mode = 'static';
+          return staticFeed(zone, page, pageSize);
+        }
+      })();
+    }
+
+    return staticFeed(zone, page, pageSize);
+  }
+
+  function handleRefreshRequest() {
+    if (state.mode !== 'static') {
+      return (async () => {
+        try {
+          const res = await nativeFetch(buildApiUrl('/api/refresh'), { cache: 'no-store' });
+          if (res.ok) {
+            state.mode = 'live';
+            return res;
+          }
+          throw new Error('Refresh failed');
+        } catch (error) {
+          state.mode = 'static';
+          return jsonResponse({ ok: true, static: true, message: 'Static feed refresh only' });
+        }
+      })();
+    }
+
+    return Promise.resolve(jsonResponse({ ok: true, static: true, message: 'Static feed refresh only' }));
+  }
+
+  function handleStatusRequest() {
+    if (state.mode !== 'static') {
+      return (async () => {
+        try {
+          return await liveStatus();
+        } catch (error) {
+          state.mode = 'static';
+          return staticStatus();
+        }
+      })();
+    }
+
+    return staticStatus();
+  }
+
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = function patchedFetch(input, init) {
+    let url;
     try {
-      const d = await loadFeedFile();
-      lastScrapedAt = d.scrapedAt || lastScrapedAt;
-      const articles = ((d.zones || {})[zone] || []).slice(0, CFG.maxPerZone)
-        .map(a => Object.assign({}, a, { timeAgo: a.published ? ago(a.published) : 'Recently' }));
-      return json({ zone, scrapedAt: d.scrapedAt, articles });
-    } catch (e) {
-      return json({ error: e.message }, 502);
+      const source = typeof input === 'string' ? input : (input && input.url) || '';
+      url = new URL(source, window.location.href);
+    } catch (error) {
+      return originalFetch(input, init);
     }
-  }
 
-  /* ── /api/refresh ── */
-  async function handleRefresh(input, init) {
-    if (mode !== 'static') {
-      try {
-        const r = await nativeFetch(apiUrl('/api/refresh'), init);
-        if (r.ok) { mode = 'live'; return r; }
-      } catch (_) { /* fall through */ }
-      mode = 'static';
+    if (url.pathname.endsWith('/api/news')) {
+      return Promise.resolve(handleNewsRequest(url, input, init));
     }
-    // Static host: a scrape can't be forced from the browser; the page will just re-read feed.json.
-    return json({ ok: true, static: true });
-  }
+    if (url.pathname.endsWith('/api/feed')) {
+      return Promise.resolve(handleFeedRequest(url, input, init));
+    }
+    if (url.pathname.endsWith('/api/refresh')) {
+      return handleRefreshRequest();
+    }
+    if (url.pathname.endsWith('/api/status')) {
+      return Promise.resolve(handleStatusRequest());
+    }
 
-  /* ── intercept the page's fetch calls ── */
-  window.fetch = function (input, init) {
-    let u;
-    try { u = new URL(typeof input === 'string' ? input : input.url, window.location.href); }
-    catch (_) { return nativeFetch(input, init); }
-
-    if (u.pathname.endsWith('/api/news'))    return handleNews(u, input, init);
-    if (u.pathname.endsWith('/api/refresh')) return handleRefresh(input, init);
-    return nativeFetch(input, init);
+    return originalFetch(input, init);
   };
 
-  /* ── auto-publish: notice new scrapes and re-render ── */
-  async function currentStamp() {
-    if (mode === 'live') {
-      const r = await nativeFetch(apiUrl('/api/status'), { cache: 'no-store' });
-      if (r.ok) return (await r.json()).scrapedAt;
-    }
-    return (await loadFeedFile()).scrapedAt;
-  }
-
   async function checkForNewStories() {
-    if (document.hidden || mode === 'unknown') return;
-    try {
-      const stamp = await currentStamp();
-      if (!stamp || stamp === lastScrapedAt) return;
-      const firstLoad = lastScrapedAt === null;
-      lastScrapedAt = stamp;
-      if (firstLoad) return;
+    if (document.hidden || state.mode === 'unknown') return;
 
-      // Re-render the visible zone, mark the others stale so they reload when opened.
-      ['hot', 'warm', 'cold'].forEach(z => { if (z !== currentZone) zoneData[z] = null; });
-      zoneData[currentZone] = null;
-      fetchZone(currentZone);
-      if (typeof showToast === 'function') showToast('New stories published');
-    } catch (e) {
-      console.warn('[Pulse] poll failed:', e.message);
+    try {
+      const status = state.mode === 'live'
+        ? await liveStatus()
+        : await staticStatus();
+
+      const stamp = status && status.scrapedAt ? status.scrapedAt : null;
+      if (!stamp || stamp === state.lastScrapedAt) return;
+
+      const wasFirstLoad = !state.lastScrapedAt;
+      state.lastScrapedAt = stamp;
+
+      if (wasFirstLoad) return;
+
+      if (window.fetchZone) {
+        const zone = window.currentZone || 'hot';
+        if (typeof window.zoneData !== 'undefined') {
+          window.zoneData[zone] = null;
+        }
+        window.fetchZone(zone);
+      }
+
+      if (typeof window.showToast === 'function') {
+        window.showToast('New stories published');
+      }
+    } catch (error) {
+      console.warn('[Pulse] poll failed:', error && error.message ? error.message : error);
     }
   }
 
-  setInterval(checkForNewStories, Math.max(1, CFG.pollMinutes) * 60 * 1000);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForNewStories(); });
+  setInterval(() => {
+    if (state.mode !== 'unknown') {
+      checkForNewStories();
+    }
+  }, Math.max(1, Number(CFG.pollMinutes) || 5) * 60 * 1000);
 
-  /* ── tiny public API for the console / other scripts ── */
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && state.mode !== 'unknown') {
+      checkForNewStories();
+    }
+  });
+
   window.Pulse = {
-    get mode() { return mode; },
-    get lastScrapedAt() { return lastScrapedAt; },
+    get mode() { return state.mode; },
+    get lastScrapedAt() { return state.lastScrapedAt; },
     checkNow: checkForNewStories,
-    config: CFG
+    config: CFG,
+    refresh: handleRefreshRequest,
+    status: handleStatusRequest,
+    news: handleNewsRequest,
+    feed: handleFeedRequest
   };
 })();

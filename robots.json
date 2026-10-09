@@ -1,0 +1,29 @@
+{
+  "_readme": "Extra scraper rules for pulse.py. These can only make the scraper stricter - each site's own robots.txt is always obeyed on top of this. Keys starting with _ are ignored.",
+  "default_crawl_delay": 0.3,
+  "disallow_paths": [
+    "/login",
+    "/account",
+    "/subscribe",
+    "/checkout",
+    "/cart",
+    "/search",
+    "/wp-admin",
+    "/members"
+  ],
+  "domains": {
+    "pitchfork.com":                { "allow": true,  "crawl_delay": 1.0 },
+    "nme.com":                      { "allow": true,  "crawl_delay": 1.0 },
+    "billboard.com":                { "allow": true,  "crawl_delay": 1.5 },
+    "rollingstone.com":             { "allow": true,  "crawl_delay": 1.5 },
+    "stereogum.com":                { "allow": true,  "crawl_delay": 1.0 },
+    "consequence.net":              { "allow": true,  "crawl_delay": 1.0 },
+    "spin.com":                     { "allow": true,  "crawl_delay": 1.0 },
+    "theguardian.com":              { "allow": true,  "crawl_delay": 1.0 },
+    "variety.com":                  { "allow": true,  "crawl_delay": 1.5 },
+    "musicbusinessworldwide.com":   { "allow": true,  "crawl_delay": 1.0 },
+    "xxlmag.com":                   { "allow": true,  "crawl_delay": 1.0 },
+    "okayplayer.com":               { "allow": true,  "crawl_delay": 1.0 },
+    "soompi.com":                   { "allow": true,  "crawl_delay": 1.0 }
+  }
+}

@@ -411,7 +411,8 @@ def start_background():
 
 # ───────────────────────── WEB SERVER ─────────────────────────
 app = Flask(__name__, static_folder=None)
-BLOCKED_EXT = (".py", ".json", ".env", ".txt", ".md", ".log", ".pyc")
+BLOCKED_EXT = (".py", ".env", ".txt", ".md", ".log", ".pyc")
+BLOCKED_NAMES = {"robots.json"}  # feed.json stays public: the page reads it as a fallback
 
 
 @app.after_request
@@ -485,7 +486,8 @@ def root():
 
 @app.route("/<path:path>")
 def static_files(path):
-    if path.lower().endswith(BLOCKED_EXT) or path.startswith("."):
+    name = path.rsplit("/", 1)[-1].lower()
+    if name.endswith(BLOCKED_EXT) or name in BLOCKED_NAMES or name.startswith("."):
         abort(404)
     return send_from_directory(SITE_DIR, path)
 

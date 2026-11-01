@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3HRILL MUSIC — The Pulse</title>
-  <script src="script/pulse.js"></script>
 <script src="feed.json"></script>
 <script src="pulse.py"></script>
 <script src="robots.json"></script>
@@ -1401,9 +1400,22 @@ async function fetchZone(zone) {
   grid.innerHTML = `<div class="zone-load"><div class="load-ring"></div><div class="load-msg">Scraping live ${zone.toUpperCase()} feed…</div></div>`;
 
   try {
-    const res = await fetch(`${API}/api/news?zone=${zone}`, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
+    let json;
+try {
+  const res = await fetch(`${API}/api/news?zone=${zone}`, { cache: 'no-store' });
+  if (!res.ok || !(res.headers.get('content-type') || '').includes('json')) throw new Error('no api');
+  json = await res.json();
+} catch (_) {
+  const res = await fetch('feed.json?t=' + Date.now(), { cache: 'no-store' });
+  if (!res.ok) throw new Error('feed.json not found on this server (HTTP ' + res.status + ')');
+  const d = await res.json();
+  const ago = p => { const s = Math.max(0, Date.now() / 1000 - p);
+    return s < 3600 ? Math.max(1, Math.floor(s / 60)) + 'm ago'
+         : s < 86400 ? Math.floor(s / 3600) + 'h ago'
+         : Math.floor(s / 86400) + 'd ago'; };
+  json = { scrapedAt: d.scrapedAt,
+           articles: (d.zones[zone] || []).slice(0, 24).map(a => ({ ...a, timeAgo: ago(a.published) })) };
+}
     const articles = (json.articles || []).map(a => ({
       // merge in tagClass/color/label from the frontend ZONES object
       ...a,

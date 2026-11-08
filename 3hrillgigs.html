@@ -425,14 +425,14 @@ position:absolute;right:10px;top:7px;width:18px;height:36%;z-index:454;
 }
 .fcard:hover::before,.fcard:hover::after{opacity:1}
 .fcard-date{
-  font-family:var(--fm);font-size:.6rem;
+  font-family:var(--fm);font-size:.6rem;position:relative;top:49px;
   color:var(--elec);letter-spacing:.1em;
-  margin-bottom:.5rem;opacity:.8;
+  margin-bottom:3.5rem;opacity:.8;
 }
 .fcard-name{
-  font-family:var(--fd);font-size:1.35rem;
+  font-family:var(--fd);font-size:1.15rem;top:35px;position:absolute;
   letter-spacing:.04em;color:var(--white);
-  line-height:1;margin-bottom:.25rem;
+  line-height:1;margin-bottom:1.5rem;
 }
 .fcard-loc{
   font-size:.78rem;color:var(--muted);
@@ -445,7 +445,10 @@ position:absolute;right:10px;top:7px;width:18px;height:36%;z-index:454;
   border:1px solid rgba(0,130,200,.22);
   color:var(--muted);letter-spacing:.09em;text-transform:uppercase;
 }
-.fbadge.trending{border-color:var(--hot);color:var(--hot)}
+.fcard-cta{
+font-size:10px;
+margin-top:15px;position:absolute;bottom:3px;}
+.fbadge.trending{color:var(--hot)}
 
 /* scroll hint */
 .scroll-hint{
@@ -1230,9 +1233,9 @@ display:none;
 /* Arena media, details */
 .arena-info-card{
   background:rgba(6,16,35,.8);
-  border:1px solid rgba(0,150,220,.12);
-  border-radius:4px;display:grid;
-  grid-template-columns:1.1fr 0.9fr;gap:1.5rem;
+  border:0px solid rgba(0,150,220,.12);
+  border-radius:14px;display:flex;height:456px;
+ flex-direction:column;gap:1.5rem;
   padding:1.4rem;position:relative;overflow:hidden;
 }
 .arena-photo-frame{
@@ -1241,7 +1244,7 @@ display:none;
 }
 .arena-img{
   position:absolute;inset:0;background-size:cover;
-  background-position:center;
+  background-position:center;width:100%;height:100%;
   animation:kenBurns 22s ease-in-out infinite alternate;
 }
 .arena-details-text{
@@ -2524,9 +2527,30 @@ const ARENAS_DATABASE = [
     occupancy: 81,
     decibels: 98,
     desc: 'The massive egg-shaped dome is the holy grail of eastern music venues. Integrates futuristic production screens and pristine ambient reverberation.',
-    img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80',
+    img: '',
     layoutSeed: 55
   },
+ {id: 'Radiocity',
+    name: 'Radio City',
+    loc: 'New York, USA',
+    cap: '55,000',
+    occupancy: 81,
+    decibels: 98,
+    desc: 'The massive egg-shaped dome is the holy grail of eastern music venues. Integrates futuristic production screens and pristine ambient reverberation.',
+    img: 'I',
+    layoutSeed: 55
+  },
+{ id: 'Sphr',
+    name: 'THE SPHERE',
+    loc: 'Las Vegas, USA',
+    cap: '55,000',
+    occupancy: 81,
+    decibels: 98,
+    desc: 'The massive egg-shaped dome is the holy grail of eastern music venues. Integrates futuristic production screens and pristine ambient reverberation.',
+    img: 'Images/Sphere.jpg',
+    layoutSeed: 55
+  },
+
   {
     id: 'eko',
     name: 'EKO DOME',

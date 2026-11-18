@@ -737,18 +737,20 @@ transition:4s all ease;
 
         /* ── product grid ── */
         .prod-grid {
-             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-            gap: 2.65rem;
-            background-position: 60%;
-            overflow-y: scroll;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            grid-auto-rows: max-content;
+            gap: 1.6rem;
+            justify-items: stretch;
+            overflow-x: hidden;
+            overflow-y: auto;
             align-content: start;
             scrollbar-width: thin;
             scrollbar-color: rgba(0, 100, 180, .12) transparent;
             flex: 1;
             min-height: 0;
             max-height: 440px;
-            padding-right: 2px;
+            padding: 4px 8px 1rem 4px;
         }
         .prod-grid::-webkit-scrollbar {
             width: 2px;
@@ -763,8 +765,11 @@ transition:4s all ease;
             border: 1px solid rgba(0, 110, 180, .13);
             border-radius: 3px;
             overflow: hidden;
-            width:250PX;
-            height:250PX;
+            width: 100%;
+            min-width: 0;
+            height: auto;
+            min-height: 250px;
+            flex-shrink: 0;
             cursor: pointer;
             transition: all .25s;
             position: relative;
